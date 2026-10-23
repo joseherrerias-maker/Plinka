@@ -1,2 +1,41 @@
-# Plinka
-Music App for Kids
+# Plinka 🎵
+
+**Plinka** is an experimental, colorful music composer inspired by the intuitive note-placement of classic creative games. Designed iPad-first for ages approximately 3–8, with room for older creators.
+
+## Playable prototype (v0.2)
+
+- Five-line musical staff with nine pitch positions (pitch goes **up/down**, time goes **left/right**)
+- 8 selectable instrument sounds and editable note stickers
+- Four horizontally scrolling measures, playback and tempo controls
+- Undo, eraser, clear, sample melody, automatic local saving
+- Responsive iPad landscape and iPhone portrait layout
+- Uses built-in browser Web Audio synthesis: **these sounds are placeholders**, not the final recorded instrument pack
+
+All prototype code is in `index.html`. No dependencies, analytics, accounts, external assets, audio API keys, or backend.
+
+## Publish to GitHub Pages
+
+1. Create a new GitHub repository named `Plinka` (public for GitHub Pages on GitHub Free). Keep it **separate** from Milo.
+2. Put `index.html`, this `README.md`, and `.nojekyll` in the repository root on `main`.
+3. Go to **Settings → Pages → Build and deployment → Source: Deploy from a branch**.
+4. Select **Branch: `main`**, **Folder: `/ (root)`**, then **Save**.
+5. After publication, open `https://<username>.github.io/Plinka/` in Safari on iPhone or iPad.
+
+For the intended account, this should be `https://joseherrerias-maker.github.io/Plinka/` **after** GitHub Pages publishes successfully. This is not a live link until deployment finishes.
+
+**Note:** GitHub Pages publishes a public site. Do not add secrets, identifying child information, private recordings, or API credentials to this repository.
+
+## How to use
+
+1. Tap a sound in the bottom tray.
+2. Tap or drag on the musical staff to place notes; higher positions play higher pitches.
+3. Tap **Play** to hear your song. Use **Stop**, **Undo**, **Erase**, or **Clear** to revise it.
+4. Scroll sideways to reach later beats, and use **Try a little tune** to hear the demo.
+
+Music is saved in the browser’s local storage on the device, not uploaded to GitHub. Browser audio starts only after a user gesture. The iOS file preview may block JavaScript; for actual gameplay use a normal HTTPS webpage in Safari.
+
+## Prototype status
+
+This is a mechanics-first proof of concept, **not** a finished app or App Store build. Sound quality, touch UX, note layering, accessibility, and iOS device testing remain to be refined.
+
+No software license is granted by including this README. This is an unpublished prototype owned by its creator.
