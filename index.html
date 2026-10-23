@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#54d9cc">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>Plinka · Playable prototype 0.2</title>
+<title>Plinka · Playable prototype 0.3</title>
 <style>
 :root{color-scheme:light;--ink:#253354;--muted:#737f96;--mint:#23bea9;--violet:#9275e9;--coral:#ff7c79;--yellow:#ffd16e;--line:#a4b6cb;--step:73px;--row:45px;--top:80px;--gutter:95px}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -258,6 +258,50 @@ $('#demo').addEventListener('click',()=>{if(!tryEdit())return;if(notes.length&&!
 function initAudio(){if(!audioCtx){const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return Promise.reject(new Error('Web Audio missing'));audioCtx=new AC();const comp=audioCtx.createDynamicsCompressor();comp.threshold.value=-19;comp.knee.value=12;comp.ratio.value=4;comp.attack.value=.004;comp.release.value=.14;master=audioCtx.createGain();master.gain.value=.47;master.connect(comp);comp.connect(audioCtx.destination);}return audioCtx.resume();}
 function envelope(g,t,attack,hold,release,volume){g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(Math.max(.0002,volume),t+Math.max(.006,attack));g.gain.setValueAtTime(Math.max(.0002,volume),t+attack+hold);g.gain.exponentialRampToValueAtTime(.0001,t+attack+hold+release);}
 function osc(type,freq,detune,t,release,vol,dest,envCfg,filterCut){const o=audioCtx.createOscillator();o.type=type;o.frequency.setValueAtTime(freq,t);o.detune.value=detune||0;const g=audioCtx.createGain();envelope(g,t,envCfg[0],envCfg[1],envCfg[2],vol);if(filterCut){let f=audioCtx.createBiquadFilter();f.type='lowpass';f.frequency.value=filterCut;o.connect(f);f.connect(g);}else o.connect(g);g.connect(dest);o.start(t);o.stop(t+envCfg.reduce((a,b)=>a+b,0)+.055);}
+// A lightly damped, physically inspired plucked string for guitar notes.
+// Unlike the piano oscillators, the bright picking transient loses its
+// harmonics naturally as the vibrating string decays (Karplus-Strong).
+const guitarBufferCache = new Map();
+function guitarBuffer(frequency){
+  const rate=audioCtx.sampleRate;
+  const key=rate+':'+frequency.toFixed(2);
+  if(guitarBufferCache.has(key))return guitarBufferCache.get(key);
+  const frameCount=Math.ceil(rate*1.2);
+  const buffer=audioCtx.createBuffer(1,frameCount,rate);
+  const data=buffer.getChannelData(0);
+  const period=Math.max(12,Math.round(rate/frequency));
+  const string=new Float32Array(period);
+  // A defined plucking point plus a small, deterministic pick transient.
+  let seed=Math.round(frequency*149)+27183;
+  for(let i=0;i<period;i++){
+    seed=(Math.imul(seed,1664525)+1013904223)>>>0;
+    const p=i/period,pluck=.22;
+    const displacement=p<pluck?p/pluck:(1-p)/(1-pluck);
+    const noise=((seed/4294967296)*2-1)*.22;
+    string[i]=(displacement*2-1)*.74+noise;
+  }
+  for(let i=0;i<frameCount;i++){
+    const j=i%period;
+    const sample=(string[j]+string[(j+1)%period])*.498;
+    string[j]=sample;
+    data[i]=sample;
+  }
+  guitarBufferCache.set(key,buffer);
+  return buffer;
+}
+function guitarPluck(frequency,time,noteLength,destination){
+  const source=audioCtx.createBufferSource();
+  source.buffer=guitarBuffer(frequency);
+  const gain=audioCtx.createGain();
+  const decay=Math.max(.46,Math.min(.9,noteLength*2.4));
+  gain.gain.setValueAtTime(.0001,time);
+  gain.gain.exponentialRampToValueAtTime(.86,time+.004);
+  gain.gain.exponentialRampToValueAtTime(.0001,time+decay);
+  source.connect(gain);
+  gain.connect(destination);
+  source.start(time);
+  source.stop(time+decay+.02);
+}
 let noiseBuffer=null;
 function noise(){if(noiseBuffer)return noiseBuffer;const len=Math.floor(audioCtx.sampleRate*.65),buf=audioCtx.createBuffer(1,len,audioCtx.sampleRate),data=buf.getChannelData(0);let r=751;for(let i=0;i<len;i++){r=(Math.imul(1664525,r)+1013904223)>>>0;data[i]=(r/2147483648-1);}noiseBuffer=buf;return buf;}
 function drum(midi,t,dest){const low=midi<=67,mid=midi>=69&&midi<=72;const src=audioCtx.createBufferSource();src.buffer=noise();const filter=audioCtx.createBiquadFilter();filter.type=low?'lowpass':mid?'bandpass':'highpass';filter.frequency.value=low?300:mid?1800:6600;filter.Q.value=.8;const g=audioCtx.createGain();envelope(g,t,.006,.01,low?.21:mid?.15:.07,low?.40:mid?.26:.19);src.connect(filter);filter.connect(g);g.connect(dest);src.start(t);src.stop(t+.55);if(low){const o=audioCtx.createOscillator();o.type='sine';o.frequency.setValueAtTime(130,t);o.frequency.exponentialRampToValueAtTime(52,t+.17);const k=audioCtx.createGain();envelope(k,t,.006,.005,.21,.62);o.connect(k);k.connect(dest);o.start(t);o.stop(t+.27);}}
@@ -265,7 +309,7 @@ function sound(inst,midi,t,length,dest){let f=440*Math.pow(2,(midi-69)/12);const
 switch(inst){
 case 'piano':osc('triangle',f,0,t,d,.42,dest,[.008,.03,.48],2200);osc('sine',f*2,0,t,d,.09,dest,[.004,.015,.22]);break;
 case 'xylo':osc('sine',f,0,t,d,.58,dest,[.005,.015,.28]);osc('sine',f*3,0,t,d,.14,dest,[.003,.009,.15]);break;
-case 'guitar':osc('triangle',f,0,t,d,.48,dest,[.003,.01,.58],1600);osc('sawtooth',f,1,t,d,.13,dest,[.003,.01,.24],1000);break;
+case 'guitar':guitarPluck(f,t,d,dest);break;
 case 'trumpet':osc('sawtooth',f,0,t,d,.34,dest,[.028,.12,Math.max(.1,d*.6)],1400);osc('square',f,0,t,d,.09,dest,[.025,.12,.29],1150);break;
 case 'flute':osc('sine',f,0,t,d,.48,dest,[.055,.11,Math.max(.19,d*.7)]);osc('sine',f*2,0,t,d,.06,dest,[.04,.10,.2]);break;
 case 'bells':osc('sine',f,0,t,d,.45,dest,[.004,.025,.95]);osc('sine',f*2.75,0,t,d,.14,dest,[.004,.008,.42]);osc('sine',f*4,0,t,d,.07,dest,[.003,.008,.25]);break;
