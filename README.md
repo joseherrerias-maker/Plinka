@@ -2,7 +2,7 @@
 
 **Plinka** is an experimental, colorful music composer inspired by the intuitive note-placement of classic creative games. Designed iPad-first for ages approximately 3–8, with room for older creators.
 
-## Playable prototype (v0.2)
+## Playable prototype (v0.3)
 
 - Five-line musical staff with nine pitch positions (pitch goes **up/down**, time goes **left/right**)
 - 8 selectable instrument sounds and editable note stickers
@@ -10,6 +10,7 @@
 - Undo, eraser, clear, sample melody, automatic local saving
 - Responsive iPad landscape and iPhone portrait layout
 - Uses built-in browser Web Audio synthesis: **these sounds are placeholders**, not the final recorded instrument pack
+- Guitar has a custom plucked-string sound, audibly distinct from the piano's oscillator timbre; requires device listening test
 
 All prototype code is in `index.html`. No dependencies, analytics, accounts, external assets, audio API keys, or backend.
 
