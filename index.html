@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#54d9cc">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>Plinka · Playable prototype 0.3</title>
+<title>Plinka · Playable prototype 0.4</title>
 <style>
 :root{color-scheme:light;--ink:#253354;--muted:#737f96;--mint:#23bea9;--violet:#9275e9;--coral:#ff7c79;--yellow:#ffd16e;--line:#a4b6cb;--step:73px;--row:45px;--top:80px;--gutter:95px}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -43,6 +43,8 @@ header{display:flex;align-items:center;justify-content:space-between;gap:20px;ma
 .play{background:#25c5b1;color:#fff;border:0;box-shadow:0 4px 0 #1c9e90;min-width:119px}
 .play:active{transform:translateY(3px);box-shadow:0 1px 0 #1c9e90}
 .stop{background:#fff4ee;color:#ed8a74;border-color:#ffe6db}
+.loop{background:#f0f4ff;color:#667aa6;border-color:#dce4f6}
+.loop.active{background:#d7f8f0;color:#087f74;border-color:#31bbad;box-shadow:inset 0 0 0 1px #31bbad}
 .score-frame{border:2px solid #e2edf3;border-radius:22px;overflow:hidden;background:linear-gradient(180deg,#fff,#fffdf8);position:relative;box-shadow:0 7px 19px #5e8caa10 inset}
 .score-scroll{position:relative;width:100%;overflow-x:auto;overflow-y:hidden;overscroll-behavior-x:contain;scrollbar-color:#c2d5e8 #f2f7fb;scrollbar-width:thin;touch-action:pan-x pan-y}
 .score-track{height:516px;position:relative;isolation:isolate}
@@ -83,6 +85,11 @@ header{display:flex;align-items:center;justify-content:space-between;gap:20px;ma
 @media(max-width:900px){#app{padding:13px 14px 22px}.brand-name{font-size:30px}.brand-icon{width:48px;height:48px;font-size:28px}.brand-caption{font-size:9px}.song-name{padding:7px}.song-name input{width:115px}.saved{display:none}.card-title{font-size:18px}.main-card{padding:12px;border-radius:25px}.top-controls{gap:6px}.tempo{padding:7px;gap:6px}.tempo input{width:85px}.pill{padding:0 12px}.score-track,.score-guide{height:485px}.clef{top:122px}.score-caption{font-size:11px}.foot{gap:10px}}
 @media (max-height:850px) and (orientation:landscape) and (min-width:700px){header{margin-bottom:11px}.main-card{padding:13px}.card-top{padding-bottom:10px}.score-track,.score-guide{height:412px}.clef{top:93px;font-size:95px}.high-low.low{top:380px}.score-caption{padding:7px 5px 0}.tray-wrap{margin-top:8px;padding:10px 12px}.tray-head{margin-bottom:4px}.instrument{padding:6px 6px 4px}.instrument-icon{height:40px;font-size:26px}.instrument .selected-indicator{min-height:11px;font-size:9px}.foot{display:none}.note{height:43px;width:49px;font-size:25px}}
 @media(max-width:570px){header{gap:7px;flex-wrap:wrap}.head-right{flex:1}.song-name{margin-left:auto}.brand-name{font-size:28px}.brand-caption{display:none}.song-name input{width:110px}.card-top{display:block}.top-controls{margin-top:11px}.tempo{flex:1}.tempo input{max-width:72px}.play{flex:1}.stop{padding:0 11px}.instrument{flex-basis:93px}.tray-hint{display:none}.score-caption span:last-child{display:none}.foot{font-size:11px}}
+@media(max-width:360px) and (orientation:portrait){
+  .top-controls{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .tempo{grid-column:1/-1}
+  .play,.stop,.loop{min-width:0;padding:0 5px}
+}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{transition:none!important;animation:none!important}}
 
 /* v0.2: compact portrait layout & usable non-JS preview inside iOS Files */
@@ -95,7 +102,7 @@ header{display:flex;align-items:center;justify-content:space-between;gap:20px;ma
   .card-top{padding:0 2px 10px}
   .card-title{font-size:16px}
   .card-subtitle{font-size:11px}
-  .top-controls{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:6px;margin-top:9px}
+  .top-controls{display:grid;grid-template-columns:minmax(0,1fr) auto auto auto;gap:6px;margin-top:9px}
   .tempo{padding:5px 7px;gap:5px;min-width:0}
   .tempo-label{font-size:10px;letter-spacing:0}
   .tempo input{width:45px;min-width:25px;max-width:none}
@@ -104,6 +111,7 @@ header{display:flex;align-items:center;justify-content:space-between;gap:20px;ma
   .pill{font-size:13px;height:41px;padding:0 10px;border-radius:12px}
   .play{min-width:66px}
   .stop{min-width:56px}
+  .loop{min-width:62px;padding:0 8px}
   .score-track,.score-guide{height:324px}
   .clef{top:111px;left:6px;font-size:69px}
   .high-low.high{top:20px}.high-low.low{top:300px}
@@ -174,7 +182,7 @@ header{display:flex;align-items:center;justify-content:space-between;gap:20px;ma
   <main class="main-card">
     <div class="card-top">
       <div><div class="card-title">Your melody <span aria-hidden="true">✨</span></div><div id="noteCount" class="card-subtitle">Tap the music lines to add a sound</div></div>
-      <div class="top-controls"><div class="tempo"><span class="tempo-label">Tempo</span><input id="tempo" type="range" min="65" max="160" step="5" value="110" aria-label="Tempo in beats per minute"><strong id="tempoValue">110</strong><span class="bpm">BPM</span></div><button id="play" class="pill play">▶ Play</button><button id="stop" class="pill stop">■ Stop</button></div>
+      <div class="top-controls"><div class="tempo"><span class="tempo-label">Tempo</span><input id="tempo" type="range" min="65" max="160" step="5" value="110" aria-label="Tempo in beats per minute"><strong id="tempoValue">110</strong><span class="bpm">BPM</span></div><button id="play" class="pill play">▶ Play</button><button id="stop" class="pill stop">■ Stop</button><button id="loop" type="button" class="pill loop" aria-label="Loop song" aria-pressed="false" title="Loop song">↻ Loop</button></div>
     </div>
     <div id="previewMode" class="preview-notice">Preview only: this file viewer cannot run Plinka’s music engine. To tap notes and hear sounds, open Plinka as a webpage in Safari.</div>
     <div class="score-frame">
@@ -222,12 +230,13 @@ const SOUNDS=[
 {id:'drums',label:'Drums',icon:'🥁',bg:'#edddff',color:'#c9a2f3',shadow:'#9367c1'}];
 const KEY='plinka-v01-song';
 const $=s=>document.querySelector(s);
-const el={track:$('#scoreTrack'),scroll:$('#scoreScroll'),grid:$('#gridLines'),notes:$('#notesLayer'),tray:$('#instrumentTray'),tempo:$('#tempo'),tempoValue:$('#tempoValue'),play:$('#play'),stop:$('#stop'),playhead:$('#playhead'),count:$('#noteCount'),erase:$('#erase'),undo:$('#undo'),title:$('#songTitle'),toast:$('#toast'),remove:$('#removeSelected')};
+const el={track:$('#scoreTrack'),scroll:$('#scoreScroll'),grid:$('#gridLines'),notes:$('#notesLayer'),tray:$('#instrumentTray'),tempo:$('#tempo'),tempoValue:$('#tempoValue'),play:$('#play'),stop:$('#stop'),loop:$('#loop'),playhead:$('#playhead'),count:$('#noteCount'),erase:$('#erase'),undo:$('#undo'),title:$('#songTitle'),toast:$('#toast'),remove:$('#removeSelected')};
 let notes=[],selectedInstrument='piano',selectedNote=null,erase=false,history=[],playing=false,paused=false,audioCtx=null,master=null,playGate=null,startedAt=0,stepLength=0,animFrame=null,toastTimer=null,nextId=1;
+let loopEnabled=false,sequence=[],sequenceIndex=0,scheduledCycle=0,loopSteps=0,lastNoteStep=0,stopAfterCycle=0,schedulerTimer=null,displayCycle=-1;
 function clamp(v,min,max){return Math.max(min,Math.min(max,v));}
 function soundFor(id){return SOUNDS.find(x=>x.id===id)||SOUNDS[0];}
-function save(){try{localStorage.setItem(KEY,JSON.stringify({notes,title:el.title.value,tempo:Number(el.tempo.value),selectedInstrument}));$('#saveBadge').textContent='✓ Saved on this device';}catch(e){$('#saveBadge').textContent='Save not available';}}
-function load(){try{const v=JSON.parse(localStorage.getItem(KEY)||'null');if(!v||!Array.isArray(v.notes))return;notes=v.notes.filter(n=>Number.isInteger(n.step)&&n.step>=0&&n.step<STEPS&&Number.isInteger(n.row)&&n.row>=0&&n.row<9&&SOUNDS.some(s=>s.id===n.inst)).map(n=>({id:nextId++,step:n.step,row:n.row,inst:n.inst}));el.tempo.value=clamp(Number(v.tempo)||110,65,160);el.title.value=String(v.title||'My First Song').slice(0,32);if(SOUNDS.some(s=>s.id===v.selectedInstrument))selectedInstrument=v.selectedInstrument;}catch(e){}el.tempoValue.textContent=el.tempo.value;}
+function save(){try{localStorage.setItem(KEY,JSON.stringify({notes,title:el.title.value,tempo:Number(el.tempo.value),selectedInstrument,loopEnabled}));$('#saveBadge').textContent='✓ Saved on this device';}catch(e){$('#saveBadge').textContent='Save not available';}}
+function load(){try{const v=JSON.parse(localStorage.getItem(KEY)||'null');if(!v||!Array.isArray(v.notes))return;notes=v.notes.filter(n=>Number.isInteger(n.step)&&n.step>=0&&n.step<STEPS&&Number.isInteger(n.row)&&n.row>=0&&n.row<9&&SOUNDS.some(s=>s.id===n.inst)).map(n=>({id:nextId++,step:n.step,row:n.row,inst:n.inst}));el.tempo.value=clamp(Number(v.tempo)||110,65,160);el.title.value=String(v.title||'My First Song').slice(0,32);if(SOUNDS.some(s=>s.id===v.selectedInstrument))selectedInstrument=v.selectedInstrument;loopEnabled=v.loopEnabled===true;}catch(e){}el.tempoValue.textContent=el.tempo.value;}
 function toast(s){el.toast.textContent=s;el.toast.classList.add('visible');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.toast.classList.remove('visible'),2100);}
 function snap(){history.push(JSON.stringify(notes));if(history.length>40)history.shift();el.undo.disabled=false;}
 function noteX(step){return GUTTER+step*STEP+STEP/2;}
@@ -235,7 +244,11 @@ function noteY(row){return TOP+row*ROW;}
 function constructGrid(){el.track.style.width=(GUTTER+STEPS*STEP)+'px';el.playhead.style.top=(TOP-20)+'px';el.playhead.style.height=(ROW*8+40)+'px';let staff=el.grid.querySelectorAll('.staff-line.static');staff.forEach((line,i)=>{line.style.top=noteY(i*2)+'px';});for(let step=0;step<=STEPS;step++){let v=document.createElement('div');v.className=(step%8===0?'bar-line': 'beat-line'+(step%2===0?' strong':''));v.style.left=(GUTTER+step*STEP)+'px';v.style.top=(TOP-20)+'px';v.style.height=(ROW*8+40)+'px';el.grid.append(v);if(step%8===0&&step<STEPS){let l=document.createElement('div');l.className='bar-label';l.style.left=(GUTTER+step*STEP+38)+'px';l.style.top=(TOP-51)+'px';l.textContent='MEASURE '+(step/8+1);el.grid.append(l);}}}
 function renderTray(){el.tray.replaceChildren();for(const s of SOUNDS){let b=document.createElement('button');b.className='instrument'+(selectedInstrument===s.id&&!erase?' selected':'');b.setAttribute('aria-label',s.label+' sound');b.setAttribute('aria-pressed',String(selectedInstrument===s.id&&!erase));b.innerHTML=`<span class="instrument-icon" style="--bg:${s.bg}">${s.icon}</span><span class="instrument-label">${s.label}</span><span class="selected-indicator">${selectedInstrument===s.id&&!erase?'✓ Selected':' '}</span>`;b.addEventListener('click',()=>{selectedInstrument=s.id;erase=false;selectedNote=null;renderTray();renderNotes();renderToolbar();save();preview(s.id,4);});el.tray.append(b);}}
 function renderNotes(){el.notes.replaceChildren();for(let n of notes){let s=soundFor(n.inst),b=document.createElement('button');b.className='note'+(n.id===selectedNote?' selected':'');b.innerHTML=s.icon;b.style.cssText=`left:${noteX(n.step)}px;top:${noteY(n.row)}px;background:${s.color};--sticker-shadow:${s.shadow};`;b.dataset.noteid=n.id;b.setAttribute('aria-label',`${s.label} ${PITCHES[n.row].n}, measure ${Math.floor(n.step/8)+1}, beat ${1+Math.floor((n.step%8)/2)}`);b.addEventListener('pointerdown',startNoteDrag);el.notes.append(b);}el.count.textContent=notes.length?(notes.length+' little note'+(notes.length===1?'':'s')+' · '+(notes.length?Math.max(...notes.map(n=>Math.floor(n.step/8)+1)):0)+' of 4 measures used'):'Tap the music lines to add a sound';el.remove.hidden=selectedNote===null;}
-function renderToolbar(){el.erase.classList.toggle('active',erase);el.erase.setAttribute('aria-pressed',String(erase));el.undo.disabled=history.length===0;el.play.textContent=paused?'▶ Resume':playing?'Ⅱ Pause':'▶ Play';el.tempo.disabled=playing;el.remove.hidden=selectedNote===null;}
+function renderToolbar(){el.erase.classList.toggle('active',erase);el.erase.setAttribute('aria-pressed',String(erase));el.undo.disabled=history.length===0;el.play.textContent=paused?'▶ Resume':playing?'Ⅱ Pause':'▶ Play';
+ el.loop.classList.toggle('active',loopEnabled);
+ el.loop.setAttribute('aria-pressed',String(loopEnabled));
+ el.loop.title=loopEnabled?'Loop is on. Tap to turn off':'Loop is off. Tap to repeat';
+ el.tempo.disabled=playing;el.remove.hidden=selectedNote===null;}
 function commit(){renderNotes();renderToolbar();save();}
 function xyToCell(clientX,clientY){const box=el.track.getBoundingClientRect();const x=clientX-box.left,y=clientY-box.top;return {step:clamp(Math.floor((x-GUTTER)/STEP),0,STEPS-1),row:clamp(Math.round((y-TOP)/ROW),0,8),within:x>=GUTTER&&y>=TOP-ROW*.57&&y<=TOP+ROW*8+ROW*.57};}
 function remove(id){const old=notes.length;if(old){snap();notes=notes.filter(n=>n.id!==id);selectedNote=null;commit();}}
@@ -316,10 +329,125 @@ case 'bells':osc('sine',f,0,t,d,.45,dest,[.004,.025,.95]);osc('sine',f*2.75,0,t,
 case 'synth':osc('sawtooth',f,-4,t,d,.17,dest,[.012,.1,.28],1300);osc('sawtooth',f,5,t,d,.17,dest,[.012,.1,.30],1200);break;
 case 'drums':drum(midi,t,dest);break;
 }}
-function cancelPlayback(){if(animFrame){cancelAnimationFrame(animFrame);animFrame=null;}if(playGate&&audioCtx){let t=audioCtx.currentTime;playGate.gain.cancelScheduledValues(t);playGate.gain.setValueAtTime(playGate.gain.value,t);playGate.gain.linearRampToValueAtTime(.0001,t+.025);playGate=null;}playing=false;paused=false;el.playhead.style.opacity=0;renderToolbar();}
-function loopFrame(){if(!playing)return;const elapsed=Math.max(0,audioCtx.currentTime-startedAt);const position=elapsed/stepLength;const x=GUTTER+STEP*(position+.5);el.playhead.style.left=x+'px';el.playhead.style.opacity=1;if(position>2){const visibleX=x-el.scroll.scrollLeft;if(visibleX>el.scroll.clientWidth*.75){el.scroll.scrollLeft=x-el.scroll.clientWidth*.53;}}if(position>=STEPS+.9){cancelPlayback();toast('Ta-da! 🎶 Play it again?');return;}animFrame=requestAnimationFrame(loopFrame);}
-function playOrPause(){if(playing){if(paused){audioCtx.resume().then(()=>{paused=false;renderToolbar();animFrame=requestAnimationFrame(loopFrame);});}else{audioCtx.suspend().then(()=>{paused=true;renderToolbar();if(animFrame)cancelAnimationFrame(animFrame);});}return;}if(!notes.length){toast('Add some notes first, or try a little tune!');return;}initAudio().then(()=>{if(playing)return;playing=true;paused=false;stepLength=60/Number(el.tempo.value)/2;startedAt=audioCtx.currentTime+.10;playGate=audioCtx.createGain();playGate.gain.value=1;playGate.connect(master);for(const n of notes){sound(n.inst,PITCHES[n.row].m,startedAt+n.step*stepLength,stepLength*.78,playGate);}el.scroll.scrollTo({left:0,behavior:'instant'});renderToolbar();animFrame=requestAnimationFrame(loopFrame);}).catch(()=>toast('Your browser could not start audio'));}
-el.play.addEventListener('click',playOrPause);el.stop.addEventListener('click',()=>{if(playing){if(paused){audioCtx.resume().then(cancelPlayback);}else cancelPlayback();toast('Stopped');}});
+// Playback is bounded by the last placed note, not by the full four-measure canvas.
+// A short Web Audio lookahead keeps the rhythm steady while allowing live Loop toggling.
+function endPlayback(natural=false){
+  if(animFrame!==null){cancelAnimationFrame(animFrame);animFrame=null;}
+  if(schedulerTimer!==null){clearInterval(schedulerTimer);schedulerTimer=null;}
+  if(playGate&&audioCtx&&!natural){
+    const t=audioCtx.currentTime;
+    playGate.gain.cancelScheduledValues(t);
+    playGate.gain.setValueAtTime(playGate.gain.value,t);
+    playGate.gain.linearRampToValueAtTime(.0001,t+.03);
+  }
+  // On natural completion, let instrument releases ring out (especially guitar/bells).
+  playGate=null;
+  playing=false;paused=false;displayCycle=-1;
+  el.playhead.style.opacity=0;
+  renderToolbar();
+}
+function playbackElapsed(){
+  return Math.max(0,audioCtx.currentTime-startedAt);
+}
+function scheduleAhead(){
+  if(!playing||paused||!audioCtx||audioCtx.state!=='running'||!playGate)return;
+  const ahead=audioCtx.currentTime+.14;
+  // Schedule only the upcoming notes; don't prequeue entire future loops.
+  while(sequence.length&&(!Number.isInteger(stopAfterCycle)||scheduledCycle<=stopAfterCycle)){
+    const n=sequence[sequenceIndex];
+    const when=startedAt+(scheduledCycle*loopSteps+n.step)*stepLength;
+    if(when>ahead)break;
+    if(when>=audioCtx.currentTime-.08){
+      sound(n.inst,PITCHES[n.row].m,Math.max(when,audioCtx.currentTime+.005),stepLength*.78,playGate);
+    }
+    sequenceIndex++;
+    if(sequenceIndex>=sequence.length){sequenceIndex=0;scheduledCycle++;}
+  }
+}
+function loopFrame(){
+  if(!playing||paused)return;
+  const elapsed=playbackElapsed();
+  const cycleDuration=loopSteps*stepLength;
+  const currentCycle=Math.floor(elapsed/cycleDuration);
+  if(Number.isInteger(stopAfterCycle)){
+    // Finish after the final note's onset, with just enough time to see it play.
+    const finishAt=stopAfterCycle*cycleDuration+lastNoteStep*stepLength+Math.min(.32,stepLength*.9);
+    if(elapsed>=finishAt){
+      endPlayback(true);
+      toast('Ta-da! 🎶 Play it again?');
+      return;
+    }
+  }
+  if(currentCycle!==displayCycle){
+    displayCycle=currentCycle;
+    if(currentCycle>0)el.scroll.scrollLeft=0;
+  }
+  const localPosition=(elapsed-currentCycle*cycleDuration)/stepLength;
+  const x=GUTTER+STEP*(Math.min(lastNoteStep+.6,localPosition)+.5);
+  el.playhead.style.left=x+'px';
+  el.playhead.style.opacity=1;
+  if(localPosition>2){
+    const visibleX=x-el.scroll.scrollLeft;
+    if(visibleX>el.scroll.clientWidth*.75)
+      el.scroll.scrollLeft=x-el.scroll.clientWidth*.53;
+  }
+  animFrame=requestAnimationFrame(loopFrame);
+}
+function playOrPause(){
+  if(playing){
+    if(paused){
+      audioCtx.resume().then(()=>{
+        paused=false;
+        renderToolbar();
+        scheduleAhead();
+        animFrame=requestAnimationFrame(loopFrame);
+      }).catch(()=>toast('Audio could not resume'));
+    }else{
+      audioCtx.suspend().then(()=>{
+        paused=true;
+        renderToolbar();
+        if(animFrame!==null){cancelAnimationFrame(animFrame);animFrame=null;}
+      }).catch(()=>toast('Could not pause audio'));
+    }
+    return;
+  }
+  if(!notes.length){toast('Add some notes first, or try a little tune!');return;}
+  initAudio().then(()=>{
+    if(playing)return;
+    sequence=notes.slice().sort((a,b)=>a.step-b.step||a.row-b.row);
+    lastNoteStep=sequence[sequence.length-1].step;
+    // Repeat at least one measure to keep very short loops musical.
+    loopSteps=Math.max(8,lastNoteStep+1);
+    sequenceIndex=0;scheduledCycle=0;displayCycle=-1;
+    stopAfterCycle=loopEnabled?null:0;
+    stepLength=60/Number(el.tempo.value)/2;
+    startedAt=audioCtx.currentTime+.10;
+    playGate=audioCtx.createGain();playGate.gain.value=1;playGate.connect(master);
+    playing=true;paused=false;
+    el.scroll.scrollLeft=0;
+    renderToolbar();
+    scheduleAhead();
+    schedulerTimer=setInterval(scheduleAhead,30);
+    animFrame=requestAnimationFrame(loopFrame);
+  }).catch(()=>toast('Your browser could not start audio'));
+}
+el.loop.addEventListener('click',()=>{
+  loopEnabled=!loopEnabled;
+  if(playing&&audioCtx){
+    const cycleDuration=loopSteps*stepLength;
+    stopAfterCycle=loopEnabled?null:Math.floor(playbackElapsed()/cycleDuration);
+  }
+  renderToolbar();
+  save();
+  toast(loopEnabled?'Loop on ↻ Your song will repeat':'Loop off · Finish this time through');
+});
+el.play.addEventListener('click',playOrPause);
+el.stop.addEventListener('click',()=>{
+  if(!playing)return;
+  if(paused&&audioCtx)audioCtx.resume().catch(()=>{});
+  endPlayback();
+  toast('Stopped');
+});
 window.addEventListener('keydown',e=>{if(['INPUT','TEXTAREA'].includes(document.activeElement.tagName))return;if(e.code==='Space'){e.preventDefault();playOrPause();}if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='z'){e.preventDefault();el.undo.click();}if(['Backspace','Delete'].includes(e.key)&&selectedNote!==null){e.preventDefault();el.remove.click();}});
 window.addEventListener('pagehide',()=>{if(playing){cancelPlayback();}});
 load();constructGrid();renderTray();renderNotes();renderToolbar();$('#fallbackNotes').hidden=true;$('#previewMode').hidden=true;
