@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#54d9cc">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Plinka · Playable prototype 0.2</title>
+<style>
+:root{color-scheme:light;--ink:#253354;--muted:#737f96;--mint:#23bea9;--violet:#9275e9;--coral:#ff7c79;--yellow:#ffd16e;--line:#a4b6cb;--step:73px;--row:45px;--top:80px;--gutter:95px}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:ui-rounded,"SF Pro Rounded","Avenir Next",Nunito,system-ui,-apple-system,sans-serif;color:var(--ink);background:radial-gradient(ellipse 700px 550px at 0% 0%,#d1fbef 0%,transparent 75%),radial-gradient(ellipse 700px 470px at 98% 100%,#e5e0ff 0%,transparent 75%),#eaf7fd;min-height:100vh;min-height:100dvh}
+button,input{font:inherit}
+button{cursor:pointer;touch-action:manipulation}
+button:focus-visible,input:focus-visible,.note:focus-visible{outline:3px solid #2977cf;outline-offset:3px}
+#app{max-width:1530px;padding:20px 28px 28px;margin:auto;position:relative}
+header{display:flex;align-items:center;justify-content:space-between;gap:20px;margin-bottom:18px}
+.brand{display:flex;align-items:center;gap:13px;user-select:none}
+.brand-icon{width:57px;height:57px;display:grid;place-items:center;flex:0 0 auto;border-radius:19px;background:linear-gradient(145deg,#24d9bd,#16acb8);box-shadow:0 6px 0 #078f9c,0 12px 18px #008a8a25;color:#fff;font-size:36px;font-weight:900;transform:rotate(-5deg)}
+.brand-name{font-weight:1000;letter-spacing:-2px;line-height:.95;font-size:37px;color:#273756}
+.brand-name span{color:#15b7a5}
+.brand-caption{font-size:12px;letter-spacing:1.5px;text-transform:uppercase;font-weight:850;color:#6c8298;margin-top:5px}
+.head-right{display:flex;align-items:center;gap:9px;flex-wrap:wrap;justify-content:flex-end}
+.song-name{display:flex;align-items:center;gap:10px;background:#ffffffa8;border:1px solid #ffffffb9;border-radius:22px;padding:8px 13px;box-shadow:0 3px 15px #61799a09}
+.song-name label{font-size:18px}
+.song-name input{width:155px;background:transparent;border:none;color:var(--ink);outline:none;font-weight:850;font-size:15px}
+.saved{font-size:11px;color:#589486;font-weight:800;white-space:nowrap}
+.round-button{border:1px solid #d7e3ed;background:#fff;border-radius:16px;color:#526380;font-size:21px;min-width:46px;height:46px;box-shadow:0 3px 0 #d2dfea;display:inline-grid;place-items:center}
+.round-button:active{transform:translateY(2px);box-shadow:0 1px 0 #d2dfea}
+.round-button[disabled]{opacity:.45;cursor:not-allowed}
+.round-button.active{background:#fff0e8;border-color:#ffb48f;color:#eb835b}
+.main-card{background:#ffffffd9;border:1px solid #fff;border-radius:33px;padding:18px;box-shadow:0 18px 45px #5587ac18,0 1px 0 #fff inset}
+.card-top{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;padding:1px 4px 16px}
+.card-title{font-size:21px;font-weight:950;letter-spacing:-.7px}
+.card-subtitle{color:#8191a5;font-size:13px;font-weight:650;margin-top:3px}
+.top-controls{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.tempo{background:#f3f7fb;border:1px solid #e6edf5;border-radius:17px;display:flex;align-items:center;gap:11px;padding:9px 12px}
+.tempo-label{font-size:12px;color:#8290a5;font-weight:900;text-transform:uppercase;letter-spacing:.8px}
+.tempo strong{font-size:16px;min-width:32px;text-align:center}
+.tempo input{width:112px;accent-color:#16bbad;cursor:pointer}
+.bpm{font-weight:850;color:#8191a5;font-size:11px}
+.pill{height:47px;border-radius:16px;padding:0 19px;font-size:15px;font-weight:900;border:1px solid #dce7f1;background:#fff;color:#587089;white-space:nowrap;display:flex;align-items:center;gap:8px;justify-content:center}
+.play{background:#25c5b1;color:#fff;border:0;box-shadow:0 4px 0 #1c9e90;min-width:119px}
+.play:active{transform:translateY(3px);box-shadow:0 1px 0 #1c9e90}
+.stop{background:#fff4ee;color:#ed8a74;border-color:#ffe6db}
+.score-frame{border:2px solid #e2edf3;border-radius:22px;overflow:hidden;background:linear-gradient(180deg,#fff,#fffdf8);position:relative;box-shadow:0 7px 19px #5e8caa10 inset}
+.score-scroll{position:relative;width:100%;overflow-x:auto;overflow-y:hidden;overscroll-behavior-x:contain;scrollbar-color:#c2d5e8 #f2f7fb;scrollbar-width:thin;touch-action:pan-x pan-y}
+.score-track{height:516px;position:relative;isolation:isolate}
+.score-guide{position:sticky;left:0;width:var(--gutter);height:516px;z-index:8;display:block;background:linear-gradient(90deg,#fffefa 85%,#fffefaec);border-right:2px solid #e5eef3;box-shadow:3px 0 7px #49739a07}
+.clef{font-family:"Apple Symbols","Noto Music","Segoe UI Symbol",serif;position:absolute;top:122px;left:21px;font-size:109px;line-height:1;color:#57617f;transform:scaleX(.8);pointer-events:none}
+.high-low{position:absolute;left:12px;color:#a4b0c1;letter-spacing:1.2px;font-size:9px;font-weight:900}
+.high-low.high{top:38px}.high-low.low{top:466px}
+.guide-lines .staff-line,.guide-lines .beat-line,.guide-lines .bar-line{position:absolute;z-index:1;pointer-events:none}
+.staff-line{border-top:2.4px solid #95abc4;left:var(--gutter);right:0;opacity:.78}
+.beat-line{width:1px;background:#eaf0f7;top:61px;height:390px}
+.beat-line.strong{width:2px;background:#dce7f3}
+.bar-line{width:2px;background:#d2deec;top:61px;height:390px}
+.bar-label{position:absolute;top:26px;color:#96a8be;font-size:12px;font-weight:950;letter-spacing:1.3px;z-index:2;pointer-events:none}
+.note{position:absolute;width:53px;height:48px;border-radius:16px;border:2px solid #fff6;display:flex;align-items:center;justify-content:center;z-index:5;font-size:27px;box-shadow:0 5px 0 var(--sticker-shadow),0 7px 10px #152b4e20;transform:translate(-50%,-50%);user-select:none;touch-action:none;cursor:grab;transition:box-shadow .15s,filter .15s}
+.note:active{cursor:grabbing}.xylo-art{width:40px;height:37px;display:block;pointer-events:none}.note .xylo-art{width:42px;height:35px}
+.note.selected{outline:3px solid #35bead;outline-offset:3px;filter:saturate(1.2)}
+.note.dragging{z-index:11;opacity:.84;box-shadow:0 10px 20px #152b4e35}
+.play-head{pointer-events:none;position:absolute;top:61px;height:405px;left:var(--gutter);width:3px;border-radius:3px;background:#15c3bb;box-shadow:0 0 0 1px #fff8,0 0 12px #38e2c8;z-index:6;opacity:0;transition:opacity .14s}
+.play-head:before{content:"";position:absolute;width:18px;height:18px;background:#15c3bb;top:-9px;left:-8px;border-radius:50%;border:3px solid #fff;box-shadow:0 2px 6px #5aafae50}
+.score-caption{display:flex;justify-content:space-between;gap:12px;padding:12px 5px 3px;align-items:center;color:#8ca0af;font-size:12px;font-weight:750;flex-wrap:wrap}
+.score-caption strong{color:#39ae9f}
+.link-button{border:none;background:none;padding:7px;color:#378ea5;font-weight:850;font-size:12px;text-decoration:underline;text-underline-offset:3px}
+.tray-wrap{margin-top:17px;border-radius:26px;background:#f5f9fb;padding:15px 15px 17px;border:1px solid #e9f0f4}
+.tray-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:13px;flex-wrap:wrap}
+.tray-title{font-weight:950;font-size:16px;display:flex;align-items:center;gap:8px}
+.tray-hint{color:#8392a4;font-size:12px;font-weight:700}
+.instrument-tray{display:flex;gap:11px;overflow-x:auto;padding:5px 3px 10px;scrollbar-width:thin;scrollbar-color:#d1dfea transparent}
+.instrument{flex:1 0 96px;max-width:126px;min-width:95px;border:2px solid #e5edf1;background:#fff;border-radius:20px;padding:9px 7px 10px;color:#34445b;display:flex;flex-direction:column;align-items:center;gap:5px;box-shadow:0 4px 0 #e2eaf0;transition:transform .1s}
+.instrument:hover{transform:translateY(-2px)}
+.instrument.selected{border-color:#24bfaf;background:#eefffb;box-shadow:0 4px 0 #25bbaa}
+.instrument-icon{width:58px;height:51px;display:grid;place-items:center;border-radius:17px;font-size:31px;background:var(--bg);box-shadow:inset 0 2px 0 #fff7}
+.instrument-label{font-weight:850;font-size:12px}
+.instrument .selected-indicator{font-size:10px;color:#0fa894;font-weight:950;min-height:13px}
+.foot{margin-top:15px;display:flex;justify-content:center;align-items:center;gap:30px;color:#788ca0;font-size:13px;font-weight:850;text-align:center;flex-wrap:wrap}
+.foot b{display:inline-grid;place-items:center;width:22px;height:22px;background:#fff;color:#11bca7;border-radius:50%;margin-right:5px}
+.toast{position:fixed;bottom:26px;left:50%;z-index:30;transform:translateX(-50%);background:#263955f0;color:#fff;padding:12px 18px;border-radius:15px;box-shadow:0 10px 25px #10284325;font-size:14px;font-weight:750;pointer-events:none;opacity:0;transition:opacity .15s;max-width:90%;text-align:center}
+.toast.visible{opacity:1}
+@media(max-width:900px){#app{padding:13px 14px 22px}.brand-name{font-size:30px}.brand-icon{width:48px;height:48px;font-size:28px}.brand-caption{font-size:9px}.song-name{padding:7px}.song-name input{width:115px}.saved{display:none}.card-title{font-size:18px}.main-card{padding:12px;border-radius:25px}.top-controls{gap:6px}.tempo{padding:7px;gap:6px}.tempo input{width:85px}.pill{padding:0 12px}.score-track,.score-guide{height:485px}.clef{top:122px}.score-caption{font-size:11px}.foot{gap:10px}}
+@media (max-height:850px) and (orientation:landscape) and (min-width:700px){header{margin-bottom:11px}.main-card{padding:13px}.card-top{padding-bottom:10px}.score-track,.score-guide{height:412px}.clef{top:93px;font-size:95px}.high-low.low{top:380px}.score-caption{padding:7px 5px 0}.tray-wrap{margin-top:8px;padding:10px 12px}.tray-head{margin-bottom:4px}.instrument{padding:6px 6px 4px}.instrument-icon{height:40px;font-size:26px}.instrument .selected-indicator{min-height:11px;font-size:9px}.foot{display:none}.note{height:43px;width:49px;font-size:25px}}
+@media(max-width:570px){header{gap:7px;flex-wrap:wrap}.head-right{flex:1}.song-name{margin-left:auto}.brand-name{font-size:28px}.brand-caption{display:none}.song-name input{width:110px}.card-top{display:block}.top-controls{margin-top:11px}.tempo{flex:1}.tempo input{max-width:72px}.play{flex:1}.stop{padding:0 11px}.instrument{flex-basis:93px}.tray-hint{display:none}.score-caption span:last-child{display:none}.foot{font-size:11px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{transition:none!important;animation:none!important}}
+
+/* v0.2: compact portrait layout & usable non-JS preview inside iOS Files */
+[hidden]{display:none!important}
+.preview-notice{padding:11px 13px;margin:0 1px 12px;border-radius:14px;background:#e9fbf8;border:1px solid #b6eee3;color:#2a6470;font-size:12px;font-weight:760;line-height:1.45}
+@media(max-width:570px) and (orientation:portrait){
+  #app{padding:9px 9px 20px}
+  header{margin-bottom:10px}
+  .main-card{padding:10px;border-radius:22px}
+  .card-top{padding:0 2px 10px}
+  .card-title{font-size:16px}
+  .card-subtitle{font-size:11px}
+  .top-controls{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:6px;margin-top:9px}
+  .tempo{padding:5px 7px;gap:5px;min-width:0}
+  .tempo-label{font-size:10px;letter-spacing:0}
+  .tempo input{width:45px;min-width:25px;max-width:none}
+  .tempo strong{font-size:13px;min-width:24px}
+  .tempo .bpm{font-size:9px}
+  .pill{font-size:13px;height:41px;padding:0 10px;border-radius:12px}
+  .play{min-width:66px}
+  .stop{min-width:56px}
+  .score-track,.score-guide{height:324px}
+  .clef{top:111px;left:6px;font-size:69px}
+  .high-low.high{top:20px}.high-low.low{top:300px}
+  .staff-line{border-top-width:2px}
+  .note{width:40px;height:39px;font-size:24px;border-radius:13px}
+  .score-caption{padding:8px 2px 1px;font-size:10px}
+  .tray-wrap{margin-top:9px;border-radius:17px;padding:10px 8px}
+  .tray-head{margin-bottom:5px}
+  .tray-title{font-size:13px}
+  .instrument-tray{gap:7px;padding:5px 1px 8px}
+  .instrument{min-width:70px;flex:0 0 70px;padding:5px 3px 6px;border-radius:14px}
+  .instrument-icon{width:49px;height:43px;font-size:27px;border-radius:12px}
+  .instrument-label{font-size:10px}
+  .instrument .selected-indicator{font-size:9px;min-height:11px}
+  .foot{display:none}
+  .score-caption span:last-child{display:block}
+  .score-caption{gap:2px}
+  .round-button{min-width:39px;height:39px;font-size:18px;border-radius:12px}
+  .brand-icon{width:39px;height:39px;border-radius:12px;font-size:23px}
+  .brand-name{font-size:26px}
+  .song-name input{width:85px;font-size:12px}
+  .head-right{gap:5px;flex:0 0 auto;flex-wrap:nowrap}
+  .song-name{display:none}
+  .song-name label{font-size:13px}
+}
+/* fallback staff lines drawn even if the file viewer blocks JavaScript */
+.staff-line.static:nth-child(1){top:80px}
+.staff-line.static:nth-child(2){top:170px}
+.staff-line.static:nth-child(3){top:260px}
+.staff-line.static:nth-child(4){top:350px}
+.staff-line.static:nth-child(5){top:440px}
+@media(max-height:850px) and (orientation:landscape) and (min-width:700px){
+  .staff-line.static:nth-child(1){top:65px}
+  .staff-line.static:nth-child(2){top:131px}
+  .staff-line.static:nth-child(3){top:197px}
+  .staff-line.static:nth-child(4){top:263px}
+  .staff-line.static:nth-child(5){top:329px}
+}
+@media(max-width:570px) and (orientation:portrait){
+  .staff-line.static:nth-child(1){top:61px}
+  .staff-line.static:nth-child(2){top:117px}
+  .staff-line.static:nth-child(3){top:173px}
+  .staff-line.static:nth-child(4){top:229px}
+  .staff-line.static:nth-child(5){top:285px}
+}
+.fallback-preview{position:absolute;top:0;left:0;right:0;bottom:0;pointer-events:none}
+.fallback-preview .note{width:42px;height:39px}
+.fallback-preview .one{left:210px;top:170px;background:#aa95f6;--sticker-shadow:#8973c7}
+.fallback-preview .two{left:299px;top:260px;background:#ffcb67;--sticker-shadow:#d59a37}
+.fallback-preview .three{left:399px;top:215px;background:#fca4b4;--sticker-shadow:#d67d8b}
+@media(max-width:570px) and (orientation:portrait){
+.fallback-preview .one{left:122px;top:117px}
+.fallback-preview .two{left:188px;top:173px}
+.fallback-preview .three{left:257px;top:229px}
+}
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <div class="brand" aria-label="Plinka"><div class="brand-icon">♫</div><div><div class="brand-name">plin<span>ka!</span></div><div class="brand-caption">make a little music</div></div></div>
+    <div class="head-right"><div class="song-name"><label for="songTitle" aria-hidden="true">🎶</label><input id="songTitle" maxlength="32" aria-label="Song name" value="My First Song"><span id="saveBadge" class="saved">✓ Saved on this device</span></div>
+      <button id="undo" class="round-button" aria-label="Undo last change" title="Undo">↶</button>
+      <button id="erase" class="round-button" aria-label="Turn eraser on or off" title="Eraser">⌫</button>
+      <button id="clear" class="round-button" aria-label="Clear all notes" title="Clear all notes">🗑</button>
+    </div>
+  </header>
+  <main class="main-card">
+    <div class="card-top">
+      <div><div class="card-title">Your melody <span aria-hidden="true">✨</span></div><div id="noteCount" class="card-subtitle">Tap the music lines to add a sound</div></div>
+      <div class="top-controls"><div class="tempo"><span class="tempo-label">Tempo</span><input id="tempo" type="range" min="65" max="160" step="5" value="110" aria-label="Tempo in beats per minute"><strong id="tempoValue">110</strong><span class="bpm">BPM</span></div><button id="play" class="pill play">▶ Play</button><button id="stop" class="pill stop">■ Stop</button></div>
+    </div>
+    <div id="previewMode" class="preview-notice">Preview only: this file viewer cannot run Plinka’s music engine. To tap notes and hear sounds, open Plinka as a webpage in Safari.</div>
+    <div class="score-frame">
+      <div id="scoreScroll" class="score-scroll" aria-label="Scrollable musical staff">
+        <div id="scoreTrack" class="score-track">
+          <div class="guide-lines" id="gridLines" aria-hidden="true"><div class="staff-line static"></div><div class="staff-line static"></div><div class="staff-line static"></div><div class="staff-line static"></div><div class="staff-line static"></div></div>
+          <div id="fallbackNotes" class="fallback-preview" aria-hidden="true"><span class="note one">🎹</span><span class="note two">🎺</span><span class="note three">🎸</span></div>
+          <div id="notesLayer" aria-label="Musical notes"></div>
+          <div id="playhead" class="play-head" aria-hidden="true"></div>
+          <div class="score-guide" aria-hidden="true"><span class="high-low high">HIGH</span><span class="clef">𝄞</span><span class="high-low low">LOW</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="score-caption"><span>♪ <strong>Higher notes</strong> are at the top · Sounds play <strong>left to right</strong></span><span><button class="link-button" id="demo">✨ Try a little tune</button> <button class="link-button" id="removeSelected" hidden>Remove selected note</button> · Scroll sideways to make more music →</span></div>
+    <section class="tray-wrap" aria-label="Choose an instrument"><div class="tray-head"><div class="tray-title">🎨 Pick a sound</div><div class="tray-hint">Tap a sound, then tap the staff to make music</div></div><div id="instrumentTray" class="instrument-tray">
+<button class="instrument selected"><span class="instrument-icon" style="--bg:#e3dcff">🎹</span><span class="instrument-label">Piano</span></button>
+<button class="instrument"><span class="instrument-icon" style="--bg:#fff0b3">🎼</span><span class="instrument-label">Xylophone</span></button>
+<button class="instrument"><span class="instrument-icon" style="--bg:#ffe0d5">🎸</span><span class="instrument-label">Guitar</span></button>
+<button class="instrument"><span class="instrument-icon" style="--bg:#ffe6bd">🎺</span><span class="instrument-label">Trumpet</span></button>
+<button class="instrument"><span class="instrument-icon" style="--bg:#d7f6f4">🪈</span><span class="instrument-label">Flute</span></button>
+<button class="instrument"><span class="instrument-icon" style="--bg:#fff0c9">🔔</span><span class="instrument-label">Bells</span></button>
+<button class="instrument"><span class="instrument-icon" style="--bg:#d9edff">⚡</span><span class="instrument-label">Synth</span></button>
+<button class="instrument"><span class="instrument-icon" style="--bg:#edddff">🥁</span><span class="instrument-label">Drums</span></button>
+</div></section>
+  </main>
+  <div class="foot"><span><b>1</b> Pick a sound</span><span><b>2</b> Tap to add a note</span><span><b>3</b> Press play!</span></div>
+</div>
+<div role="status" aria-live="polite" id="toast" class="toast"></div>
+<script>
+'use strict';
+(()=>{
+const MOBILE=matchMedia('(max-width:570px) and (orientation:portrait)').matches;
+const COMPACT=matchMedia('(max-height:850px) and (orientation:landscape) and (min-width:700px)').matches;
+const STEPS=32, STEP=MOBILE?54:COMPACT?58:73, ROW=MOBILE?28:COMPACT?33:45, TOP=MOBILE?61:COMPACT?65:80, GUTTER=MOBILE?58:COMPACT?78:95;
+const PITCHES=[{n:'F5',m:77},{n:'E5',m:76},{n:'D5',m:74},{n:'C5',m:72},{n:'B4',m:71},{n:'A4',m:69},{n:'G4',m:67},{n:'F4',m:65},{n:'E4',m:64}];
+const XYLO_ICON='<svg class="xylo-art" viewBox="0 0 58 48" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M8 37L47 8M11 9L48 38" stroke="#b48460" stroke-width="4" stroke-linecap="round"/><rect x="8" y="13" width="7" height="27" rx="3" fill="#f56b70"/><rect x="16" y="11" width="7" height="29" rx="3" fill="#ffbb4e"/><rect x="24" y="9" width="7" height="31" rx="3" fill="#79ce79"/><rect x="32" y="11" width="7" height="29" rx="3" fill="#55b6ed"/><rect x="40" y="14" width="7" height="26" rx="3" fill="#9b77e3"/></svg>';
+const SOUNDS=[
+{id:'piano',label:'Piano',icon:'🎹',bg:'#e3dcff',color:'#8d74de',shadow:'#6b58aa'},
+{id:'xylo',label:'Xylophone',icon:XYLO_ICON,bg:'#fff0b3',color:'#ffc75c',shadow:'#dda436'},
+{id:'guitar',label:'Guitar',icon:'🎸',bg:'#ffe0d5',color:'#ff9881',shadow:'#d66e5a'},
+{id:'trumpet',label:'Trumpet',icon:'🎺',bg:'#ffe6bd',color:'#ffc66a',shadow:'#d99539'},
+{id:'flute',label:'Flute',icon:'🪈',bg:'#d7f6f4',color:'#7cdbd4',shadow:'#3faaa6'},
+{id:'bells',label:'Bells',icon:'🔔',bg:'#fff0c9',color:'#ffda88',shadow:'#e1aa51'},
+{id:'synth',label:'Synth',icon:'⚡',bg:'#d9edff',color:'#8ec8ff',shadow:'#4d94d4'},
+{id:'drums',label:'Drums',icon:'🥁',bg:'#edddff',color:'#c9a2f3',shadow:'#9367c1'}];
+const KEY='plinka-v01-song';
+const $=s=>document.querySelector(s);
+const el={track:$('#scoreTrack'),scroll:$('#scoreScroll'),grid:$('#gridLines'),notes:$('#notesLayer'),tray:$('#instrumentTray'),tempo:$('#tempo'),tempoValue:$('#tempoValue'),play:$('#play'),stop:$('#stop'),playhead:$('#playhead'),count:$('#noteCount'),erase:$('#erase'),undo:$('#undo'),title:$('#songTitle'),toast:$('#toast'),remove:$('#removeSelected')};
+let notes=[],selectedInstrument='piano',selectedNote=null,erase=false,history=[],playing=false,paused=false,audioCtx=null,master=null,playGate=null,startedAt=0,stepLength=0,animFrame=null,toastTimer=null,nextId=1;
+function clamp(v,min,max){return Math.max(min,Math.min(max,v));}
+function soundFor(id){return SOUNDS.find(x=>x.id===id)||SOUNDS[0];}
+function save(){try{localStorage.setItem(KEY,JSON.stringify({notes,title:el.title.value,tempo:Number(el.tempo.value),selectedInstrument}));$('#saveBadge').textContent='✓ Saved on this device';}catch(e){$('#saveBadge').textContent='Save not available';}}
+function load(){try{const v=JSON.parse(localStorage.getItem(KEY)||'null');if(!v||!Array.isArray(v.notes))return;notes=v.notes.filter(n=>Number.isInteger(n.step)&&n.step>=0&&n.step<STEPS&&Number.isInteger(n.row)&&n.row>=0&&n.row<9&&SOUNDS.some(s=>s.id===n.inst)).map(n=>({id:nextId++,step:n.step,row:n.row,inst:n.inst}));el.tempo.value=clamp(Number(v.tempo)||110,65,160);el.title.value=String(v.title||'My First Song').slice(0,32);if(SOUNDS.some(s=>s.id===v.selectedInstrument))selectedInstrument=v.selectedInstrument;}catch(e){}el.tempoValue.textContent=el.tempo.value;}
+function toast(s){el.toast.textContent=s;el.toast.classList.add('visible');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.toast.classList.remove('visible'),2100);}
+function snap(){history.push(JSON.stringify(notes));if(history.length>40)history.shift();el.undo.disabled=false;}
+function noteX(step){return GUTTER+step*STEP+STEP/2;}
+function noteY(row){return TOP+row*ROW;}
+function constructGrid(){el.track.style.width=(GUTTER+STEPS*STEP)+'px';el.playhead.style.top=(TOP-20)+'px';el.playhead.style.height=(ROW*8+40)+'px';let staff=el.grid.querySelectorAll('.staff-line.static');staff.forEach((line,i)=>{line.style.top=noteY(i*2)+'px';});for(let step=0;step<=STEPS;step++){let v=document.createElement('div');v.className=(step%8===0?'bar-line': 'beat-line'+(step%2===0?' strong':''));v.style.left=(GUTTER+step*STEP)+'px';v.style.top=(TOP-20)+'px';v.style.height=(ROW*8+40)+'px';el.grid.append(v);if(step%8===0&&step<STEPS){let l=document.createElement('div');l.className='bar-label';l.style.left=(GUTTER+step*STEP+38)+'px';l.style.top=(TOP-51)+'px';l.textContent='MEASURE '+(step/8+1);el.grid.append(l);}}}
+function renderTray(){el.tray.replaceChildren();for(const s of SOUNDS){let b=document.createElement('button');b.className='instrument'+(selectedInstrument===s.id&&!erase?' selected':'');b.setAttribute('aria-label',s.label+' sound');b.setAttribute('aria-pressed',String(selectedInstrument===s.id&&!erase));b.innerHTML=`<span class="instrument-icon" style="--bg:${s.bg}">${s.icon}</span><span class="instrument-label">${s.label}</span><span class="selected-indicator">${selectedInstrument===s.id&&!erase?'✓ Selected':' '}</span>`;b.addEventListener('click',()=>{selectedInstrument=s.id;erase=false;selectedNote=null;renderTray();renderNotes();renderToolbar();save();preview(s.id,4);});el.tray.append(b);}}
+function renderNotes(){el.notes.replaceChildren();for(let n of notes){let s=soundFor(n.inst),b=document.createElement('button');b.className='note'+(n.id===selectedNote?' selected':'');b.innerHTML=s.icon;b.style.cssText=`left:${noteX(n.step)}px;top:${noteY(n.row)}px;background:${s.color};--sticker-shadow:${s.shadow};`;b.dataset.noteid=n.id;b.setAttribute('aria-label',`${s.label} ${PITCHES[n.row].n}, measure ${Math.floor(n.step/8)+1}, beat ${1+Math.floor((n.step%8)/2)}`);b.addEventListener('pointerdown',startNoteDrag);el.notes.append(b);}el.count.textContent=notes.length?(notes.length+' little note'+(notes.length===1?'':'s')+' · '+(notes.length?Math.max(...notes.map(n=>Math.floor(n.step/8)+1)):0)+' of 4 measures used'):'Tap the music lines to add a sound';el.remove.hidden=selectedNote===null;}
+function renderToolbar(){el.erase.classList.toggle('active',erase);el.erase.setAttribute('aria-pressed',String(erase));el.undo.disabled=history.length===0;el.play.textContent=paused?'▶ Resume':playing?'Ⅱ Pause':'▶ Play';el.tempo.disabled=playing;el.remove.hidden=selectedNote===null;}
+function commit(){renderNotes();renderToolbar();save();}
+function xyToCell(clientX,clientY){const box=el.track.getBoundingClientRect();const x=clientX-box.left,y=clientY-box.top;return {step:clamp(Math.floor((x-GUTTER)/STEP),0,STEPS-1),row:clamp(Math.round((y-TOP)/ROW),0,8),within:x>=GUTTER&&y>=TOP-ROW*.57&&y<=TOP+ROW*8+ROW*.57};}
+function remove(id){const old=notes.length;if(old){snap();notes=notes.filter(n=>n.id!==id);selectedNote=null;commit();}}
+function preview(inst,row){initAudio().then(()=>{sound(inst,PITCHES[row].m,audioCtx.currentTime+.015,.20,master);}).catch(()=>toast('Sound is unavailable on this device'));}
+function tryEdit(){if(playing){toast('Press Stop to edit your song');return false;}return true;}
+el.track.addEventListener('pointerup',e=>{if(e.target.closest('.note'))return;if(!tryEdit())return;const c=xyToCell(e.clientX,e.clientY);if(!c.within)return;const at=notes.find(n=>n.row===c.row&&n.step===c.step);if(erase){if(at)remove(at.id);return;}if(at){selectedNote=at.id;renderNotes();preview(at.inst,at.row);return;}snap();notes.push({id:nextId++,step:c.step,row:c.row,inst:selectedInstrument});selectedNote=null;commit();preview(selectedInstrument,c.row);});
+function startNoteDrag(e){e.stopPropagation();if(!tryEdit())return;e.preventDefault();const target=e.currentTarget,id=Number(target.dataset.noteid),n=notes.find(n=>n.id===id);if(!n)return;const startX=e.clientX,startY=e.clientY;let moved=false;target.setPointerCapture(e.pointerId);
+ function move(ev){const dx=ev.clientX-startX,dy=ev.clientY-startY;if(Math.abs(dx)+Math.abs(dy)>10)moved=true;if(moved){target.classList.add('dragging');target.style.left=(noteX(n.step)+dx)+'px';target.style.top=(noteY(n.row)+dy)+'px';}}
+ function end(ev){target.removeEventListener('pointermove',move);target.removeEventListener('pointerup',end);target.removeEventListener('pointercancel',end);if(ev.type==='pointercancel'){renderNotes();return;}if(erase){remove(id);return;}if(moved){const c=xyToCell(ev.clientX,ev.clientY);if(c.within){const occupied=notes.some(o=>o.id!==id&&o.step===c.step&&o.row===c.row);if(!occupied&&(c.row!==n.row||c.step!==n.step)){snap();n.step=c.step;n.row=c.row;selectedNote=id;commit();preview(n.inst,n.row);return;}if(occupied)toast('That spot already has a note');}renderNotes();}else{selectedNote=id;renderNotes();preview(n.inst,n.row);}}
+ target.addEventListener('pointermove',move);target.addEventListener('pointerup',end);target.addEventListener('pointercancel',end);
+}
+el.erase.addEventListener('click',()=>{erase=!erase;selectedNote=null;renderTray();renderNotes();renderToolbar();if(erase)toast('Eraser on · tap a note to remove it');});
+el.remove.addEventListener('click',()=>{if(selectedNote!==null&&tryEdit())remove(selectedNote);});
+el.undo.addEventListener('click',()=>{if(!tryEdit()||!history.length)return;notes=JSON.parse(history.pop());selectedNote=null;commit();toast('Undone!');});
+$('#clear').addEventListener('click',()=>{if(!tryEdit())return;if(!notes.length){toast('Your staff is already empty');return;}if(window.confirm('Clear all the notes in this song?')){snap();notes=[];selectedNote=null;commit();toast('Fresh music sheet!');}});
+el.tempo.addEventListener('input',()=>{el.tempoValue.textContent=el.tempo.value;save();});el.title.addEventListener('input',save);
+$('#demo').addEventListener('click',()=>{if(!tryEdit())return;if(notes.length&&!window.confirm('Replace these notes with a little demo tune?'))return;snap();const melody=[6,6,5,6,4,4,5,6,7,7,6,5,6,5,6,8];notes=melody.map((row,i)=>({id:nextId++,step:i*2,row,inst:['piano','piano','xylo','piano','bells','xylo','piano','piano','guitar','guitar','flute','xylo','trumpet','xylo','piano','bells'][i]}));selectedNote=null;commit();el.scroll.scrollTo({left:0,behavior:'smooth'});toast('A little tune! Press Play ♪');});
+
+// Web Audio: temporary synthesized instrument timbres. V1 production will replace these with licensed samples.
+function initAudio(){if(!audioCtx){const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return Promise.reject(new Error('Web Audio missing'));audioCtx=new AC();const comp=audioCtx.createDynamicsCompressor();comp.threshold.value=-19;comp.knee.value=12;comp.ratio.value=4;comp.attack.value=.004;comp.release.value=.14;master=audioCtx.createGain();master.gain.value=.47;master.connect(comp);comp.connect(audioCtx.destination);}return audioCtx.resume();}
+function envelope(g,t,attack,hold,release,volume){g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(Math.max(.0002,volume),t+Math.max(.006,attack));g.gain.setValueAtTime(Math.max(.0002,volume),t+attack+hold);g.gain.exponentialRampToValueAtTime(.0001,t+attack+hold+release);}
+function osc(type,freq,detune,t,release,vol,dest,envCfg,filterCut){const o=audioCtx.createOscillator();o.type=type;o.frequency.setValueAtTime(freq,t);o.detune.value=detune||0;const g=audioCtx.createGain();envelope(g,t,envCfg[0],envCfg[1],envCfg[2],vol);if(filterCut){let f=audioCtx.createBiquadFilter();f.type='lowpass';f.frequency.value=filterCut;o.connect(f);f.connect(g);}else o.connect(g);g.connect(dest);o.start(t);o.stop(t+envCfg.reduce((a,b)=>a+b,0)+.055);}
+let noiseBuffer=null;
+function noise(){if(noiseBuffer)return noiseBuffer;const len=Math.floor(audioCtx.sampleRate*.65),buf=audioCtx.createBuffer(1,len,audioCtx.sampleRate),data=buf.getChannelData(0);let r=751;for(let i=0;i<len;i++){r=(Math.imul(1664525,r)+1013904223)>>>0;data[i]=(r/2147483648-1);}noiseBuffer=buf;return buf;}
+function drum(midi,t,dest){const low=midi<=67,mid=midi>=69&&midi<=72;const src=audioCtx.createBufferSource();src.buffer=noise();const filter=audioCtx.createBiquadFilter();filter.type=low?'lowpass':mid?'bandpass':'highpass';filter.frequency.value=low?300:mid?1800:6600;filter.Q.value=.8;const g=audioCtx.createGain();envelope(g,t,.006,.01,low?.21:mid?.15:.07,low?.40:mid?.26:.19);src.connect(filter);filter.connect(g);g.connect(dest);src.start(t);src.stop(t+.55);if(low){const o=audioCtx.createOscillator();o.type='sine';o.frequency.setValueAtTime(130,t);o.frequency.exponentialRampToValueAtTime(52,t+.17);const k=audioCtx.createGain();envelope(k,t,.006,.005,.21,.62);o.connect(k);k.connect(dest);o.start(t);o.stop(t+.27);}}
+function sound(inst,midi,t,length,dest){let f=440*Math.pow(2,(midi-69)/12);const d=Math.max(.12,length);
+switch(inst){
+case 'piano':osc('triangle',f,0,t,d,.42,dest,[.008,.03,.48],2200);osc('sine',f*2,0,t,d,.09,dest,[.004,.015,.22]);break;
+case 'xylo':osc('sine',f,0,t,d,.58,dest,[.005,.015,.28]);osc('sine',f*3,0,t,d,.14,dest,[.003,.009,.15]);break;
+case 'guitar':osc('triangle',f,0,t,d,.48,dest,[.003,.01,.58],1600);osc('sawtooth',f,1,t,d,.13,dest,[.003,.01,.24],1000);break;
+case 'trumpet':osc('sawtooth',f,0,t,d,.34,dest,[.028,.12,Math.max(.1,d*.6)],1400);osc('square',f,0,t,d,.09,dest,[.025,.12,.29],1150);break;
+case 'flute':osc('sine',f,0,t,d,.48,dest,[.055,.11,Math.max(.19,d*.7)]);osc('sine',f*2,0,t,d,.06,dest,[.04,.10,.2]);break;
+case 'bells':osc('sine',f,0,t,d,.45,dest,[.004,.025,.95]);osc('sine',f*2.75,0,t,d,.14,dest,[.004,.008,.42]);osc('sine',f*4,0,t,d,.07,dest,[.003,.008,.25]);break;
+case 'synth':osc('sawtooth',f,-4,t,d,.17,dest,[.012,.1,.28],1300);osc('sawtooth',f,5,t,d,.17,dest,[.012,.1,.30],1200);break;
+case 'drums':drum(midi,t,dest);break;
+}}
+function cancelPlayback(){if(animFrame){cancelAnimationFrame(animFrame);animFrame=null;}if(playGate&&audioCtx){let t=audioCtx.currentTime;playGate.gain.cancelScheduledValues(t);playGate.gain.setValueAtTime(playGate.gain.value,t);playGate.gain.linearRampToValueAtTime(.0001,t+.025);playGate=null;}playing=false;paused=false;el.playhead.style.opacity=0;renderToolbar();}
+function loopFrame(){if(!playing)return;const elapsed=Math.max(0,audioCtx.currentTime-startedAt);const position=elapsed/stepLength;const x=GUTTER+STEP*(position+.5);el.playhead.style.left=x+'px';el.playhead.style.opacity=1;if(position>2){const visibleX=x-el.scroll.scrollLeft;if(visibleX>el.scroll.clientWidth*.75){el.scroll.scrollLeft=x-el.scroll.clientWidth*.53;}}if(position>=STEPS+.9){cancelPlayback();toast('Ta-da! 🎶 Play it again?');return;}animFrame=requestAnimationFrame(loopFrame);}
+function playOrPause(){if(playing){if(paused){audioCtx.resume().then(()=>{paused=false;renderToolbar();animFrame=requestAnimationFrame(loopFrame);});}else{audioCtx.suspend().then(()=>{paused=true;renderToolbar();if(animFrame)cancelAnimationFrame(animFrame);});}return;}if(!notes.length){toast('Add some notes first, or try a little tune!');return;}initAudio().then(()=>{if(playing)return;playing=true;paused=false;stepLength=60/Number(el.tempo.value)/2;startedAt=audioCtx.currentTime+.10;playGate=audioCtx.createGain();playGate.gain.value=1;playGate.connect(master);for(const n of notes){sound(n.inst,PITCHES[n.row].m,startedAt+n.step*stepLength,stepLength*.78,playGate);}el.scroll.scrollTo({left:0,behavior:'instant'});renderToolbar();animFrame=requestAnimationFrame(loopFrame);}).catch(()=>toast('Your browser could not start audio'));}
+el.play.addEventListener('click',playOrPause);el.stop.addEventListener('click',()=>{if(playing){if(paused){audioCtx.resume().then(cancelPlayback);}else cancelPlayback();toast('Stopped');}});
+window.addEventListener('keydown',e=>{if(['INPUT','TEXTAREA'].includes(document.activeElement.tagName))return;if(e.code==='Space'){e.preventDefault();playOrPause();}if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='z'){e.preventDefault();el.undo.click();}if(['Backspace','Delete'].includes(e.key)&&selectedNote!==null){e.preventDefault();el.remove.click();}});
+window.addEventListener('pagehide',()=>{if(playing){cancelPlayback();}});
+load();constructGrid();renderTray();renderNotes();renderToolbar();$('#fallbackNotes').hidden=true;$('#previewMode').hidden=true;
+})();
+</script>
+</body>
+</html>
