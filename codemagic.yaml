@@ -69,6 +69,12 @@ workflows:
             --config "Release" \
             --archive-xcargs "CURRENT_PROJECT_VERSION=$PROJECT_BUILD_NUMBER" \
             --ipa-directory "$CM_BUILD_DIR/build/ios/ipa"
+      - name: Verify orientations in signed IPA before upload
+        script: |
+          #!/bin/bash
+          set -euo pipefail
+          IPA="$CM_BUILD_DIR/build/ios/ipa/Plinka.ipa"
+          python3 "$CM_BUILD_DIR/ios/scripts/verify-orientations.py" "$IPA"
     artifacts:
       - build/ios/ipa/*.ipa
       - /tmp/xcodebuild_logs/*.log
