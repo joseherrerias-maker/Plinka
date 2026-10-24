@@ -24,7 +24,7 @@ Open `ios/Plinka.xcodeproj` in Xcode 26 or newer. Select the shared **Plinka** s
 
 ## Deliberately not added yet
 
-- Final recorded instrument samples, final app icon, export to video/YouTube Shorts
+- Final recorded instrument samples, a future polished mascot/icon redesign, export to video/YouTube Shorts
 - Parent gate/privacy policy/App Store product listing, in-app purchases or subscriptions
 - Analytics, accounts, cloud storage
 - Final Apple signing, TestFlight release or App Store submission
@@ -47,12 +47,12 @@ Before running the first signed Plinka build:
 1. Apple Developer App ID **`com.joseherrerias.plinka`** has been registered and the **Pluki** iOS app record was accepted in App Store Connect.
 2. In Codemagic **Team settings → codemagic.yaml settings → Code signing identities**, verify the existing Apple Distribution certificate is available (Milo uses the reference `Milo Distribution`). A distribution certificate may sign multiple apps belonging to the same Apple Developer team.
 3. Create/fetch an **App Store provisioning profile for Plinka's bundle ID** and add it to Codemagic's iOS provisioning profiles. Milo's provisioning profile belongs to Milo's bundle ID and cannot be reused for Plinka. Codemagic selects the Plinka profile using `ios_signing.distribution_type: app_store` and `bundle_identifier: com.joseherrerias.plinka`.
-4. Supply a valid iOS App Store icon in Pluki's native asset catalog; the initial SwiftUI skeleton has no final icon yet.
+4. The approved **temporary** Pluki music-note icon is now integrated through `Plinka/Assets.xcassets/AppIcon.appiconset` and generated before CI builds. The build script `ios/scripts/prepare-app-icon.sh` converts a compact, source-controlled rendering of the approved artwork into the required 1024px PNG. We can replace it with the original full-resolution PNG or a future mascot later.
 5. In Codemagic → Plinka → **Start new build** → `main` → **Pluki iOS - TestFlight Upload**.
 
 The workflow builds a signed Release IPA and uploads it to App Store Connect for **internal TestFlight testing only**, without submitting for external beta or public App Store review. Add internal testers in App Store Connect after Apple's processing finishes. It remains manual so it doesn't automatically consume Codemagic minutes.
 
-**Status:** iOS unsigned simulator compilation passed in [GitHub Actions Build 1](https://github.com/joseherrerias-maker/Plinka/actions/runs/40045749850). The new Codemagic signed/TestFlight workflow has **not been run**. A connected Developer Portal integration does not itself verify that Plinka's app record, distribution certificate, provisioning profile, or app icon is ready.
+**Status:** iOS unsigned simulator compilation passed in [GitHub Actions Build 1](https://github.com/joseherrerias-maker/Plinka/actions/runs/40045749850). The new Codemagic signed/TestFlight workflow has **not been run**; the latest GitHub Actions compile tests the new icon asset. A connected Developer Portal integration does not itself verify that Plinka's app record, distribution certificate, provisioning profile, or app icon is ready.
 
 References: [Codemagic signing guide](https://docs.codemagic.io/yaml-code-signing/signing-ios/), [TestFlight publishing guide](https://docs.codemagic.io/yaml-publishing/app-store-connect/), [native iOS guide](https://docs.codemagic.io/yaml-quick-start/building-a-native-ios-app/).
 
