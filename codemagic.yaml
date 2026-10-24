@@ -12,6 +12,8 @@ workflows:
     environment:
       xcode: latest
     scripts:
+      - name: Prepare Pluki app icon asset
+        script: bash "$CM_BUILD_DIR/ios/scripts/prepare-app-icon.sh"
       - name: Compile Plinka for iOS Simulator (unsigned)
         script: |
           #!/bin/bash
@@ -45,6 +47,8 @@ workflows:
         distribution_type: app_store
         bundle_identifier: com.joseherrerias.plinka
     scripts:
+      - name: Prepare Pluki app icon asset
+        script: bash "$CM_BUILD_DIR/ios/scripts/prepare-app-icon.sh"
       - name: Check signing files and configure Xcode
         script: |
           #!/bin/bash
