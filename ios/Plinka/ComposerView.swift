@@ -97,7 +97,7 @@ struct ComposerView: View {
                 .background(PlinkaStyle.teal.gradient, in: RoundedRectangle(cornerRadius: 16))
                 .rotationEffect(.degrees(-5))
             VStack(alignment: .leading, spacing: 0) {
-                Text("plinka!")
+                Text("pluki!")
                     .font(.system(size: compact ? 31 : 40, weight: .black, design: .rounded))
                     .tracking(-2)
                     .foregroundStyle(PlinkaStyle.ink)
