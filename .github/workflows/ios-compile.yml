@@ -36,3 +36,7 @@ jobs:
             -derivedDataPath "$RUNNER_TEMP/PlinkaDerivedData" \
             CODE_SIGNING_ALLOWED=NO \
             build 2>&1 | tee "$RUNNER_TEMP/plinka-build.log"
+      - name: Verify Apple-required orientation values in built app
+        run: |
+          python3 ios/scripts/verify-orientations.py \
+            "$RUNNER_TEMP/PlinkaDerivedData/Build/Products/Debug-iphonesimulator/Plinka.app/Info.plist"
