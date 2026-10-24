@@ -251,6 +251,37 @@ final class PlinkaAudio: ObservableObject {
             case .synth:
                 value = (fundamental * 0.65 +
                          sin(tau * f * 1.01 * t) * 0.35) * exp(-3.8 * t)
+            case .puppy:
+                // Two short voiced barks, with a downward pitch sweep.
+                let local = t.truncatingRemainder(dividingBy: 0.19)
+                let phase = tau * f * 0.48 * (local - 0.9 * local * local)
+                let envelope = min(1, local * 120) * exp(-24 * local)
+                    * (t < 0.36 ? 1.0 : exp(-70 * (t - 0.36)))
+                value = (sin(phase) * 0.65 + sin(3 * phase) * 0.23
+                    + random() * 0.12) * envelope
+            case .kitten:
+                // A voiced meow: rising then falling pitch and a nasal overtone.
+                let phase = tau * f * (0.85 * t + 0.9 * t * t - t * t * t)
+                let envelope = min(1, t * 22) * exp(-5 * t)
+                value = (sin(phase) * 0.60 + sin(2 * phase) * 0.28
+                    + sin(3 * phase) * 0.12) * envelope
+            case .sparkle:
+                // Three overlapping bright chimes form a tiny upward flourish.
+                value = 0
+                for partial in 0..<3 {
+                    let local = t - Double(partial) * 0.055
+                    if local >= 0 {
+                        let pitch = f * pow(1.5, Double(partial))
+                        value += sin(tau * pitch * local)
+                            * min(1, local * 500) * exp(-12 * local) * 0.48
+                    }
+                }
+            case .boing:
+                // Integrating the wobbling pitch keeps the waveform continuous.
+                let wobble = (1 - cos(tau * 11 * t)) / (tau * 11)
+                let phase = tau * f * (0.65 * t + 0.25 * wobble)
+                value = (sin(phase) * 0.78 + sin(2 * phase) * 0.18)
+                    * exp(-6 * t)
             case .drums:
                 if f < 420 {
                     value = sin(tau * (90 - 58 * min(t, 0.20)) * t) * exp(-18 * t)
@@ -261,7 +292,8 @@ final class PlinkaAudio: ObservableObject {
             // A brief anti-click fade, then quick decay appropriate for
             // toy-like musical stickers.
             let attack = min(1.0, t * 500.0)
-            output[offset + i] += Float(value * attack * 0.24)
+            let release = min(1.0, Double(count - 1 - i) / (rate * 0.015))
+            output[offset + i] += Float(value * attack * release * 0.24)
         }
     }
 }

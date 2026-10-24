@@ -25,6 +25,12 @@ art['flute']='<g transform="rotate(40 64 64)">'+rect(53,13,22,103,'#bed5df',9)+r
 art['bells']='<path d="M24 89Q39 79 37 56Q37 27 64 27Q91 27 91 56Q89 79 104 89Z" fill="#ffc44f" stroke="#e4a02c" stroke-width="3"/>'+circle(64,23,8,'#e9a82e')+rect(22,86,84,12,'#f8b23d',6)+circle(64,101,9,'#bb7b25')+'<path d="M47 58Q46 40 58 38" stroke="#fff0b4" stroke-width="6" fill="none" stroke-linecap="round"/>'
 art['synth']=rect(13,30,102,72,'#9f70db',14)+rect(18,34,92,10,'#bb92ef',5)+keys(21,58,86,36)+''.join(circle(x,49,3,'#ffe781') for x in [28,39,50])+rect(79,46,25,5,'#594c91',2)
 art['drums']='<path d="M25 49H103V93Q63 111 25 93Z" fill="#fa7970" stroke="#d35151" stroke-width="3"/>'+''.join('<path d="M%d 53l13 43 13-43" fill="none" stroke="#ffe4a4" stroke-width="3"/>'%x for x in [25,51,77])+'<ellipse cx="64" cy="49" rx="41" ry="13" fill="#fff4d7" stroke="#e5ae55" stroke-width="5"/>'+line(26,19,84,44,'#c18449',5)+line(104,15,49,43,'#c18449',5)+circle(27,19,5,'#e8b775')+circle(104,15,5,'#e8b775')
+# Bright animal and toy stickers share the existing editable vector style.
+face=circle(64,67,39,'#b97af5')+circle(49,65,5,'#243651')+circle(79,65,5,'#243651')+circle(64,78,5,'#e94a97')+'<path d="M52 87Q64 97 76 87" fill="none" stroke="#243651" stroke-width="3" stroke-linecap="round"/>'
+art['kitten']='<path d="M28 49L25 14 53 35M77 35L103 14 100 52" fill="#b97af5" stroke="#8952c5" stroke-width="4"/>'+face+circle(42,81,7,'#e8a5fa')+circle(86,81,7,'#e8a5fa')
+art['puppy']=circle(64,67,39,'#ffe1a6')+'<ellipse cx="29" cy="52" rx="17" ry="32" fill="#c56a2b" transform="rotate(18 29 52)"/><ellipse cx="99" cy="52" rx="17" ry="32" fill="#c56a2b" transform="rotate(-18 99 52)"/>'+circle(50,62,5,'#243651')+circle(78,62,5,'#243651')+circle(64,80,16,'#fff6df')+circle(64,75,7,'#243651')+rect(59,87,10,13,'#ff678c',5)
+art['sparkle']='<path d="M64 10L80 43 116 48 90 74 96 111 64 93 32 111 38 74 12 48 48 43Z" fill="#ffdc32" stroke="#f4ad14" stroke-width="4" stroke-linejoin="round"/>'+circle(51,62,4,'#593d32')+circle(77,62,4,'#593d32')+'<path d="M55 77Q64 85 73 77" fill="none" stroke="#593d32" stroke-width="3" stroke-linecap="round"/>'
+art['boing']='<path d="M49 47Q103 51 88 64Q22 72 42 82Q105 87 83 100H44" fill="none" stroke="#8d63e8" stroke-width="9" stroke-linecap="round"/>'+circle(64,32,25,'#ff619d')+circle(55,28,4,'#243651')+circle(73,28,4,'#243651')+'<path d="M56 40Q64 46 72 40" fill="none" stroke="#243651" stroke-width="3" stroke-linecap="round"/>'+circle(51,19,6,'#ffb8d3')
 # All stickers use the same transparent canvas, inset, and subtle grounding shadow.
 for name,body in art.items():
  art[name]=svg('<ellipse cx="65" cy="114" rx="36" ry="5" fill="#364354" opacity=".13"/>'+body)
@@ -48,4 +54,4 @@ for name,source in art.items():
  folder=assets/(name+'.imageset');folder.mkdir(parents=True,exist_ok=True)
  subprocess.run(['inkscape',str(path),'--export-filename='+str(folder/(name+'.png')),'--export-width='+('1600' if name=='studio-room' else '256')],check=True,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
  (folder/'Contents.json').write_text(json.dumps({'images':[{'filename':name+'.png','idiom':'universal'}],'info':{'author':'xcode','version':1}}))
-print('Rendered 8 transparent instrument stickers and studio background.')
+print('Rendered instrument, animal, and fun stickers with studio background.')

@@ -2,7 +2,7 @@ import SwiftUI
 import Foundation
 
 enum Instrument: String, Codable, CaseIterable, Identifiable {
-    case piano, xylophone, guitar, trumpet, flute, bells, synth, drums
+    case piano, xylophone, guitar, trumpet, flute, bells, synth, drums, puppy, kitten, sparkle, boing
 
     var id: String { rawValue }
     var label: String {
@@ -15,6 +15,10 @@ enum Instrument: String, Codable, CaseIterable, Identifiable {
         case .bells: return "Bells"
         case .synth: return "Synth"
         case .drums: return "Drums"
+        case .puppy: return "Puppy"
+        case .kitten: return "Kitten"
+        case .sparkle: return "Sparkle"
+        case .boing: return "Boing"
         }
     }
     var emoji: String {
@@ -27,6 +31,10 @@ enum Instrument: String, Codable, CaseIterable, Identifiable {
         case .bells: return "🔔"
         case .synth: return "⚡️"
         case .drums: return "🥁"
+        case .puppy: return "🐶"
+        case .kitten: return "🐱"
+        case .sparkle: return "⭐️"
+        case .boing: return "🌈"
         }
     }
     var tint: Color {
@@ -38,6 +46,10 @@ enum Instrument: String, Codable, CaseIterable, Identifiable {
         case .flute: return Color(red: 0.43, green: 0.82, blue: 0.80)
         case .bells: return Color(red: 1.00, green: 0.83, blue: 0.54)
         case .synth: return Color(red: 0.54, green: 0.76, blue: 1.00)
+        case .puppy: return Color.orange
+        case .kitten: return Color.purple
+        case .sparkle: return Color.yellow
+        case .boing: return Color.pink
         case .drums: return Color(red: 0.77, green: 0.60, blue: 0.93)
         }
     }
