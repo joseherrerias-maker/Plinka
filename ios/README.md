@@ -1,14 +1,14 @@
-# Plinka — Native iOS prototype (0.1 / pre-build)
+# Plinka — Native iOS prototype (Build 1: simulator compile passed)
 
-This is a **standalone SwiftUI iPhone + iPad app**. The web prototype remains at the repository root as GitHub Pages \`index.html\`. No web backend or subscription is needed.
+This is a **standalone SwiftUI iPhone + iPad app**. The web prototype remains at the repository root as GitHub Pages `index.html`. No web backend or subscription is needed.
 
 ## Open and compile
 
-Open \`ios/Plinka.xcodeproj\` in Xcode 26 or newer. Select the shared **Plinka** scheme, a device or iOS simulator, and Build. The app targets iOS 17+ on iPhone and iPad.
+Open `ios/Plinka.xcodeproj` in Xcode 26 or newer. Select the shared **Plinka** scheme, a device or iOS simulator, and Build. The app targets iOS 17+ on iPhone and iPad.
 
-**Provisioning:** For a signed device build, choose your Apple Developer Team in Signing & Capabilities. The bundle ID \`com.joseherrerias.plinka\` is a provisional identifier; verify its availability in App Store Connect before distribution.
+**Provisioning:** For a signed device build, choose your Apple Developer Team in Signing & Capabilities. The bundle ID `com.joseherrerias.plinka` is a provisional identifier; verify its availability in App Store Connect before distribution.
 
-**First-build status:** Source files and Xcode project scaffolding are committed, but this environment has no macOS/Xcode SDK. Swift syntax-only checks cannot substitute for a device/simulator build. Do not label this as successfully compiled until an actual Xcode build has passed.
+**Build 1 status:** GitHub Actions successfully compiled the native app for a generic iOS Simulator using Xcode on macOS 26. [Verified build](https://github.com/joseherrerias-maker/Plinka/actions/runs/40045749850). This does not establish real-device runtime testing, code signing, or TestFlight readiness.
 
 ## First playable native scope
 
@@ -33,4 +33,4 @@ Open \`ios/Plinka.xcodeproj\` in Xcode 26 or newer. Select the shared **Plinka**
 
 Apple Xcode Cloud supports this repository and requires a shared archivable scheme (included here), an App Store Connect app record, development signing and initial configuration. For your current older Mac, a cloud Mac/Xcode service or Codemagic compile-only workflow may be the practical first-build route.
 
-Keep all iOS files under \`ios/\`. Do not move or replace the root \`index.html\`: GitHub Pages should keep working.
+Keep all iOS files under `ios/`. Do not move or replace the root `index.html`: GitHub Pages should keep working.
