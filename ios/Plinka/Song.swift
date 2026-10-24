@@ -70,6 +70,7 @@ final class SongStore: ObservableObject {
     @Published var erasing = false
     @Published var selectedID: UUID?
     private var undoHistory: [Song] = []
+    private var redoHistory: [Song] = []
 
     init() {
         if let data = UserDefaults.standard.data(forKey: Self.saveKey),
@@ -91,10 +92,12 @@ final class SongStore: ObservableObject {
 
     private func remember() {
         undoHistory.append(song)
+        redoHistory.removeAll()
         if undoHistory.count > 40 { undoHistory.removeFirst() }
     }
 
     var canUndo: Bool { !undoHistory.isEmpty }
+    var canRedo: Bool { !redoHistory.isEmpty }
 
     func choose(_ instrument: Instrument) {
         chosen = instrument
@@ -144,7 +147,15 @@ final class SongStore: ObservableObject {
 
     func undo() {
         guard let prior = undoHistory.popLast() else { return }
+        redoHistory.append(song)
         song = prior
+        selectedID = nil
+    }
+
+    func redo() {
+        guard let next = redoHistory.popLast() else { return }
+        undoHistory.append(song)
+        song = next
         selectedID = nil
     }
 

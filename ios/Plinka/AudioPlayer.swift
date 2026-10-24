@@ -18,8 +18,7 @@ final class PlinkaAudio: ObservableObject {
                                        sampleRate: 44_100, channels: 1, interleaved: false)!
     private var activeBuffer: AVAudioPCMBuffer?
     private var ticker: Timer?
-    private var playbackStart: TimeInterval = 0
-    private var elapsedBeforePause: TimeInterval = 0
+    private var pausedStep: Double = 0
     private var phraseDuration: TimeInterval = 0
     private var stepSeconds: TimeInterval = 0
     private var lastStep = 0
@@ -57,14 +56,10 @@ final class PlinkaAudio: ObservableObject {
         if isPlaying {
             if isPaused {
                 player.play()
-                playbackStart = ProcessInfo.processInfo.systemUptime
                 isPaused = false
                 startTicker()
             } else {
-                elapsedBeforePause += ProcessInfo.processInfo.systemUptime - playbackStart
-                player.pause()
-                isPaused = true
-                stopTicker()
+                pause()
             }
         } else {
             start(song)
@@ -85,15 +80,14 @@ final class PlinkaAudio: ObservableObject {
             player.scheduleBuffer(rendered.buffer, at: nil,
                                   options: looping ? [.loops] : [])
             player.play()
-            elapsedBeforePause = 0
-            playbackStart = ProcessInfo.processInfo.systemUptime
+            pausedStep = 0
             isPlaying = true
             isPaused = false
             playheadStep = 0
             audioError = nil
             startTicker()
         } catch {
-            audioError = "Plinka could not start audio on this device."
+            audioError = "Pluki could not start audio on this device."
             stop()
         }
     }
@@ -105,7 +99,7 @@ final class PlinkaAudio: ObservableObject {
         isPlaying = false
         isPaused = false
         playheadStep = nil
-        elapsedBeforePause = 0
+        pausedStep = 0
     }
 
     func updateLoop(_ song: Song) {
@@ -126,15 +120,39 @@ final class PlinkaAudio: ObservableObject {
         }
     }
 
+    func pause() {
+        guard isPlaying, !isPaused else { return }
+        pausedStep = currentPlaybackStep() ?? 0
+        player.pause()
+        isPaused = true
+        stopTicker()
+    }
+
+    // Use the audio player's sample timeline so pauses and render startup do
+    // not introduce wall-clock drift into the playhead or scrolling.
+    private var elapsedAudioTime: TimeInterval? {
+        guard let nodeTime = player.lastRenderTime,
+              let time = player.playerTime(forNodeTime: nodeTime), time.sampleRate > 0 else { return nil }
+        return max(0, Double(time.sampleTime) / time.sampleRate)
+    }
+
+    func currentPlaybackStep() -> Double? {
+        guard isPlaying, stepSeconds > 0 else { return nil }
+        if isPaused { return pausedStep }
+        guard let elapsed = elapsedAudioTime else { return 0 }
+        let local = looping ? elapsed.truncatingRemainder(dividingBy: phraseDuration) : elapsed
+        return min(Double(lastStep) + 0.8, local / stepSeconds)
+    }
+
     private func tick() {
-        guard isPlaying, !isPaused, stepSeconds > 0 else { return }
-        let elapsed = elapsedBeforePause + ProcessInfo.processInfo.systemUptime - playbackStart
-        if !looping && elapsed >= phraseDuration {
-            stop()
-            return
+        guard isPlaying, !isPaused, let elapsed = elapsedAudioTime else { return }
+        if !looping && elapsed >= phraseDuration { stop(); return }
+        // Only publish beat changes for sticker highlighting. The scroll view
+        // reads the continuous sample position independently on each frame.
+        if let step = currentPlaybackStep() {
+            let beat = floor(step)
+            if playheadStep != beat { playheadStep = beat }
         }
-        let localTime = looping ? elapsed.truncatingRemainder(dividingBy: phraseDuration) : elapsed
-        playheadStep = min(Double(lastStep) + 0.8, localTime / stepSeconds)
     }
 
     private struct RenderResult {
@@ -175,7 +193,7 @@ final class PlinkaAudio: ObservableObject {
             // Soft limit stacked notes without harsh clipping.
             samples[i] = Float(tanh(Double(samples[i]) * 0.8))
         }
-        return RenderResult(buffer: buffer, duration: duration,
+        return RenderResult(buffer: buffer, duration: Double(frameCount) / format.sampleRate,
                             stepSeconds: stepSeconds, lastStep: last)
     }
 

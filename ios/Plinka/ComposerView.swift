@@ -1,404 +1,427 @@
 import SwiftUI
+import UIKit
 
-private enum PlinkaStyle {
-    static let ink = Color(red: 0.15, green: 0.21, blue: 0.34)
-    static let teal = Color(red: 0.13, green: 0.76, blue: 0.67)
-    static let muted = Color(red: 0.45, green: 0.55, blue: 0.66)
+private enum PlukiStyle {
+    static let ink = Color(red: 0.13, green: 0.22, blue: 0.34)
+    static let green = Color(red: 0.20, green: 0.75, blue: 0.43)
+    static let blue = Color(red: 0.13, green: 0.69, blue: 0.90)
+    static let paper = Color(red: 1, green: 0.98, blue: 0.93)
 }
 
 struct ComposerView: View {
     @StateObject private var store = SongStore()
     @StateObject private var audio = PlinkaAudio()
+    @Environment(\.scenePhase) private var scenePhase
     @State private var confirmClear = false
+    @State private var showSettings = false
 
     var body: some View {
         GeometryReader { geometry in
-            let compact = geometry.size.width < 650
-            ScrollView(.vertical) {
-                VStack(alignment: .leading, spacing: compact ? 12 : 19) {
-                    header(compact: compact)
-                    VStack(alignment: .leading, spacing: compact ? 10 : 17) {
-                        HStack(alignment: .firstTextBaseline) {
-                            VStack(alignment: .leading, spacing: 3) {
-                                Text("Your melody ✨")
-                                    .font(.system(size: compact ? 21 : 27, weight: .heavy, design: .rounded))
-                                    .foregroundStyle(PlinkaStyle.ink)
-                                Text(store.song.notes.isEmpty
-                                     ? "Tap the music lines to add a sound"
-                                     : "\(store.song.notes.count) little notes")
-                                    .font(.system(size: compact ? 12 : 14, weight: .medium))
-                                    .foregroundStyle(PlinkaStyle.muted)
-                            }
-                            Spacer()
-                            if !compact {
-                                TextField("Song name", text: $store.song.title)
-                                    .textFieldStyle(.roundedBorder)
-                                    .frame(maxWidth: 210)
-                            }
-                        }
-                        playbackControls(compact: compact)
-                        StaffView(store: store, audio: audio, compact: compact)
-                            .padding(.vertical, 3)
-                        HStack {
-                            Label("Higher is higher-pitched", systemImage: "music.note")
-                            Spacer()
-                            if !compact { Text("Scroll sideways to make more music →") }
-                        }
-                        .font(.system(size: compact ? 10 : 12, weight: .semibold))
-                        .foregroundStyle(PlinkaStyle.muted)
-                        instrumentTray
-                        if let error = audio.audioError {
-                            Text(error).font(.caption).foregroundStyle(.red)
-                        }
-                    }
-                    .padding(compact ? 13 : 22)
-                    .background(.white.opacity(0.90), in: RoundedRectangle(cornerRadius: compact ? 22 : 34))
-                    .shadow(color: .blue.opacity(0.07), radius: 26, y: 10)
-                    if !compact {
-                        HStack(spacing: 24) {
-                            Text("① Pick a sound")
-                            Text("② Tap to add a note")
-                            Text("③ Press play!")
-                        }
-                        .font(.system(size: 13, weight: .semibold))
-                        .foregroundStyle(PlinkaStyle.muted)
-                        .frame(maxWidth: .infinity)
-                    }
-                }
-                .padding(compact ? 12 : 24)
-                .frame(maxWidth: 1430)
-                .frame(maxWidth: .infinity)
+            let short = geometry.size.height < 500
+            let narrow = geometry.size.width < 600
+            let padding: CGFloat = short ? 8 : 16
+            let gap: CGFloat = short ? 8 : 12
+            let toolbar: CGFloat = narrow ? 108 : (short ? 52 : 72)
+            let tray: CGFloat = short ? 68 : 106
+            let staffHeight = max(100, geometry.size.height - 2 * padding - 2 * gap - toolbar - tray)
+            VStack(spacing: gap) {
+                toolbarView(narrow: narrow, short: short)
+                    .frame(height: toolbar)
+                StaffView(store: store, audio: audio, height: staffHeight, short: short)
+                    .frame(height: staffHeight)
+                instrumentTray(short: short)
+                    .frame(height: tray)
             }
-            .scrollIndicators(.hidden)
-            .background(
-                LinearGradient(colors: [
-                    Color(red: 0.79, green: 0.98, blue: 0.92),
-                    Color(red: 0.93, green: 0.96, blue: 1.00),
-                    Color(red: 0.89, green: 0.87, blue: 1.00)
-                ], startPoint: .topLeading, endPoint: .bottomTrailing)
-                .ignoresSafeArea()
-            )
+            .padding(padding)
+            .frame(width: geometry.size.width, height: geometry.size.height, alignment: .top)
+            .background {
+                Image("studio-room").resizable().scaledToFill()
+                    .overlay(.white.opacity(0.12)).ignoresSafeArea()
+            }
+            .clipped()
         }
+        .foregroundStyle(PlukiStyle.ink)
+        .sheet(isPresented: $showSettings) { settings }
         .confirmationDialog("Clear your entire melody?", isPresented: $confirmClear) {
-            Button("Clear all notes", role: .destructive) {
-                audio.stop()
-                store.clear()
-            }
+            Button("Clear all notes", role: .destructive) { audio.stop(); store.clear() }
             Button("Cancel", role: .cancel) {}
         }
+        .onChange(of: scenePhase) { _, phase in
+            if phase != .active { audio.pause() }
+        }
     }
 
-    private func header(compact: Bool) -> some View {
-        HStack(spacing: 10) {
-            Text("♫")
-                .font(.system(size: compact ? 29 : 38, weight: .heavy))
-                .foregroundStyle(.white)
-                .frame(width: compact ? 44 : 58, height: compact ? 44 : 58)
-                .background(PlinkaStyle.teal.gradient, in: RoundedRectangle(cornerRadius: 16))
-                .rotationEffect(.degrees(-5))
-            VStack(alignment: .leading, spacing: 0) {
-                Text("pluki!")
-                    .font(.system(size: compact ? 31 : 40, weight: .black, design: .rounded))
-                    .tracking(-2)
-                    .foregroundStyle(PlinkaStyle.ink)
-                if !compact {
-                    Text("MAKE A LITTLE MUSIC")
-                        .font(.system(size: 10, weight: .heavy, design: .rounded))
-                        .tracking(1.2)
-                        .foregroundStyle(PlinkaStyle.muted)
+    private func toolbarView(narrow: Bool, short: Bool) -> some View {
+        Group {
+            if narrow {
+                VStack(spacing: 6) {
+                    HStack {
+                        wordmark(small: true)
+                        Spacer(minLength: 4)
+                        editButtons
+                    }
+                    HStack(spacing: 8) {
+                        transport
+                        tempo(compact: true)
+                    }
+                }
+            } else {
+                HStack(spacing: short ? 8 : 18) {
+                    wordmark(small: short)
+                    Spacer(minLength: 0)
+                    transport
+                    tempo(compact: short)
+                    editButtons
                 }
             }
-            Spacer(minLength: 4)
-            headerButton("arrow.uturn.backward", title: "Undo", disabled: !store.canUndo || audio.isPlaying) { store.undo() }
-            headerButton(store.erasing ? "eraser.fill" : "eraser", title: "Erase", disabled: audio.isPlaying) {
-                store.erasing.toggle()
-                store.selectedID = nil
-            }
-            headerButton("trash", title: "Clear", disabled: audio.isPlaying || store.song.notes.isEmpty) {
-                confirmClear = true
-            }
         }
     }
 
-    private func headerButton(_ icon: String, title: String, disabled: Bool, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
-            Image(systemName: icon)
-                .font(.system(size: 18, weight: .bold))
-                .foregroundStyle(PlinkaStyle.ink)
-                .frame(width: 43, height: 43)
-                .background(.white, in: RoundedRectangle(cornerRadius: 14))
+    private func wordmark(small: Bool) -> some View {
+        HStack(spacing: 5) {
+            Image(systemName: "music.note").foregroundStyle(PlukiStyle.green)
+            Text("pluki!").tracking(-1)
         }
-        .buttonStyle(.plain)
-        .disabled(disabled)
-        .opacity(disabled ? 0.4 : 1)
+        .font(.system(size: small ? 25 : 35, weight: .black, design: .rounded))
+        .padding(.horizontal, small ? 10 : 18)
+        .frame(height: small ? 44 : 62)
+        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 20))
+        .accessibilityLabel("Pluki")
+    }
+
+    private var transport: some View {
+        HStack(spacing: 6) {
+            tool("backward.end.fill", title: "Restart", disabled: store.song.notes.isEmpty) {
+                audio.stop(); audio.start(store.song)
+            }
+            Button { audio.playOrPause(store.song) } label: {
+                Image(systemName: audio.isPlaying && !audio.isPaused ? "pause.fill" : "play.fill")
+                    .font(.system(size: 22, weight: .bold))
+                    .foregroundStyle(.white)
+                    .frame(width: 48, height: 48)
+                    .background(PlukiStyle.green.gradient, in: Circle())
+                    .overlay(Circle().strokeBorder(.white.opacity(0.6), lineWidth: 2))
+                    .shadow(color: PlukiStyle.green.opacity(0.3), radius: 4, y: 3)
+            }
+            .buttonStyle(.plain)
+            .disabled(store.song.notes.isEmpty)
+            .opacity(store.song.notes.isEmpty ? 0.5 : 1)
+            .accessibilityLabel(audio.isPaused ? "Resume" : (audio.isPlaying ? "Pause" : "Play"))
+            tool("stop.fill", title: "Stop", disabled: !audio.isPlaying) { audio.stop() }
+        }
+    }
+
+    private var editButtons: some View {
+        HStack(spacing: 4) {
+            tool("arrow.uturn.backward", title: "Undo", disabled: !store.canUndo || audio.isPlaying) { store.undo() }
+            tool("arrow.uturn.forward", title: "Redo", disabled: !store.canRedo || audio.isPlaying) { store.redo() }
+            tool("gearshape.fill", title: "Song settings") { showSettings = true }
+        }
+    }
+
+    private func tool(_ icon: String, title: String, disabled: Bool = false,
+                      action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Image(systemName: icon).font(.system(size: 18, weight: .bold))
+                .frame(width: 44, height: 44)
+                .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 15))
+        }
+        .buttonStyle(.plain).disabled(disabled).opacity(disabled ? 0.4 : 1)
         .accessibilityLabel(title)
     }
 
-    private func playbackControls(compact: Bool) -> some View {
-        Group {
-            if compact {
-                VStack(spacing: 8) {
-                    tempoPicker
-                    playbackButtons
-                }
-            } else {
-                HStack(spacing: 14) {
-                    tempoPicker
-                    Spacer(minLength: 10)
-                    playbackButtons
-                }
+    private func tempo(compact: Bool) -> some View {
+        HStack(spacing: 5) {
+            VStack(alignment: .leading, spacing: 0) {
+                if !compact { Text("Tempo").font(.caption) }
+                Text("\(Int(store.song.tempo))").font(.system(size: 13, weight: .bold, design: .rounded)).monospacedDigit()
             }
-        }
-    }
-
-    private var tempoPicker: some View {
-        HStack(spacing: 9) {
-            Text("TEMPO")
-                .font(.system(size: 11, weight: .heavy))
-                .foregroundStyle(PlinkaStyle.muted)
             Slider(value: $store.song.tempo, in: 65...160, step: 5)
-                .tint(PlinkaStyle.teal)
-                .frame(minWidth: 82, maxWidth: 160)
-                .disabled(audio.isPlaying)
-            Text("\(Int(store.song.tempo)) BPM")
-                .font(.system(size: 12, weight: .heavy, design: .rounded))
-                .monospacedDigit()
-                .foregroundStyle(PlinkaStyle.ink)
+                .tint(PlukiStyle.green).disabled(audio.isPlaying)
+                .accessibilityLabel("Tempo").accessibilityValue("\(Int(store.song.tempo)) beats per minute")
         }
-        .padding(.horizontal, 11).padding(.vertical, 9)
-        .background(Color(red: 0.95, green: 0.97, blue: 0.99), in: RoundedRectangle(cornerRadius: 14))
+        .padding(.horizontal, 8)
+        .frame(minWidth: 95, maxWidth: compact ? 155 : 240, minHeight: 44)
+        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 15))
     }
 
-    private var playbackButtons: some View {
-        HStack(spacing: 8) {
-            Button {
-                audio.playOrPause(store.song)
-            } label: {
-                Label(audio.isPaused ? "Resume" : (audio.isPlaying ? "Pause" : "Play"),
-                      systemImage: audio.isPlaying && !audio.isPaused ? "pause.fill" : "play.fill")
-            }
-            .buttonStyle(PlinkaPill(color: PlinkaStyle.teal, foreground: .white))
-            Button { audio.stop() } label: {
-                Label("Stop", systemImage: "stop.fill")
-            }
-            .buttonStyle(PlinkaPill(color: Color(red: 1, green: 0.93, blue: 0.89),
-                                    foreground: Color(red: 0.84, green: 0.37, blue: 0.32)))
-            Button {
-                store.song.loop.toggle()
-                audio.updateLoop(store.song)
-            } label: {
-                Label("Loop", systemImage: "repeat")
-            }
-            .buttonStyle(PlinkaPill(
-                color: store.song.loop
-                    ? Color(red: 0.73, green: 0.97, blue: 0.90)
-                    : Color(red: 0.91, green: 0.94, blue: 1.0),
-                foreground: store.song.loop ? Color(red: 0.05, green: 0.49, blue: 0.42)
-                                            : PlinkaStyle.ink))
-            .accessibilityAddTraits(store.song.loop ? [.isSelected] : [])
-        }
-        .font(.system(size: 13, weight: .heavy, design: .rounded))
-    }
-
-    private var instrumentTray: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Text("🎨 Pick a sound")
-                .font(.system(size: 17, weight: .heavy, design: .rounded))
-                .foregroundStyle(PlinkaStyle.ink)
+    private func instrumentTray(short: Bool) -> some View {
+        GeometryReader { geometry in
             ScrollView(.horizontal) {
-                HStack(spacing: 11) {
+                HStack(spacing: 8) {
                     ForEach(Instrument.allCases) { instrument in
                         Button {
-                            guard !audio.isPlaying else { return }
                             store.choose(instrument)
                             audio.preview(instrument, row: 5)
                         } label: {
-                            VStack(spacing: 6) {
-                                Text(instrument.emoji)
-                                    .font(.system(size: 34))
-                                    .frame(width: 61, height: 49)
-                                    .background(instrument.tint.opacity(0.28),
-                                                in: RoundedRectangle(cornerRadius: 13))
+                            VStack(spacing: 0) {
+                                Image(instrument.rawValue).resizable().scaledToFit()
+                                    .frame(height: short ? 39 : 67)
                                 Text(instrument.label)
-                                    .font(.system(size: 11, weight: .bold, design: .rounded))
+                                    .font(.system(size: short ? 10 : 12, weight: .bold, design: .rounded))
                                     .lineLimit(1)
-                                    .foregroundStyle(PlinkaStyle.ink)
                             }
-                            .frame(width: 91, height: 91)
-                            .background(store.chosen == instrument
-                                ? Color(red: 0.91, green: 1.0, blue: 0.97) : .white,
-                                in: RoundedRectangle(cornerRadius: 18))
-                            .overlay {
-                                RoundedRectangle(cornerRadius: 18)
-                                    .strokeBorder(store.chosen == instrument
-                                        ? PlinkaStyle.teal : .gray.opacity(0.13), lineWidth: 2)
-                            }
+                            .frame(width: max(short ? 64 : 86, (geometry.size.width - 16 - 7 * 8) / 8),
+                                   height: short ? 56 : 94)
+                            .background(store.chosen == instrument && !store.erasing
+                                ? Color(red: 0.86, green: 0.97, blue: 1) : instrument.tint.opacity(0.12),
+                                in: RoundedRectangle(cornerRadius: 15))
+                            .overlay(RoundedRectangle(cornerRadius: 15).strokeBorder(
+                                store.chosen == instrument && !store.erasing ? PlukiStyle.blue : .clear, lineWidth: 2))
                         }
-                        .buttonStyle(.plain)
-                        .disabled(audio.isPlaying)
+                        .buttonStyle(.plain).disabled(audio.isPlaying)
                         .accessibilityLabel(instrument.label)
+                        .accessibilityAddTraits(store.chosen == instrument ? [.isSelected] : [])
                     }
-                }
-                .padding(3)
-            }
-            .scrollIndicators(.hidden)
+                }.padding(.horizontal, 8).padding(.vertical, 6)
+            }.scrollIndicators(.hidden)
         }
-        .padding(13)
-        .background(Color(red: 0.95, green: 0.97, blue: 0.985),
-                    in: RoundedRectangle(cornerRadius: 21))
+        .background(PlukiStyle.paper.opacity(0.96), in: RoundedRectangle(cornerRadius: 22))
     }
-}
 
-private struct PlinkaPill: ButtonStyle {
-    let color: Color
-    let foreground: Color
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .padding(.horizontal, 14)
-            .frame(minHeight: 45)
-            .foregroundStyle(foreground)
-            .background(color, in: RoundedRectangle(cornerRadius: 14))
-            .opacity(configuration.isPressed ? 0.8 : 1)
-            .scaleEffect(configuration.isPressed ? 0.97 : 1)
+    private var settings: some View {
+        NavigationStack {
+            Form {
+                Section("Your song") {
+                    TextField("Song name", text: $store.song.title)
+                    Toggle("Loop playback", isOn: $store.song.loop)
+                        .onChange(of: store.song.loop) { _, _ in audio.updateLoop(store.song) }
+                }
+                Section("Compose") {
+                    Toggle("Eraser", isOn: $store.erasing).disabled(audio.isPlaying)
+                    Button("Clear all notes", role: .destructive) { confirmClear = true }
+                        .disabled(audio.isPlaying || store.song.notes.isEmpty)
+                    Text("Choose a sound, then tap the staff. Move a sticker up or down to change pitch, or sideways to change timing.")
+                }
+                if let error = audio.audioError { Section { Text(error).foregroundStyle(.red) } }
+                Section { Text("Pluki · Version 0.2.0").foregroundStyle(.secondary) }
+            }
+            .navigationTitle("Song settings")
+            .toolbar { ToolbarItem(placement: .confirmationAction) { Button("Done") { showSettings = false } } }
+        }
+        .presentationDetents([.medium, .large])
     }
 }
 
 private struct StaffView: View {
     @ObservedObject var store: SongStore
     @ObservedObject var audio: PlinkaAudio
-    let compact: Bool
-
-    private var cellWidth: CGFloat { compact ? 54 : 72 }
-    private var rowHeight: CGFloat { compact ? 31 : 43 }
-    private var gutter: CGFloat { compact ? 55 : 82 }
-    private var top: CGFloat { compact ? 65 : 80 }
-    private var trackHeight: CGFloat { top + rowHeight * 8 + 45 }
-    private var trackWidth: CGFloat { gutter + CGFloat(SongStore.steps) * cellWidth }
+    let height: CGFloat
+    let short: Bool
 
     var body: some View {
-        ScrollViewReader { scroller in
-            ScrollView(.horizontal) {
-                ZStack(alignment: .topLeading) {
-                    Canvas { context, size in
-                        for row in stride(from: 0, through: 8, by: 2) {
-                            let y = top + CGFloat(row) * rowHeight
-                            var p = Path()
-                            p.move(to: CGPoint(x: gutter, y: y))
-                            p.addLine(to: CGPoint(x: size.width, y: y))
-                            context.stroke(p, with: .color(Color(red: 0.59, green: 0.68, blue: 0.79)),
-                                           lineWidth: 2)
-                        }
-                        for step in 0...SongStore.steps {
-                            let x = gutter + CGFloat(step) * cellWidth
-                            var p = Path()
-                            p.move(to: CGPoint(x: x, y: top - 25))
-                            p.addLine(to: CGPoint(x: x, y: top + rowHeight * 8 + 20))
-                            context.stroke(p, with: .color(Color(red: 0.81, green: 0.87, blue: 0.93)
-                                .opacity(step.isMultiple(of: 8) ? 0.88 : 0.33)),
-                                lineWidth: step.isMultiple(of: 8) ? 2 : 1)
-                        }
-                    }
-                    .frame(width: trackWidth, height: trackHeight)
+        let metrics = StaffMetrics(height: height, short: short)
+        FollowScrollView(audio: audio, metrics: metrics) {
+            StaffContent(store: store, audio: audio, metrics: metrics)
+        }
+        .background(PlukiStyle.paper, in: RoundedRectangle(cornerRadius: 22))
+        .clipShape(RoundedRectangle(cornerRadius: 22))
+        .overlay(RoundedRectangle(cornerRadius: 22).strokeBorder(.white.opacity(0.8), lineWidth: 2))
+        .overlay(alignment: .topTrailing) {
+            if store.erasing { Text("Eraser on").font(.caption.bold()).padding(8).background(.thinMaterial, in: Capsule()).padding(8).allowsHitTesting(false) }
+        }
+    }
+}
 
-                    // The tappable music surface is behind placed stickers.
-                    Rectangle().fill(.clear).contentShape(Rectangle())
-                        .frame(width: trackWidth - gutter, height: trackHeight)
-                        .offset(x: gutter)
-                        .onTapGesture { location in
-                            guard !audio.isPlaying else { return }
-                            let rawY = location.y - top
-                            guard rawY >= -rowHeight * 0.55,
-                                  rawY <= rowHeight * 8.55 else { return }
-                            let step = Int(floor(location.x / cellWidth))
-                            let row = Int(round(rawY / rowHeight))
-                            if let note = store.tap(step: step, row: row) {
-                                audio.preview(note.instrument, row: note.row)
-                            }
-                        }
+private struct StaffMetrics {
+    let height: CGFloat
+    let short: Bool
+    var top: CGFloat { short ? 32 : 60 }
+    var bottom: CGFloat { short ? 28 : 48 }
+    var row: CGFloat { max(5, (height - top - bottom) / 8) }
+    var cell: CGFloat { short ? 60 : 84 }
+    var gutter: CGFloat { short ? 60 : 90 }
+    var width: CGFloat { gutter + CGFloat(SongStore.steps) * cell + 16 }
+    var sticker: CGFloat { min(short ? 40 : 66, row * 2.3) }
+    func x(_ step: Double) -> CGFloat { gutter + (CGFloat(step) + 0.5) * cell }
+}
 
-                    Text("𝄞")
-                        .font(.system(size: compact ? 74 : 103))
-                        .foregroundStyle(Color(red: 0.37, green: 0.43, blue: 0.56))
-                        .position(x: gutter * 0.50, y: top + rowHeight * 3.65)
+private struct StaffContent: View {
+    @ObservedObject var store: SongStore
+    @ObservedObject var audio: PlinkaAudio
+    let metrics: StaffMetrics
 
-                    ForEach(0..<4, id: \.self) { measure in
-                        Text("MEASURE \(measure + 1)")
-                            .font(.system(size: compact ? 10 : 12, weight: .black, design: .rounded))
-                            .foregroundStyle(Color(red: 0.61, green: 0.68, blue: 0.76))
-                            .position(x: gutter + CGFloat(measure * 8) * cellWidth + 70, y: 23)
-                    }
-
-                    ForEach(store.song.notes) { note in
-                        Text(note.instrument.emoji)
-                            .font(.system(size: compact ? 23 : 29))
-                            .frame(width: compact ? 41 : 54, height: compact ? 39 : 49)
-                            .background(note.instrument.tint,
-                                        in: RoundedRectangle(cornerRadius: 14))
-                            .overlay {
-                                RoundedRectangle(cornerRadius: 14)
-                                    .strokeBorder(.white.opacity(0.82), lineWidth: 2)
-                            }
-                            .shadow(color: note.instrument.tint.opacity(0.40), radius: 3, y: 4)
-                            .overlay {
-                                if store.selectedID == note.id {
-                                    RoundedRectangle(cornerRadius: 16)
-                                        .strokeBorder(PlinkaStyle.teal, lineWidth: 3)
-                                        .padding(-3)
-                                }
-                            }
-                            .position(x: gutter + (CGFloat(note.step) + 0.5) * cellWidth,
-                                      y: top + CGFloat(note.row) * rowHeight)
-                            .onTapGesture {
-                                guard !audio.isPlaying else { return }
-                                if store.erasing {
-                                    store.remove(id: note.id)
-                                } else {
-                                    store.selectedID = note.id
-                                    audio.preview(note.instrument, row: note.row)
-                                }
-                            }
-                            .simultaneousGesture(
-                                DragGesture(minimumDistance: 12)
-                                    .onEnded { drag in
-                                        guard !audio.isPlaying else { return }
-                                        let dx = Int((drag.translation.width / cellWidth).rounded())
-                                        let dy = Int((drag.translation.height / rowHeight).rounded())
-                                        store.move(id: note.id, horizontal: dx, vertical: dy)
-                                    }
-                            )
-                            .accessibilityLabel("\(note.instrument.label), note position \(note.row + 1), step \(note.step + 1)")
-                    }
-                    if let step = audio.playheadStep {
-                        Capsule().fill(PlinkaStyle.teal)
-                            .frame(width: 3, height: rowHeight * 8 + 37)
-                            .shadow(color: PlinkaStyle.teal.opacity(0.55), radius: 5)
-                            .position(x: gutter + (CGFloat(step) + 0.5) * cellWidth,
-                                      y: top + rowHeight * 4)
-                    }
-                    // Minimal scroll anchors used to follow the playhead.
-                    ForEach(0..<SongStore.steps, id: \.self) { step in
-                        Color.clear.frame(width: 1, height: 1)
-                            .position(x: gutter + CGFloat(step) * cellWidth, y: 2)
-                            .id(step)
-                    }
+    var body: some View {
+        ZStack(alignment: .topLeading) {
+            Canvas { context, _ in
+                for row in stride(from: 0, through: 8, by: 2) {
+                    let y = metrics.top + CGFloat(row) * metrics.row
+                    var path = Path()
+                    path.move(to: CGPoint(x: metrics.gutter - 12, y: y))
+                    path.addLine(to: CGPoint(x: metrics.width, y: y))
+                    context.stroke(path, with: .color(PlukiStyle.ink.opacity(0.85)), lineWidth: 1.6)
                 }
-                .frame(width: trackWidth, height: trackHeight)
-                .background(.white)
+                for step in 0..<SongStore.steps {
+                    let x = metrics.x(Double(step))
+                    var path = Path()
+                    path.move(to: CGPoint(x: x, y: 28))
+                    path.addLine(to: CGPoint(x: x, y: metrics.height - 15))
+                    context.stroke(path, with: .color(PlukiStyle.ink.opacity(step.isMultiple(of: 2) ? 0.12 : 0.05)),
+                                   style: StrokeStyle(lineWidth: 1, dash: [5, 6]))
+                }
+            }.frame(width: metrics.width, height: metrics.height)
+            Rectangle().fill(.clear).contentShape(Rectangle())
+                .frame(width: metrics.width, height: metrics.height)
+                .onTapGesture { location in
+                    guard !audio.isPlaying, location.x >= metrics.gutter else { return }
+                    let row = Int(((location.y - metrics.top) / metrics.row).rounded())
+                    let step = Int(floor((location.x - metrics.gutter) / metrics.cell))
+                    if let note = store.tap(step: step, row: row) { audio.preview(note.instrument, row: note.row) }
+                }
+            Text("𝄞").font(.system(size: metrics.row * 7.5))
+                .position(x: metrics.gutter * 0.46, y: metrics.top + metrics.row * 4)
+                .allowsHitTesting(false)
+            ForEach(0..<SongStore.steps, id: \.self) { step in
+                Text(step.isMultiple(of: 2) ? "\(step / 2 + 1)" : "·")
+                    .font(.system(size: metrics.short ? 11 : 15, weight: .bold, design: .rounded))
+                    .foregroundStyle(PlukiStyle.ink.opacity(0.4))
+                    .position(x: metrics.x(Double(step)), y: 16)
+                    .allowsHitTesting(false)
             }
-            .scrollIndicators(.visible, axes: .horizontal)
-            .onChange(of: Int(audio.playheadStep ?? 0)) { _, newStep in
-                if audio.isPlaying && newStep > 4 && newStep.isMultiple(of: 4) {
-                    withAnimation(.easeOut(duration: 0.15)) {
-                        scroller.scrollTo(min(31, newStep + 4), anchor: .center)
+            ForEach(store.song.notes) { note in
+                let active = audio.isPlaying && Int(audio.playheadStep ?? -1) == note.step
+                Image(note.instrument.rawValue).resizable().scaledToFit()
+                    .frame(width: metrics.sticker, height: metrics.sticker)
+                    .background {
+                        if active { Circle().fill(PlukiStyle.blue.opacity(0.18)).padding(-3) }
                     }
-                }
+                    .overlay {
+                        if store.selectedID == note.id && !audio.isPlaying {
+                            RoundedRectangle(cornerRadius: 12).strokeBorder(PlukiStyle.blue, lineWidth: 2).padding(-2)
+                        }
+                    }
+                    .frame(minWidth: 44, minHeight: 44)
+                    .contentShape(Rectangle())
+                    .position(x: metrics.x(Double(note.step)), y: metrics.top + CGFloat(note.row) * metrics.row)
+                    .onTapGesture {
+                        guard !audio.isPlaying else { return }
+                        if store.erasing { store.remove(id: note.id) }
+                        else { store.selectedID = note.id; audio.preview(note.instrument, row: note.row) }
+                    }
+                    .simultaneousGesture(DragGesture(minimumDistance: 12).onEnded { drag in
+                        guard !audio.isPlaying else { return }
+                        store.move(id: note.id,
+                                   horizontal: Int((drag.translation.width / metrics.cell).rounded()),
+                                   vertical: Int((drag.translation.height / metrics.row).rounded()))
+                    })
+                    .accessibilityLabel("\(note.instrument.label), pitch position \(note.row + 1), step \(note.step + 1)")
             }
         }
-        .frame(height: trackHeight)
-        .clipShape(RoundedRectangle(cornerRadius: 20))
-        .overlay {
-            RoundedRectangle(cornerRadius: 20)
-                .strokeBorder(Color(red: 0.86, green: 0.91, blue: 0.95), lineWidth: 2)
+        .frame(width: metrics.width, height: metrics.height)
+    }
+}
+
+/// The staff is hosted in a real scroll view. A display link moves only the
+/// lightweight playhead and scroll offset; SwiftUI doesn't rebuild at 60 Hz.
+private struct FollowScrollView<Content: View>: UIViewControllerRepresentable {
+    let audio: PlinkaAudio
+    let metrics: StaffMetrics
+    @ViewBuilder let content: () -> Content
+
+    func makeUIViewController(context: Context) -> FollowController<Content> {
+        FollowController(audio: audio, metrics: metrics, content: content())
+    }
+    func updateUIViewController(_ controller: FollowController<Content>, context: Context) {
+        controller.metrics = metrics
+        controller.host.rootView = content()
+        controller.view.setNeedsLayout()
+    }
+    static func dismantleUIViewController(_ controller: FollowController<Content>, coordinator: ()) {
+        controller.invalidate()
+    }
+}
+
+@MainActor
+private final class FrameTarget: NSObject {
+    var callback: (() -> Void)?
+    @objc func frame() { callback?() }
+}
+
+@MainActor
+private final class FollowController<Content: View>: UIViewController {
+    let audio: PlinkaAudio
+    var metrics: StaffMetrics
+    let host: UIHostingController<Content>
+    private let scroll = UIScrollView()
+    private let playhead = UIView()
+    private let marker = UIView()
+    private let target = FrameTarget()
+    private var link: CADisplayLink?
+    private var wasPlaying = false
+
+    init(audio: PlinkaAudio, metrics: StaffMetrics, content: Content) {
+        self.audio = audio; self.metrics = metrics
+        host = UIHostingController(rootView: content)
+        super.init(nibName: nil, bundle: nil)
+    }
+    required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        view.backgroundColor = .clear
+        scroll.backgroundColor = .clear
+        scroll.contentInsetAdjustmentBehavior = .never
+        scroll.showsHorizontalScrollIndicator = true
+        scroll.alwaysBounceVertical = false
+        scroll.isDirectionalLockEnabled = true
+        scroll.delaysContentTouches = false
+        view.addSubview(scroll)
+        addChild(host)
+        host.view.backgroundColor = .clear
+        // This is a wide music canvas, not a screen-sized child safe area.
+        host.safeAreaRegions = []
+        scroll.addSubview(host.view)
+        host.didMove(toParent: self)
+        for item in [playhead, marker] {
+            item.backgroundColor = UIColor(red: 0.13, green: 0.69, blue: 0.90, alpha: 1)
+            item.isUserInteractionEnabled = false
+            item.layer.cornerRadius = 2
+            scroll.addSubview(item)
         }
+        target.callback = { [weak self] in self?.advanceFrame() }
+    }
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        if link == nil {
+            let display = CADisplayLink(target: target, selector: #selector(FrameTarget.frame))
+            display.preferredFrameRateRange = CAFrameRateRange(minimum: 30, maximum: 60, preferred: 60)
+            display.add(to: .main, forMode: .common)
+            link = display
+        }
+    }
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        invalidate()
+    }
+    func invalidate() { link?.invalidate(); link = nil }
+
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        scroll.frame = view.bounds
+        host.view.frame = CGRect(x: 0, y: 0, width: metrics.width, height: metrics.height)
+        scroll.contentSize = host.view.frame.size
+        advanceFrame()
+    }
+
+    private func advanceFrame() {
+        let playing = audio.isPlaying
+        scroll.isScrollEnabled = !playing || audio.isPaused
+        playhead.isHidden = !playing
+        marker.isHidden = !playing
+        guard playing else {
+            if wasPlaying { scroll.setContentOffset(.zero, animated: false) }
+            wasPlaying = false
+            return
+        }
+        wasPlaying = true
+        guard let step = audio.currentPlaybackStep() else { return }
+        let x = metrics.x(step)
+        playhead.frame = CGRect(x: x - 1.5, y: 25, width: 3, height: max(1, metrics.height - 38))
+        marker.frame = CGRect(x: x - 5, y: 22, width: 10, height: 8)
+        guard !audio.isPaused else { return }
+        // Continuous movement begins when the playhead reaches 38% of the
+        // viewport. Clamp at both ends; a loop resets directly to its first beat.
+        let desired = max(0, min(metrics.width - scroll.bounds.width, x - scroll.bounds.width * 0.38))
+        scroll.setContentOffset(CGPoint(x: desired, y: 0), animated: false)
     }
 }
