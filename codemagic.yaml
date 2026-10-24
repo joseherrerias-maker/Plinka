@@ -1,9 +1,9 @@
-# Plinka iOS native app - low-cost, manually triggered compile check.
-# The web demo remains hosted from root index.html via GitHub Pages.
-#
-# This workflow intentionally skips signing, App Store upload, simulators
-# running tests, and automatic triggers to protect Codemagic build minutes.
-# Its .app artifact is for an iOS Simulator, NOT for installing on an iPhone.
+# Plinka iOS: two manually selected workflows (no automatic triggers).
+# 1. plinka-ios-compile: unsigned simulator compile, no Apple credentials.
+# 2. plinka-ios-testflight: signed device archive and upload to TestFlight.
+# The root web demo and GitHub Pages deployment remain unchanged.
+# Apple API credentials must be entered as Codemagic Secret environment variables,
+# NEVER in this public GitHub repository.
 workflows:
   plinka-ios-compile:
     name: Plinka iOS - Compile Only
@@ -30,3 +30,64 @@ workflows:
     artifacts:
       - build/plinka-ios-compile.log
       - build/derived/Build/Products/Debug-iphonesimulator/Plinka.app
+
+  plinka-ios-testflight:
+    name: Plinka iOS - TestFlight Upload
+    instance_type: mac_mini_m2
+    max_build_duration: 30
+    environment:
+      xcode: latest
+      groups:
+        - appstore_credentials
+      vars:
+        # Must exactly match the app identifier registered with Apple.
+        BUNDLE_ID: "com.joseherrerias.plinka"
+    scripts:
+      - name: Verify signing credentials
+        script: |
+          #!/bin/bash
+          set -euo pipefail
+          for variable in APP_STORE_CONNECT_PRIVATE_KEY APP_STORE_CONNECT_KEY_IDENTIFIER APP_STORE_CONNECT_ISSUER_ID CERTIFICATE_PRIVATE_KEY; do
+            if [ -z "${!variable:-}" ]; then
+              echo "Missing secret ${variable}; configure the appstore_credentials group in Codemagic."
+              exit 1
+            fi
+          done
+          echo "Required Apple credentials are configured."
+      - name: Set up signing keychain
+        script: keychain initialize
+      - name: Fetch Apple distribution certificate and profile
+        script: |
+          app-store-connect fetch-signing-files "$BUNDLE_ID" --type IOS_APP_STORE --create
+      - name: Import distribution certificate
+        script: keychain add-certificates
+      - name: Configure Xcode signing and internal TestFlight export
+        script: |
+          xcode-project use-profiles \
+            --project "$CM_BUILD_DIR/ios/Plinka.xcodeproj" \
+            --custom-export-options='{"testFlightInternalTestingOnly": true}'
+      - name: Build signed Plinka IPA
+        script: |
+          #!/bin/bash
+          set -euo pipefail
+          mkdir -p "$CM_BUILD_DIR/build/ios/ipa"
+          xcode-project build-ipa \
+            --project "$CM_BUILD_DIR/ios/Plinka.xcodeproj" \
+            --scheme "Plinka" \
+            --config "Release" \
+            --archive-xcargs "CURRENT_PROJECT_VERSION=$PROJECT_BUILD_NUMBER" \
+            --ipa-directory "$CM_BUILD_DIR/build/ios/ipa"
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+      - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.dSYM
+    publishing:
+      app_store_connect:
+        # Upload to App Store Connect / TestFlight for internal testing.
+        api_key: $APP_STORE_CONNECT_PRIVATE_KEY
+        key_id: $APP_STORE_CONNECT_KEY_IDENTIFIER
+        issuer_id: $APP_STORE_CONNECT_ISSUER_ID
+        # Avoid automatically submitting for external beta or App Store review.
+        # Add internal testers in App Store Connect once Apple processes the build.
+        submit_to_testflight: false
+        submit_to_app_store: false
