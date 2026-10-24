@@ -1,12 +1,12 @@
-# Plinka — Native iOS prototype (Build 1: simulator compile passed)
+# Pluki — Native iOS prototype (Build 1: simulator compile passed)
 
-This is a **standalone SwiftUI iPhone + iPad app**. The web prototype remains at the repository root as GitHub Pages `index.html`. No web backend or subscription is needed.
+This is a **standalone SwiftUI iPhone + iPad app**. The public-facing name is **Pluki**, while the GitHub repository, Xcode target and bundle identifier retain their original internal Plinka names. The web prototype remains at the repository root as GitHub Pages `index.html`. No web backend or subscription is needed.
 
 ## Open and compile
 
 Open `ios/Plinka.xcodeproj` in Xcode 26 or newer. Select the shared **Plinka** scheme, a device or iOS simulator, and Build. The app targets iOS 17+ on iPhone and iPad.
 
-**Provisioning:** For a signed device build, choose your Apple Developer Team in Signing & Capabilities. The bundle ID `com.joseherrerias.plinka` is a provisional identifier; verify its availability in App Store Connect before distribution.
+**Provisioning:** For a signed device build, choose your Apple Developer Team in Signing & Capabilities. The registered bundle ID `com.joseherrerias.plinka` remains unchanged; the App Store Connect app is named **Pluki**. Keep the existing bundle ID and SKU `PLINKA-IOS-001`.
 
 **Build 1 status:** GitHub Actions successfully compiled the native app for a generic iOS Simulator using Xcode on macOS 26. [Verified build](https://github.com/joseherrerias-maker/Plinka/actions/runs/40045749850). This does not establish real-device runtime testing, code signing, or TestFlight readiness.
 
@@ -33,8 +33,8 @@ Open `ios/Plinka.xcodeproj` in Xcode 26 or newer. Select the shared **Plinka** s
 
 The repository's root [`codemagic.yaml`](../codemagic.yaml) now has **two manually triggered workflows**:
 
-1. **Plinka iOS - Compile Only** (`plinka-ios-compile`): unsigned iOS Simulator build, no Apple credentials, no TestFlight upload.
-2. **Plinka iOS - TestFlight Upload** (`plinka-ios-testflight`): Apple distribution signing, signed Release IPA, and upload to App Store Connect for **internal TestFlight testing only**. It does **not** submit Plinka to App Store review.
+1. **Pluki iOS - Compile Only** (`plinka-ios-compile`): unsigned iOS Simulator build, no Apple credentials, no TestFlight upload.
+2. **Pluki iOS - TestFlight Upload** (`plinka-ios-testflight`): Apple distribution signing, signed Release IPA, and upload to App Store Connect for **internal TestFlight testing only**. It does **not** submit Plinka to App Store review.
 
 Neither workflow starts automatically on a GitHub commit, and both are available under branch `main` when launching a Codemagic build.
 
@@ -44,11 +44,11 @@ Plinka now references the existing Codemagic Developer Portal integration **`Mil
 
 Before running the first signed Plinka build:
 
-1. Register the exact bundle identifier **`com.joseherrerias.plinka`** in Apple Developer and create a new Plinka iOS app record in App Store Connect.
+1. Apple Developer App ID **`com.joseherrerias.plinka`** has been registered and the **Pluki** iOS app record was accepted in App Store Connect.
 2. In Codemagic **Team settings → codemagic.yaml settings → Code signing identities**, verify the existing Apple Distribution certificate is available (Milo uses the reference `Milo Distribution`). A distribution certificate may sign multiple apps belonging to the same Apple Developer team.
 3. Create/fetch an **App Store provisioning profile for Plinka's bundle ID** and add it to Codemagic's iOS provisioning profiles. Milo's provisioning profile belongs to Milo's bundle ID and cannot be reused for Plinka. Codemagic selects the Plinka profile using `ios_signing.distribution_type: app_store` and `bundle_identifier: com.joseherrerias.plinka`.
-4. Supply a valid iOS App Store icon in Plinka's native asset catalog; the initial SwiftUI skeleton has no final icon yet.
-5. In Codemagic → Plinka → **Start new build** → `main` → **Plinka iOS - TestFlight Upload**.
+4. Supply a valid iOS App Store icon in Pluki's native asset catalog; the initial SwiftUI skeleton has no final icon yet.
+5. In Codemagic → Plinka → **Start new build** → `main` → **Pluki iOS - TestFlight Upload**.
 
 The workflow builds a signed Release IPA and uploads it to App Store Connect for **internal TestFlight testing only**, without submitting for external beta or public App Store review. Add internal testers in App Store Connect after Apple's processing finishes. It remains manual so it doesn't automatically consume Codemagic minutes.
 
