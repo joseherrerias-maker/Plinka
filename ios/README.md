@@ -29,8 +29,21 @@ Open `ios/Plinka.xcodeproj` in Xcode 26 or newer. Select the shared **Plinka** s
 - Analytics, accounts, cloud storage
 - Final Apple signing, TestFlight release or App Store submission
 
-## Cloud build
+## Codemagic - compile only (manual)
 
-Apple Xcode Cloud supports this repository and requires a shared archivable scheme (included here), an App Store Connect app record, development signing and initial configuration. For your current older Mac, a cloud Mac/Xcode service or Codemagic compile-only workflow may be the practical first-build route.
+The repository root [`codemagic.yaml`](../codemagic.yaml) defines the workflow **Plinka iOS - Compile Only**, ID `plinka-ios-compile`.
+
+1. In [Codemagic](https://codemagic.io/apps), select **Add application**, connect GitHub, and select `joseherrerias-maker/Plinka` (not Milo-Native).
+2. Use the **codemagic.yaml** configuration; select branch `main` and **Check for configuration file** if prompted.
+3. Select **Start new build**, branch `main`, workflow **Plinka iOS - Compile Only**.
+4. Review the build logs and resulting unsigned iOS Simulator `Plinka.app` artifact.
+
+The workflow uses the M2 Mac mini with `xcode: latest`, executes `xcodebuild` on `ios/Plinka.xcodeproj` with scheme `Plinka`, and does not sign, run UI tests, publish, or trigger builds automatically. **No Apple certificates or API credentials are required** for this compile check. This is not a signed installable iPhone/iPad `.ipa`; Apple signing and provisioning must be configured separately for real-device testing or TestFlight.
+
+The **GitHub Actions iOS simulator compile passed** independently on [Build 1](https://github.com/joseherrerias-maker/Plinka/actions/runs/40045749850). A Codemagic build has not been run or verified yet.
+
+## Other cloud-build option
+
+Apple Xcode Cloud also supports this repository with a shared scheme and App Store Connect integration, but Codemagic is now configured for manual compile-only builds.
 
 Keep all iOS files under `ios/`. Do not move or replace the root `index.html`: GitHub Pages should keep working.
