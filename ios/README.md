@@ -38,27 +38,23 @@ The repository's root [`codemagic.yaml`](../codemagic.yaml) now has **two manual
 
 Neither workflow starts automatically on a GitHub commit, and both are available under branch `main` when launching a Codemagic build.
 
-### One-time Apple setup for TestFlight Upload
+### One-time setup for TestFlight Upload — reuse Milo integration
 
-- A paid **Apple Developer Program** membership and permission to manage App Store Connect keys are required.
-- Register **`com.joseherrerias.plinka`** as an App ID in Apple Developer and create a new app record named Plinka in App Store Connect using the exact same bundle identifier. It is still a provisional bundle ID until it is registered.
-- In App Store Connect → Users and Access → Integrations → App Store Connect API, create an API key (App Manager access) for Codemagic. **Do not paste the private key into this chat or commit it to GitHub.**
-- In Codemagic → Plinka → Environment variables, create a group named exactly **`appstore_credentials`** with these **Secret** variables:
-  - `APP_STORE_CONNECT_PRIVATE_KEY`: full content of the downloaded .p8 API key
-  - `APP_STORE_CONNECT_KEY_IDENTIFIER`: App Store Connect key ID
-  - `APP_STORE_CONNECT_ISSUER_ID`: issuer ID
-  - `CERTIFICATE_PRIVATE_KEY`: PEM-encoded signing key used to create/fetch the Apple distribution certificate; Codemagic's signing documentation explains how to generate/export this key
-- From Codemagic select **Start new build → main → Plinka iOS - TestFlight Upload**. The workflow fetches/creates the appropriate Apple distribution files, configures signing, increases the build number using `PROJECT_BUILD_NUMBER`, archives the native Xcode project, and uploads the IPA.
+Plinka now references the existing Codemagic Developer Portal integration **`Milo Codemagic 2`**, already used by Milo's working signed workflow. No duplicate App Store Connect API key or `appstore_credentials` group is required.
 
-### Important limitations / checks
+Before running the first signed Plinka build:
 
-- **Before the first TestFlight upload:** Finish adding a valid iOS app icon asset. The native Build 1 project was intentionally created without a final branded asset catalog, and Apple may reject uploads missing required icons. Also check the app record, bundle ID and any Apple compliance questions.
-- The workflow requests **TestFlight Internal Testing Only** in its export options; add the relevant internal testers in App Store Connect after Apple finishes processing the uploaded build.
-- Codemagic credentials, provisioning and the .p8 private key are not currently available to this ChatGPT session. Only you can complete those secure Codemagic / Apple steps.
-- The signed TestFlight workflow **has not yet run**. The separate [GitHub Actions simulator build](https://github.com/joseherrerias-maker/Plinka/actions/runs/40045749850) was successful.
-- The workflow is deliberately **manual** to conserve your Codemagic credits; it does not run visual or UI tests.
+1. Register the exact bundle identifier **`com.joseherrerias.plinka`** in Apple Developer and create a new Plinka iOS app record in App Store Connect.
+2. In Codemagic **Team settings → codemagic.yaml settings → Code signing identities**, verify the existing Apple Distribution certificate is available (Milo uses the reference `Milo Distribution`). A distribution certificate may sign multiple apps belonging to the same Apple Developer team.
+3. Create/fetch an **App Store provisioning profile for Plinka's bundle ID** and add it to Codemagic's iOS provisioning profiles. Milo's provisioning profile belongs to Milo's bundle ID and cannot be reused for Plinka. Codemagic selects the Plinka profile using `ios_signing.distribution_type: app_store` and `bundle_identifier: com.joseherrerias.plinka`.
+4. Supply a valid iOS App Store icon in Plinka's native asset catalog; the initial SwiftUI skeleton has no final icon yet.
+5. In Codemagic → Plinka → **Start new build** → `main` → **Plinka iOS - TestFlight Upload**.
 
-References: [Codemagic signing guide](https://docs.codemagic.io/yaml-code-signing/alternative-code-signing-methods/), [TestFlight publishing guide](https://docs.codemagic.io/yaml-publishing/app-store-connect/), and [native iOS guide](https://docs.codemagic.io/yaml-quick-start/building-a-native-ios-app/).
+The workflow builds a signed Release IPA and uploads it to App Store Connect for **internal TestFlight testing only**, without submitting for external beta or public App Store review. Add internal testers in App Store Connect after Apple's processing finishes. It remains manual so it doesn't automatically consume Codemagic minutes.
+
+**Status:** iOS unsigned simulator compilation passed in [GitHub Actions Build 1](https://github.com/joseherrerias-maker/Plinka/actions/runs/40045749850). The new Codemagic signed/TestFlight workflow has **not been run**. A connected Developer Portal integration does not itself verify that Plinka's app record, distribution certificate, provisioning profile, or app icon is ready.
+
+References: [Codemagic signing guide](https://docs.codemagic.io/yaml-code-signing/signing-ios/), [TestFlight publishing guide](https://docs.codemagic.io/yaml-publishing/app-store-connect/), [native iOS guide](https://docs.codemagic.io/yaml-quick-start/building-a-native-ios-app/).
 
 ## Other cloud-build option
 
