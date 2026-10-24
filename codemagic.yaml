@@ -1,0 +1,32 @@
+# Plinka iOS native app - low-cost, manually triggered compile check.
+# The web demo remains hosted from root index.html via GitHub Pages.
+#
+# This workflow intentionally skips signing, App Store upload, simulators
+# running tests, and automatic triggers to protect Codemagic build minutes.
+# Its .app artifact is for an iOS Simulator, NOT for installing on an iPhone.
+workflows:
+  plinka-ios-compile:
+    name: Plinka iOS - Compile Only
+    instance_type: mac_mini_m2
+    max_build_duration: 20
+    environment:
+      xcode: latest
+    scripts:
+      - name: Compile Plinka for iOS Simulator (unsigned)
+        script: |
+          #!/bin/bash
+          set -euo pipefail
+          mkdir -p "$CM_BUILD_DIR/build"
+          xcodebuild \
+            -project "$CM_BUILD_DIR/ios/Plinka.xcodeproj" \
+            -scheme "Plinka" \
+            -configuration Debug \
+            -sdk iphonesimulator \
+            -destination "generic/platform=iOS Simulator" \
+            -derivedDataPath "$CM_BUILD_DIR/build/derived" \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            build 2>&1 | tee "$CM_BUILD_DIR/build/plinka-ios-compile.log"
+    artifacts:
+      - build/plinka-ios-compile.log
+      - build/derived/Build/Products/Debug-iphonesimulator/Plinka.app
