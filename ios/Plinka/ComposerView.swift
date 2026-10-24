@@ -18,14 +18,14 @@ struct ComposerView: View {
     var body: some View {
         GeometryReader { geometry in
             let short = geometry.size.height < 500
-            let narrow = geometry.size.width < 600
+            let narrow = geometry.size.width < 780
             let padding: CGFloat = short ? 8 : 16
             let gap: CGFloat = short ? 8 : 12
             let toolbar: CGFloat = narrow ? 108 : (short ? 52 : 72)
             let tray: CGFloat = short ? 68 : 106
             let staffHeight = max(100, geometry.size.height - 2 * padding - 2 * gap - toolbar - tray)
             VStack(spacing: gap) {
-                toolbarView(narrow: narrow, short: short)
+                toolbarView(narrow: narrow, short: short, iconOnlyBrand: geometry.size.width < 400)
                     .frame(height: toolbar)
                 StaffView(store: store, audio: audio, height: staffHeight, short: short)
                     .frame(height: staffHeight)
@@ -51,12 +51,21 @@ struct ComposerView: View {
         }
     }
 
-    private func toolbarView(narrow: Bool, short: Bool) -> some View {
+    private func toolbarView(narrow: Bool, short: Bool, iconOnlyBrand: Bool) -> some View {
         Group {
             if narrow {
                 VStack(spacing: 6) {
                     HStack {
-                        wordmark(small: true)
+                        if iconOnlyBrand {
+                            Image(systemName: "music.note")
+                                .font(.system(size: 25, weight: .black))
+                                .foregroundStyle(PlukiStyle.green)
+                                .frame(width: 44, height: 44)
+                                .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 15))
+                                .accessibilityLabel("Pluki")
+                        } else {
+                            wordmark(small: true)
+                        }
                         Spacer(minLength: 4)
                         editButtons
                     }
@@ -108,6 +117,11 @@ struct ComposerView: View {
             .opacity(store.song.notes.isEmpty ? 0.5 : 1)
             .accessibilityLabel(audio.isPaused ? "Resume" : (audio.isPlaying ? "Pause" : "Play"))
             tool("stop.fill", title: "Stop", disabled: !audio.isPlaying) { audio.stop() }
+            tool("repeat", title: "Loop", selected: store.song.loop) {
+                store.song.loop.toggle()
+                audio.updateLoop(store.song)
+            }
+            .accessibilityValue(store.song.loop ? "On" : "Off")
         }
     }
 
@@ -115,19 +129,33 @@ struct ComposerView: View {
         HStack(spacing: 4) {
             tool("arrow.uturn.backward", title: "Undo", disabled: !store.canUndo || audio.isPlaying) { store.undo() }
             tool("arrow.uturn.forward", title: "Redo", disabled: !store.canRedo || audio.isPlaying) { store.redo() }
+            tool(store.erasing ? "eraser.fill" : "eraser", title: "Eraser",
+                 disabled: audio.isPlaying, selected: store.erasing) {
+                store.erasing.toggle()
+                store.selectedID = nil
+            }
+            .accessibilityValue(store.erasing ? "On" : "Off")
+            tool("trash", title: "Clear all notes", disabled: audio.isPlaying || store.song.notes.isEmpty) {
+                confirmClear = true
+            }
             tool("gearshape.fill", title: "Song settings") { showSettings = true }
         }
     }
 
-    private func tool(_ icon: String, title: String, disabled: Bool = false,
+    private func tool(_ icon: String, title: String, disabled: Bool = false, selected: Bool = false,
                       action: @escaping () -> Void) -> some View {
         Button(action: action) {
             Image(systemName: icon).font(.system(size: 18, weight: .bold))
                 .frame(width: 44, height: 44)
                 .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 15))
+                .overlay(RoundedRectangle(cornerRadius: 15)
+                    .fill(selected ? PlukiStyle.green.opacity(0.22) : .clear))
+                .overlay(RoundedRectangle(cornerRadius: 15)
+                    .strokeBorder(selected ? PlukiStyle.green : .clear, lineWidth: 2))
         }
         .buttonStyle(.plain).disabled(disabled).opacity(disabled ? 0.4 : 1)
         .accessibilityLabel(title)
+        .accessibilityAddTraits(selected ? [.isSelected] : [])
     }
 
     private func tempo(compact: Bool) -> some View {
@@ -141,7 +169,7 @@ struct ComposerView: View {
                 .accessibilityLabel("Tempo").accessibilityValue("\(Int(store.song.tempo)) beats per minute")
         }
         .padding(.horizontal, 8)
-        .frame(minWidth: 95, maxWidth: compact ? 155 : 240, minHeight: 44)
+        .frame(minWidth: compact ? 82 : 95, maxWidth: compact ? 155 : 240, minHeight: 44)
         .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 15))
     }
 
@@ -184,13 +212,8 @@ struct ComposerView: View {
             Form {
                 Section("Your song") {
                     TextField("Song name", text: $store.song.title)
-                    Toggle("Loop playback", isOn: $store.song.loop)
-                        .onChange(of: store.song.loop) { _, _ in audio.updateLoop(store.song) }
                 }
                 Section("Compose") {
-                    Toggle("Eraser", isOn: $store.erasing).disabled(audio.isPlaying)
-                    Button("Clear all notes", role: .destructive) { confirmClear = true }
-                        .disabled(audio.isPlaying || store.song.notes.isEmpty)
                     Text("Choose a sound, then tap the staff. Move a sticker up or down to change pitch, or sideways to change timing.")
                 }
                 if let error = audio.audioError { Section { Text(error).foregroundStyle(.red) } }
