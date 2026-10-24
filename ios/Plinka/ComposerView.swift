@@ -1,5 +1,6 @@
 import SwiftUI
 import UIKit
+import CoreText
 
 private enum PlukiStyle {
     static let ink = Color(red: 0.13, green: 0.22, blue: 0.34)
@@ -14,6 +15,13 @@ struct ComposerView: View {
     @Environment(\.scenePhase) private var scenePhase
     @State private var confirmClear = false
     @State private var showSettings = false
+    @State private var soundGroup: SoundGroup = .instruments
+
+    private var versionLabel: String {
+        let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "?"
+        let build = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "?"
+        return "Pluki · Version \(version) · Build \(build)"
+    }
 
     var body: some View {
         GeometryReader { geometry in
@@ -22,7 +30,7 @@ struct ComposerView: View {
             let padding: CGFloat = short ? 8 : 16
             let gap: CGFloat = short ? 8 : 12
             let toolbar: CGFloat = narrow ? 108 : (short ? 52 : 72)
-            let tray: CGFloat = short ? 68 : 106
+            let tray: CGFloat = short ? 94 : 140
             let staffHeight = max(100, geometry.size.height - 2 * padding - 2 * gap - toolbar - tray)
             VStack(spacing: gap) {
                 toolbarView(narrow: narrow, short: short, iconOnlyBrand: geometry.size.width < 400)
@@ -174,35 +182,57 @@ struct ComposerView: View {
     }
 
     private func instrumentTray(short: Bool) -> some View {
-        GeometryReader { geometry in
-            ScrollView(.horizontal) {
-                HStack(spacing: 8) {
-                    ForEach(Instrument.allCases) { instrument in
-                        Button {
-                            store.choose(instrument)
-                            audio.preview(instrument, row: 5)
-                        } label: {
-                            VStack(spacing: 0) {
-                                Image(instrument.rawValue).resizable().scaledToFit()
-                                    .frame(height: short ? 39 : 67)
-                                Text(instrument.label)
-                                    .font(.system(size: short ? 10 : 12, weight: .bold, design: .rounded))
-                                    .lineLimit(1)
-                            }
-                            .frame(width: max(short ? 64 : 86, (geometry.size.width - 16 - 7 * 8) / 8),
-                                   height: short ? 56 : 94)
-                            .background(store.chosen == instrument && !store.erasing
-                                ? Color(red: 0.86, green: 0.97, blue: 1) : instrument.tint.opacity(0.12),
-                                in: RoundedRectangle(cornerRadius: 15))
-                            .overlay(RoundedRectangle(cornerRadius: 15).strokeBorder(
-                                store.chosen == instrument && !store.erasing ? PlukiStyle.blue : .clear, lineWidth: 2))
-                        }
-                        .buttonStyle(.plain).disabled(audio.isPlaying)
-                        .accessibilityLabel(instrument.label)
-                        .accessibilityAddTraits(store.chosen == instrument ? [.isSelected] : [])
+        VStack(spacing: 2) {
+            HStack(spacing: 6) {
+                ForEach(SoundGroup.allCases) { group in
+                    Button {
+                        soundGroup = group
+                        store.choose(group.instruments[0])
+                    } label: {
+                        Label(group.rawValue, systemImage: group.icon)
+                            .font(.system(size: short ? 11 : 12, weight: .bold, design: .rounded))
+                            .frame(maxWidth: .infinity, minHeight: short ? 24 : 28)
+                            .background(soundGroup == group ? PlukiStyle.blue.opacity(0.16) : .clear,
+                                        in: Capsule())
+                            .contentShape(Rectangle())
                     }
-                }.padding(.horizontal, 8).padding(.vertical, 6)
-            }.scrollIndicators(.hidden)
+                    .buttonStyle(.plain)
+                    .disabled(audio.isPlaying)
+                    .accessibilityAddTraits(soundGroup == group ? [.isSelected] : [])
+                }
+            }.padding(.horizontal, 8).padding(.top, 4)
+            GeometryReader { geometry in
+                ScrollView(.horizontal) {
+                    HStack(spacing: 8) {
+                        ForEach(soundGroup.instruments) { instrument in
+                            Button {
+                                store.choose(instrument)
+                                audio.preview(instrument, row: 5)
+                            } label: {
+                                VStack(spacing: 0) {
+                                    InstrumentSticker(instrument: instrument)
+                                        .frame(height: short ? 41 : 74)
+                                    Text(instrument.label)
+                                        .font(.system(size: short ? 10 : 12, weight: .bold, design: .rounded))
+                                        .lineLimit(1)
+                                }
+                                .frame(width: max(short ? 72 : 92, (geometry.size.width - 16 - 7 * 8) / 8),
+                                       height: short ? 56 : 98)
+                                .background(store.chosen == instrument && !store.erasing
+                                    ? Color(red: 0.86, green: 0.97, blue: 1) : instrument.tint.opacity(0.16),
+                                    in: RoundedRectangle(cornerRadius: 15))
+                                .overlay(RoundedRectangle(cornerRadius: 15).strokeBorder(
+                                    store.chosen == instrument && !store.erasing ? PlukiStyle.blue : .clear, lineWidth: 2))
+                            }
+                            .buttonStyle(.plain).disabled(audio.isPlaying)
+                            .accessibilityLabel(instrument.label)
+                            .accessibilityAddTraits(store.chosen == instrument ? [.isSelected] : [])
+                        }
+                    }.padding(.horizontal, 8).padding(.vertical, 4)
+                }
+                .id(soundGroup)
+                .scrollIndicators(.visible)
+            }
         }
         .background(PlukiStyle.paper.opacity(0.96), in: RoundedRectangle(cornerRadius: 22))
     }
@@ -214,16 +244,67 @@ struct ComposerView: View {
                     TextField("Song name", text: $store.song.title)
                 }
                 Section("Compose") {
-                    Text("Choose a sound, then tap the staff. Move a sticker up or down to change pitch, or sideways to change timing.")
+                    Text("Choose Instruments, Animals, or Fun below the staff, then choose a sound and tap the staff. Move a sticker up or down to change pitch, or sideways to change timing.")
                 }
                 if let error = audio.audioError { Section { Text(error).foregroundStyle(.red) } }
-                Section { Text("Pluki · Version 0.2.0").foregroundStyle(.secondary) }
+                Section { Text(versionLabel).foregroundStyle(.secondary) }
             }
             .navigationTitle("Song settings")
             .toolbar { ToolbarItem(placement: .confirmationAction) { Button("Done") { showSettings = false } } }
         }
         .presentationDetents([.medium, .large])
     }
+}
+
+private enum SoundGroup: String, CaseIterable, Identifiable {
+    case instruments = "Instruments", animals = "Animals", fun = "Fun"
+    var id: String { rawValue }
+    var icon: String {
+        switch self {
+        case .instruments: return "pianokeys"
+        case .animals: return "pawprint.fill"
+        case .fun: return "star.fill"
+        }
+    }
+    var instruments: [Instrument] {
+        switch self {
+        case .instruments: return [.piano, .xylophone, .guitar, .trumpet, .flute, .bells, .synth, .drums]
+        case .animals: return [.puppy, .kitten]
+        case .fun: return [.sparkle, .boing]
+        }
+    }
+}
+
+private struct InstrumentSticker: View {
+    let instrument: Instrument
+    var body: some View {
+        Image(instrument.rawValue).resizable().scaledToFit()
+            .saturation(1.25).contrast(1.06)
+            .shadow(color: instrument.tint.opacity(0.25), radius: 1.5, y: 2)
+    }
+}
+
+@MainActor
+private enum ClefArtwork {
+    // Use the actual glyph's ink bounds, including font fallback and overhang.
+    // A fixed transparent image can then fit inside the gutter at every height.
+    static let image: UIImage = {
+        let text = NSAttributedString(string: "𝄞", attributes: [
+            .font: UIFont.systemFont(ofSize: 240),
+            .foregroundColor: UIColor(red: 0.13, green: 0.22, blue: 0.34, alpha: 1)
+        ])
+        let line = CTLineCreateWithAttributedString(text as CFAttributedString)
+        let bounds = CTLineGetBoundsWithOptions(line, .useGlyphPathBounds).integral
+        guard !bounds.isNull, !bounds.isInfinite, !bounds.isEmpty else { return UIImage() }
+        let size = CGSize(width: max(1, bounds.width + 8), height: max(1, bounds.height + 8))
+        return UIGraphicsImageRenderer(size: size).image { renderer in
+            let context = renderer.cgContext
+            context.translateBy(x: 4 - bounds.minX, y: 4 + bounds.maxY)
+            context.scaleBy(x: 1, y: -1)
+            context.textPosition = .zero
+            CTLineDraw(line, context)
+        }
+    }()
 }
 
 private struct StaffView: View {
@@ -255,7 +336,7 @@ private struct StaffMetrics {
     var cell: CGFloat { short ? 60 : 84 }
     var gutter: CGFloat { short ? 60 : 90 }
     var width: CGFloat { gutter + CGFloat(SongStore.steps) * cell + 16 }
-    var sticker: CGFloat { min(short ? 40 : 66, row * 2.3) }
+    var sticker: CGFloat { min(short ? 48 : 78, row * (short ? 3.4 : 2.6)) }
     func x(_ step: Double) -> CGFloat { gutter + (CGFloat(step) + 0.5) * cell }
 }
 
@@ -291,8 +372,9 @@ private struct StaffContent: View {
                     let step = Int(floor((location.x - metrics.gutter) / metrics.cell))
                     if let note = store.tap(step: step, row: row) { audio.preview(note.instrument, row: note.row) }
                 }
-            Text("𝄞").font(.system(size: metrics.row * 7.5))
-                .position(x: metrics.gutter * 0.46, y: metrics.top + metrics.row * 4)
+            Image(uiImage: ClefArtwork.image).resizable().scaledToFit()
+                .frame(width: metrics.gutter - 24, height: metrics.row * 7)
+                .position(x: metrics.gutter * 0.5, y: metrics.top + metrics.row * 4)
                 .allowsHitTesting(false)
             ForEach(0..<SongStore.steps, id: \.self) { step in
                 Text(step.isMultiple(of: 2) ? "\(step / 2 + 1)" : "·")
@@ -303,7 +385,7 @@ private struct StaffContent: View {
             }
             ForEach(store.song.notes) { note in
                 let active = audio.isPlaying && Int(audio.playheadStep ?? -1) == note.step
-                Image(note.instrument.rawValue).resizable().scaledToFit()
+                InstrumentSticker(instrument: note.instrument)
                     .frame(width: metrics.sticker, height: metrics.sticker)
                     .background {
                         if active { Circle().fill(PlukiStyle.blue.opacity(0.18)).padding(-3) }
