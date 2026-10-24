@@ -18,9 +18,8 @@ struct ComposerView: View {
     @State private var soundGroup: SoundGroup = .instruments
 
     private var versionLabel: String {
-        let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "?"
-        let build = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "?"
-        return "Pluki · Version \(version) · Build \(build)"
+        let build = Bundle.main.object(forInfoDictionaryKey: "PlukiReleaseBuild") as? String ?? "?"
+        return "Build \(build)"
     }
 
     var body: some View {

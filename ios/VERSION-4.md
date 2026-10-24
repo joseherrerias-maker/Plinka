@@ -1,5 +1,11 @@
 # Pluki Build 4 — 0.3.1
 
+Follow-up label correction after compilation: Settings displays only `Build 4`.
+The display number comes from `PLUKI_RELEASE_BUILD` in the project, independently
+of the Codemagic/Apple build counter. Increment it for each named Pluki build.
+Apple version and build metadata are retained for distribution. The original
+compiled Build 4 archive is preserved; this correction needs a new compilation.
+
 Fixes prompted by the user-confirmed Build 3 TestFlight installation:
 - Settings now reads the installed app version and Apple build number from
   Bundle.main. The previous literal "0.2.0" was misleading even in Build 3.
