@@ -1,6 +1,6 @@
-# Plinka 🎵
+# Pluki 🎵
 
-**Plinka** is an experimental, colorful music composer inspired by the intuitive note-placement of classic creative games. Designed iPad-first for ages approximately 3–8, with room for older creators.
+**Pluki** is an experimental, colorful music composer inspired by the intuitive note-placement of classic creative games. Designed iPad-first for ages approximately 3–8, with room for older creators.
 
 ## Playable prototype (v0.4)
 
@@ -42,10 +42,13 @@ Music is saved in the browser’s local storage on the device, not uploaded to G
 This is a mechanics-first proof of concept, **not** a finished app or App Store build. Sound quality, touch UX, note layering, accessibility, and iOS device testing remain to be refined.
 
 No software license is granted by including this README. This is an unpublished prototype owned by its creator.
+
+**Branding note (October 2026):** The app's public name is **Pluki**, accepted in App Store Connect. The GitHub repository URL, Xcode project/scheme, SKU `PLINKA-IOS-001`, and registered bundle identifier `com.joseherrerias.plinka` remain unchanged to preserve existing development and Apple signing configuration.
+
 ## Native iOS app (Build 1)
 
 The native SwiftUI source and Xcode project are under [`ios/`](ios/). A compile-only GitHub Actions workflow passed its first unsigned simulator build on October 23, 2026 (Pacific time). This does not yet mean the app was installed or tested on an iPhone or iPad. See [iOS build notes](ios/README.md).
 
 ## Build iOS with Codemagic
 
-The root [`codemagic.yaml`](codemagic.yaml) provides **Plinka iOS - Compile Only** (unsigned simulator check) and **Plinka iOS - TestFlight Upload** (signed IPA sent to App Store Connect for internal testers). Both are manual workflows to conserve Codemagic minutes. TestFlight requires Apple signing credentials and an App Store Connect app record; see the [native iOS setup guide](ios/README.md).
+The root [`codemagic.yaml`](codemagic.yaml) provides **Pluki iOS - Compile Only** (unsigned simulator check) and **Pluki iOS - TestFlight Upload** (signed IPA sent to App Store Connect for internal testers). Both are manual workflows to conserve Codemagic minutes. TestFlight requires Apple signing credentials and an App Store Connect app record; see the [native iOS setup guide](ios/README.md).
