@@ -29,18 +29,36 @@ Open `ios/Plinka.xcodeproj` in Xcode 26 or newer. Select the shared **Plinka** s
 - Analytics, accounts, cloud storage
 - Final Apple signing, TestFlight release or App Store submission
 
-## Codemagic - compile only (manual)
+## Codemagic: compile and TestFlight workflows
 
-The repository root [`codemagic.yaml`](../codemagic.yaml) defines the workflow **Plinka iOS - Compile Only**, ID `plinka-ios-compile`.
+The repository's root [`codemagic.yaml`](../codemagic.yaml) now has **two manually triggered workflows**:
 
-1. In [Codemagic](https://codemagic.io/apps), select **Add application**, connect GitHub, and select `joseherrerias-maker/Plinka` (not Milo-Native).
-2. Use the **codemagic.yaml** configuration; select branch `main` and **Check for configuration file** if prompted.
-3. Select **Start new build**, branch `main`, workflow **Plinka iOS - Compile Only**.
-4. Review the build logs and resulting unsigned iOS Simulator `Plinka.app` artifact.
+1. **Plinka iOS - Compile Only** (`plinka-ios-compile`): unsigned iOS Simulator build, no Apple credentials, no TestFlight upload.
+2. **Plinka iOS - TestFlight Upload** (`plinka-ios-testflight`): Apple distribution signing, signed Release IPA, and upload to App Store Connect for **internal TestFlight testing only**. It does **not** submit Plinka to App Store review.
 
-The workflow uses the M2 Mac mini with `xcode: latest`, executes `xcodebuild` on `ios/Plinka.xcodeproj` with scheme `Plinka`, and does not sign, run UI tests, publish, or trigger builds automatically. **No Apple certificates or API credentials are required** for this compile check. This is not a signed installable iPhone/iPad `.ipa`; Apple signing and provisioning must be configured separately for real-device testing or TestFlight.
+Neither workflow starts automatically on a GitHub commit, and both are available under branch `main` when launching a Codemagic build.
 
-The **GitHub Actions iOS simulator compile passed** independently on [Build 1](https://github.com/joseherrerias-maker/Plinka/actions/runs/40045749850). A Codemagic build has not been run or verified yet.
+### One-time Apple setup for TestFlight Upload
+
+- A paid **Apple Developer Program** membership and permission to manage App Store Connect keys are required.
+- Register **`com.joseherrerias.plinka`** as an App ID in Apple Developer and create a new app record named Plinka in App Store Connect using the exact same bundle identifier. It is still a provisional bundle ID until it is registered.
+- In App Store Connect → Users and Access → Integrations → App Store Connect API, create an API key (App Manager access) for Codemagic. **Do not paste the private key into this chat or commit it to GitHub.**
+- In Codemagic → Plinka → Environment variables, create a group named exactly **`appstore_credentials`** with these **Secret** variables:
+  - `APP_STORE_CONNECT_PRIVATE_KEY`: full content of the downloaded .p8 API key
+  - `APP_STORE_CONNECT_KEY_IDENTIFIER`: App Store Connect key ID
+  - `APP_STORE_CONNECT_ISSUER_ID`: issuer ID
+  - `CERTIFICATE_PRIVATE_KEY`: PEM-encoded signing key used to create/fetch the Apple distribution certificate; Codemagic's signing documentation explains how to generate/export this key
+- From Codemagic select **Start new build → main → Plinka iOS - TestFlight Upload**. The workflow fetches/creates the appropriate Apple distribution files, configures signing, increases the build number using `PROJECT_BUILD_NUMBER`, archives the native Xcode project, and uploads the IPA.
+
+### Important limitations / checks
+
+- **Before the first TestFlight upload:** Finish adding a valid iOS app icon asset. The native Build 1 project was intentionally created without a final branded asset catalog, and Apple may reject uploads missing required icons. Also check the app record, bundle ID and any Apple compliance questions.
+- The workflow requests **TestFlight Internal Testing Only** in its export options; add the relevant internal testers in App Store Connect after Apple finishes processing the uploaded build.
+- Codemagic credentials, provisioning and the .p8 private key are not currently available to this ChatGPT session. Only you can complete those secure Codemagic / Apple steps.
+- The signed TestFlight workflow **has not yet run**. The separate [GitHub Actions simulator build](https://github.com/joseherrerias-maker/Plinka/actions/runs/40045749850) was successful.
+- The workflow is deliberately **manual** to conserve your Codemagic credits; it does not run visual or UI tests.
+
+References: [Codemagic signing guide](https://docs.codemagic.io/yaml-code-signing/alternative-code-signing-methods/), [TestFlight publishing guide](https://docs.codemagic.io/yaml-publishing/app-store-connect/), and [native iOS guide](https://docs.codemagic.io/yaml-quick-start/building-a-native-ios-app/).
 
 ## Other cloud-build option
 
