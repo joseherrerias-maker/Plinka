@@ -1,0 +1,236 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		A01000000000000000000001 /* PlinkaApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A02000000000000000000001 /* PlinkaApp.swift */; };
+		A01000000000000000000002 /* Song.swift in Sources */ = {isa = PBXBuildFile; fileRef = A02000000000000000000002 /* Song.swift */; };
+		A01000000000000000000003 /* AudioPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A02000000000000000000003 /* AudioPlayer.swift */; };
+		A01000000000000000000004 /* ComposerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A02000000000000000000004 /* ComposerView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		A02000000000000000000001 /* PlinkaApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlinkaApp.swift; sourceTree = "<group>"; };
+		A02000000000000000000002 /* Song.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Song.swift; sourceTree = "<group>"; };
+		A02000000000000000000003 /* AudioPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPlayer.swift; sourceTree = "<group>"; };
+		A02000000000000000000004 /* ComposerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComposerView.swift; sourceTree = "<group>"; };
+		A02000000000000000000005 /* Plinka.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Plinka.app; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		A03000000000000000000001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		A04000000000000000000001 = {
+			isa = PBXGroup;
+			children = (
+				A04000000000000000000002 /* Plinka */,
+				A04000000000000000000003 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		A04000000000000000000002 /* Plinka */ = {
+			isa = PBXGroup;
+			children = (
+				A02000000000000000000001 /* PlinkaApp.swift */,
+				A02000000000000000000002 /* Song.swift */,
+				A02000000000000000000003 /* AudioPlayer.swift */,
+				A02000000000000000000004 /* ComposerView.swift */,
+			);
+			path = Plinka;
+			sourceTree = "<group>";
+		};
+		A04000000000000000000003 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A02000000000000000000005 /* Plinka.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		A05000000000000000000001 /* Plinka */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A09000000000000000000002 /* Build configuration list for PBXNativeTarget "Plinka" */;
+			buildPhases = (
+				A06000000000000000000001 /* Sources */,
+				A03000000000000000000001 /* Frameworks */,
+				A07000000000000000000001 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Plinka;
+			productName = Plinka;
+			productReference = A02000000000000000000005 /* Plinka.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		A08000000000000000000001 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastUpgradeCheck = 2600;
+				TargetAttributes = {
+					A05000000000000000000001 = {
+						CreatedOnToolsVersion = 26.0;
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = A09000000000000000000001 /* Build configuration list for PBXProject "Plinka" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = A04000000000000000000001;
+			productRefGroup = A04000000000000000000003 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				A05000000000000000000001 /* Plinka */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		A07000000000000000000001 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		A06000000000000000000001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A01000000000000000000001 /* PlinkaApp.swift in Sources */,
+				A01000000000000000000002 /* Song.swift in Sources */,
+				A01000000000000000000003 /* AudioPlayer.swift in Sources */,
+				A01000000000000000000004 /* ComposerView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		A0A000000000000000000001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		A0A000000000000000000002 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+			};
+			name = Release;
+		};
+		A0A000000000000000000003 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.joseherrerias.plinka;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		A0A000000000000000000004 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.joseherrerias.plinka;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		A09000000000000000000001 /* Build configuration list for PBXProject "Plinka" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A0A000000000000000000001 /* Debug */,
+				A0A000000000000000000002 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A09000000000000000000002 /* Build configuration list for PBXNativeTarget "Plinka" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A0A000000000000000000003 /* Debug */,
+				A0A000000000000000000004 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = A08000000000000000000001 /* Project object */;
+}
