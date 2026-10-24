@@ -45,3 +45,7 @@ No software license is granted by including this README. This is an unpublished 
 ## Native iOS app (Build 1)
 
 The native SwiftUI source and Xcode project are under [`ios/`](ios/). A compile-only GitHub Actions workflow passed its first unsigned simulator build on October 23, 2026 (Pacific time). This does not yet mean the app was installed or tested on an iPhone or iPad. See [iOS build notes](ios/README.md).
+
+## Compile iOS in Codemagic
+
+Use the root [`codemagic.yaml`](codemagic.yaml), workflow **Plinka iOS - Compile Only** (`plinka-ios-compile`). Builds run **manually** from Codemagic on branch `main` to conserve free minutes. This unsigned simulator compile requires no Apple signing credentials and does not produce an installable device IPA. See [iOS setup and steps](ios/README.md).
