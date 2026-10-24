@@ -24,7 +24,7 @@ One-time signing setup in Apple Developer and Codemagic:
    Both must use that distribution certificate. The script reads actual profile
    UUIDs and team IDs; Apple profile display names do not need to match.
 4. Both references must exist before selecting the dual-export workflow.
-   The existing TestFlight-only workflow remains available without these references.
+   This is the only Codemagic workflow; both profiles are required.
 
 Milo's Ad Hoc profile cannot sign Pluki: its app identifier is different.
 The ZIP is a transport container; extract the IPA and use the same Ad Hoc install
