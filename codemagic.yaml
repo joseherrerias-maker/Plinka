@@ -6,7 +6,7 @@
 # No Apple private keys belong in this public GitHub repository.
 workflows:
   plinka-ios-compile:
-    name: Plinka iOS - Compile Only
+    name: Pluki iOS - Compile Only
     instance_type: mac_mini_m2
     max_build_duration: 20
     environment:
@@ -32,7 +32,7 @@ workflows:
       - build/derived/Build/Products/Debug-iphonesimulator/Plinka.app
 
   plinka-ios-testflight:
-    name: Plinka iOS - TestFlight Upload
+    name: Pluki iOS - TestFlight Upload
     instance_type: mac_mini_m2
     max_build_duration: 30
     # Reuse the Apple Developer Portal connection already used by Milo.
