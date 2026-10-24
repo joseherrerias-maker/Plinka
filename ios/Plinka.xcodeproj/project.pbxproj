@@ -11,6 +11,7 @@
 		A01000000000000000000002 /* Song.swift in Sources */ = {isa = PBXBuildFile; fileRef = A02000000000000000000002 /* Song.swift */; };
 		A01000000000000000000003 /* AudioPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A02000000000000000000003 /* AudioPlayer.swift */; };
 		A01000000000000000000004 /* ComposerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A02000000000000000000004 /* ComposerView.swift */; };
+		A01000000000000000000005 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A02000000000000000000006 /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -19,6 +20,7 @@
 		A02000000000000000000003 /* AudioPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPlayer.swift; sourceTree = "<group>"; };
 		A02000000000000000000004 /* ComposerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComposerView.swift; sourceTree = "<group>"; };
 		A02000000000000000000005 /* Plinka.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Plinka.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A02000000000000000000006 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -47,6 +49,7 @@
 				A02000000000000000000002 /* Song.swift */,
 				A02000000000000000000003 /* AudioPlayer.swift */,
 				A02000000000000000000004 /* ComposerView.swift */,
+				A02000000000000000000006 /* Assets.xcassets */,
 			);
 			path = Plinka;
 			sourceTree = "<group>";
@@ -117,6 +120,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A01000000000000000000005 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -173,6 +177,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -195,6 +200,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
