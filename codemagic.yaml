@@ -87,3 +87,66 @@ workflows:
         # Internal TestFlight builds are managed in App Store Connect.
         submit_to_testflight: false
         submit_to_app_store: false
+
+  pluki-ios-dual-export:
+    name: Pluki Build 3 - TestFlight and iPad ZIP
+    instance_type: mac_mini_m2
+    max_build_duration: 30
+    integrations:
+      app_store_connect: "Milo Codemagic 2"
+    environment:
+      xcode: latest
+      ios_signing:
+        provisioning_profiles:
+          - pluki_app_store
+          - pluki_adhoc_ipad
+        certificates:
+          - "Milo Distribution"
+    scripts:
+      - name: Prepare icon and signing exports
+        script: |
+          set -euo pipefail
+          bash "$CM_BUILD_DIR/ios/scripts/prepare-app-icon.sh"
+          python3 "$CM_BUILD_DIR/ios/scripts/prepare-dual-export.py"
+      - name: Create one signed archive
+        script: |
+          set -euo pipefail
+          xcodebuild archive \
+            -project "$CM_BUILD_DIR/ios/Plinka.xcodeproj" \
+            -scheme Plinka -configuration Release \
+            -destination 'generic/platform=iOS' \
+            -archivePath "$CM_BUILD_DIR/build/Pluki.xcarchive" \
+            DEVELOPMENT_TEAM="$(cat "$CM_BUILD_DIR/build/signing-team.txt")" \
+            CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY="Apple Distribution" \
+            PROVISIONING_PROFILE_SPECIFIER="$(cat "$CM_BUILD_DIR/build/signing-profile.txt")" \
+            CURRENT_PROJECT_VERSION="$PROJECT_BUILD_NUMBER"
+      - name: Export TestFlight and iPad from the same archive
+        script: |
+          set -euo pipefail
+          xcodebuild -exportArchive \
+            -archivePath "$CM_BUILD_DIR/build/Pluki.xcarchive" \
+            -exportOptionsPlist "$CM_BUILD_DIR/build/TestFlightExport.plist" \
+            -exportPath "$CM_BUILD_DIR/build/testflight"
+          xcodebuild -exportArchive \
+            -archivePath "$CM_BUILD_DIR/build/Pluki.xcarchive" \
+            -exportOptionsPlist "$CM_BUILD_DIR/build/AdHocExport.plist" \
+            -exportPath "$CM_BUILD_DIR/build/ipad"
+          mv "$CM_BUILD_DIR/build/ipad/Plinka.ipa" "$CM_BUILD_DIR/build/ipad/Pluki-iPad-AdHoc.ipa"
+          python3 "$CM_BUILD_DIR/ios/scripts/verify-orientations.py" "$CM_BUILD_DIR/build/testflight/Plinka.ipa"
+          python3 "$CM_BUILD_DIR/ios/scripts/verify-orientations.py" "$CM_BUILD_DIR/build/ipad/Pluki-iPad-AdHoc.ipa"
+          python3 "$CM_BUILD_DIR/ios/scripts/package-ipad.py" \
+            "$CM_BUILD_DIR/build/ipad/Pluki-iPad-AdHoc.ipa" "$CM_BUILD_DIR/build/Pluki-iPad-AdHoc.zip"
+          touch "$CM_BUILD_DIR/build/exports-verified"
+    artifacts:
+      - build/testflight/*.ipa
+      - build/ipad/Pluki-iPad-AdHoc.ipa
+      - build/Pluki-iPad-AdHoc.zip
+      - build/Pluki.xcarchive
+      - /tmp/xcodebuild_logs/*.log
+    publishing:
+      scripts:
+        - name: Upload only the TestFlight export
+          script: |
+            set -euo pipefail
+            if [ ! -f "$CM_BUILD_DIR/build/exports-verified" ]; then exit 0; fi
+            app-store-connect publish --path "$CM_BUILD_DIR/build/testflight/Plinka.ipa"
