@@ -20,7 +20,7 @@ One-time signing setup in Apple Developer and Codemagic:
    certificate used by the Codemagic "Milo Distribution" identity.
 2. Import/fetch it into Codemagic Code signing identities with reference
    pluki_adhoc_ipad.
-3. Import/reference Pluki's existing App Store profile as pluki_app_store.
+3. Import/reference Pluki's existing App Store profile as Pluki App Store Profile.
    Both must use that distribution certificate. The script reads actual profile
    UUIDs and team IDs; Apple profile display names do not need to match.
 4. Both references must exist before selecting the dual-export workflow.
