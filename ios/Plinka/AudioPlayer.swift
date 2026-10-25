@@ -44,6 +44,23 @@ final class PlinkaAudio: ObservableObject {
         }
     }
 
+    /// Use exactly the playback synthesis, including recorded animal sounds and gain.
+    /// Export one pass even when the composer's Loop toggle is enabled.
+    func writeExportAudio(_ song: Song, to url: URL) throws -> TimeInterval {
+        guard !song.notes.isEmpty, recordings.count == Self.recordedInstruments.count else {
+            throw CocoaError(.fileReadCorruptFile)
+        }
+        var onePass = song
+        onePass.loop = false
+        let result = render(song: onePass)
+        if let channel = result.buffer.floatChannelData?[0] {
+            for i in 0..<Int(result.buffer.frameLength) { channel[i] *= 0.72 }
+        }
+        let file = try AVAudioFile(forWriting: url, settings: format.settings)
+        try file.write(from: result.buffer)
+        return result.duration
+    }
+
     private func prepareAudio() throws {
         guard recordings.count == Self.recordedInstruments.count else {
             throw CocoaError(.fileReadCorruptFile)

@@ -56,6 +56,8 @@ def main():
         if not isinstance(release_build, str) or release_build != expected_build:
             raise ValueError(f"Missing or incorrect release label: {release_build!r}; expected Build {expected_build}.")
         print(f"Verified settings label: Build {release_build}")
+        if not info.get("NSPhotoLibraryAddUsageDescription"):
+            raise ValueError("Video export needs an add-only Photos permission description.")
         supported = info.get("UISupportedInterfaceOrientations")
         ipad = next(
             (value for key, value in info.items()

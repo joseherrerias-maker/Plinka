@@ -22,6 +22,7 @@ struct ComposerView: View {
     @State private var showSongs = false
     @State private var showSamples = false
     @State private var showSave = false
+    @State private var showVideoExport = false
     @State private var saveTitle = ""
     @State private var pendingSong: SavedSong?
     @State private var confirmOpen = false
@@ -56,6 +57,7 @@ struct ComposerView: View {
         .sheet(isPresented: $showSettings) { settings }
         .sheet(isPresented: $showSongs) { savedSongsView }
         .sheet(isPresented: $showSamples) { samplesView }
+        .sheet(isPresented: $showVideoExport) { SongVideoExportView(song: store.song) }
         .alert("Save song", isPresented: $showSave) {
             TextField("Song name", text: $saveTitle)
             Button("Save") { store.saveSong(named: saveTitle) }
@@ -211,6 +213,12 @@ struct ComposerView: View {
             songMenuRow("Save song", icon: "square.and.arrow.down.fill", color: PlukiStyle.green) {
                 saveTitle = store.song.title; showSave = true
             }
+        }
+        if inSong {
+            songMenuRow("Export video", icon: "video.fill", color: .pink) {
+                audio.stop(); showVideoExport = true
+            }
+            .disabled(store.song.notes.isEmpty)
         }
         songMenuRow("Samples", icon: "music.note.list", color: .purple) {
             audio.stop(); showSamples = true
@@ -622,7 +630,7 @@ private struct InstrumentSticker: View {
 }
 
 @MainActor
-private enum ClefArtwork {
+enum ClefArtwork {
     // Use the actual glyph's ink bounds, including font fallback and overhang.
     // A fixed transparent image can then fit inside the gutter at every height.
     static let image: UIImage = {

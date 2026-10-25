@@ -13,6 +13,7 @@
 		A01000000000000000000004 /* ComposerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A02000000000000000000004 /* ComposerView.swift */; };
 		A01000000000000000000005 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A02000000000000000000006 /* Assets.xcassets */; };
 		A01000000000000000000006 /* Sounds in Resources */ = {isa = PBXBuildFile; fileRef = A02000000000000000000007 /* Sounds */; };
+		A01000000000000000000008 /* VideoExport.swift in Sources */ = {isa = PBXBuildFile; fileRef = A02000000000000000000008 /* VideoExport.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -23,6 +24,7 @@
 		A02000000000000000000005 /* Plinka.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Plinka.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A02000000000000000000006 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A02000000000000000000007 /* Sounds */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Sounds; sourceTree = "<group>"; };
+		A02000000000000000000008 /* VideoExport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoExport.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -51,6 +53,7 @@
 				A02000000000000000000002 /* Song.swift */,
 				A02000000000000000000003 /* AudioPlayer.swift */,
 				A02000000000000000000004 /* ComposerView.swift */,
+				A02000000000000000000008 /* VideoExport.swift */,
 				A02000000000000000000006 /* Assets.xcassets */,
 				A02000000000000000000007 /* Sounds */,
 			);
@@ -139,6 +142,7 @@
 				A01000000000000000000002 /* Song.swift in Sources */,
 				A01000000000000000000003 /* AudioPlayer.swift in Sources */,
 				A01000000000000000000004 /* ComposerView.swift in Sources */,
+				A01000000000000000000008 /* VideoExport.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -188,14 +192,14 @@
 				INFOPLIST_KEY_CFBundleDisplayName = Pluki;
 				INFOPLIST_KEY_CFBundleName = Pluki;
 				INFOPLIST_FILE = Plinka/Info.plist;
-				PLUKI_RELEASE_BUILD = 8;
+				PLUKI_RELEASE_BUILD = 9;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				MARKETING_VERSION = 0.6.0;
+				MARKETING_VERSION = 0.7.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.joseherrerias.plinka;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -216,14 +220,14 @@
 				INFOPLIST_KEY_CFBundleDisplayName = Pluki;
 				INFOPLIST_KEY_CFBundleName = Pluki;
 				INFOPLIST_FILE = Plinka/Info.plist;
-				PLUKI_RELEASE_BUILD = 8;
+				PLUKI_RELEASE_BUILD = 9;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				MARKETING_VERSION = 0.6.0;
+				MARKETING_VERSION = 0.7.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.joseherrerias.plinka;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";

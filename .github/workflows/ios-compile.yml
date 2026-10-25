@@ -46,3 +46,14 @@ jobs:
             "$RUNNER_TEMP/PlinkaDerivedData/Build/Products/Debug-iphonesimulator/Plinka.app/Info.plist"
           python3 ios/scripts/verify-sound-resources.py \
             "$RUNNER_TEMP/PlinkaDerivedData/Build/Products/Debug-iphonesimulator/Plinka.app"
+      - name: Check video export media
+        if: contains(github.event.head_commit.message, '[video-check]')
+        timeout-minutes: 5
+        run: bash ios/scripts/check-video-export.sh "$RUNNER_TEMP/PlinkaDerivedData/Build/Products/Debug-iphonesimulator/Plinka.app"
+      - name: Keep export check videos and frames
+        if: always() && contains(github.event.head_commit.message, '[video-check]')
+        uses: actions/upload-artifact@v4
+        with:
+          name: Pluki-video-check
+          path: ${{ runner.temp }}/PlukiVideoCheck
+          retention-days: 7
