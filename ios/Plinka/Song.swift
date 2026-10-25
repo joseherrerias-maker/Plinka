@@ -94,56 +94,125 @@ struct Song: Codable, Equatable {
     var stepCount: Int { max(32, min(Self.maximumSteps, sheetSteps ?? 32)) }
 }
 
-// Short arrangements made for Pluki's 32-step staff. No commercial recordings.
+// Pluki arrangements of traditional/classical themes and original compositions.
+// Times are half-beat steps; all pitches fit the existing nine-row staff.
 struct SampleSong: Identifiable {
     let id: String
     let detail: String
     let song: Song
 
-    private static func melody(_ pitches: [Int], steps: [Int], instrument: Instrument) -> [MusicNote] {
+    private static func phrase(_ pitches: [Int], durations: [Int],
+                               instrument: Instrument, start: Int = 0) -> [MusicNote] {
         let staff = [77, 76, 74, 72, 71, 69, 67, 65, 64]
-        precondition(pitches.count == steps.count)
-        return zip(pitches, steps).map { pitch, step in
+        precondition(pitches.count == durations.count && durations.allSatisfy { $0 > 0 })
+        var step = start
+        return zip(pitches, durations).map { pitch, duration in
+            defer { step += duration }
             guard let row = staff.firstIndex(of: pitch) else { preconditionFailure("Sample pitch outside staff") }
             return MusicNote(step: step, row: row, instrument: instrument)
         }
     }
 
+    // Keep each staff cell editable individually; melody takes precedence over decoration.
+    private static func decorate(_ melody: [MusicNote], with accents: [MusicNote]) -> [MusicNote] {
+        var occupied = Set(melody.map { "\($0.step):\($0.row)" })
+        return melody + accents.filter { occupied.insert("\($0.step):\($0.row)").inserted }
+    }
+
+    private static var twinkle: Song {
+        let a = [67,67,74,74,76,76,74,72,72,71,71,69,69,67]
+        let b = [74,74,72,72,71,71,69,74,74,72,72,71,71,69]
+        let rhythm = [2,2,2,2,2,2,4,2,2,2,2,2,2,4]
+        let notes = phrase(a, durations: rhythm, instrument: .piano)
+            + phrase(b, durations: rhythm, instrument: .bells, start: 32)
+            + phrase(a, durations: rhythm, instrument: .piano, start: 64)
+        let accents = phrase(Array(repeating: 64, count: 6), durations: Array(repeating: 16, count: 6), instrument: .guitar)
+        return Song(title: "Twinkle, Twinkle, Little Star", tempo: 100,
+                    notes: decorate(notes, with: accents), sheetSteps: 96)
+    }
+
+    private static var frereJacques: Song {
+        // The low dominant in the final phrase is raised an octave to fit the staff.
+        let pitches = [67,69,71,67,67,69,71,67,71,72,74,71,72,74,
+                       74,76,74,72,71,67,74,76,74,72,71,67,67,74,67,67,74,67]
+        let rhythm = [2,2,2,2,2,2,2,2,2,2,4,2,2,4,
+                      1,1,1,1,2,2,1,1,1,1,2,2,2,2,4,2,2,4]
+        let notes = phrase(pitches, durations: rhythm, instrument: .flute)
+            + phrase(pitches, durations: rhythm, instrument: .xylophone, start: 64)
+        let bells = [0,32,64,96].map { MusicNote(step: $0, row: 8, instrument: .bells) }
+        return Song(title: "Frère Jacques", tempo: 108,
+                    notes: decorate(notes, with: bells), sheetSteps: 128)
+    }
+
+    private static var odeToJoy: Song {
+        let opening = [71,71,72,74,74,72,71,69,67,67,69,71,71,69,69]
+        let answer = [71,71,72,74,74,72,71,69,67,67,69,71,69,67,67]
+        let rhythm = [2,2,2,2,2,2,2,2,2,2,2,2,3,1,4]
+        let notes = phrase(opening, durations: rhythm, instrument: .piano)
+            + phrase(answer, durations: rhythm, instrument: .piano, start: 32)
+            + phrase(opening, durations: rhythm, instrument: .flute, start: 64)
+            + phrase(answer, durations: rhythm, instrument: .piano, start: 96)
+        let accents = [64,80,96,112].map { MusicNote(step: $0, row: 8, instrument: .bells) }
+        return Song(title: "Ode to Joy", tempo: 112,
+                    notes: decorate(notes, with: accents), sheetSteps: 128)
+    }
+
+    private static var oldMacDonald: Song {
+        let refrain = [72,72,72,67,69,69,67,76,76,74,74,72]
+        let rhythm = [2,2,2,2,2,2,4,2,2,2,2,8]
+        var notes: [MusicNote] = []
+        for (verse, animal) in [Instrument.cow, .chicken].enumerated() {
+            let start = verse * 96
+            notes += phrase(refrain, durations: rhythm, instrument: .xylophone, start: start)
+            // A spacious call-and-response break between the familiar refrains.
+            notes += phrase([67,69,72,69,67,72,74,72],
+                            durations: [2,2,4,2,2,4,8,8], instrument: .guitar, start: start + 32)
+            notes += [38,46,52,56,60].map { MusicNote(step: start + $0, row: 5, instrument: animal) }
+            notes += phrase(refrain, durations: rhythm, instrument: .xylophone, start: start + 64)
+        }
+        return Song(title: "Old MacDonald", tempo: 110, notes: notes, sheetSteps: 192)
+    }
+
+    private static var plukiPop: Song {
+        let a = [72,76,74,72,71,67,69,76,74,71,72,69,67,69,71,72]
+        let b = [76,74,72,69,72,74,71,67,69,71,74,76,74,72,71,67]
+        let rhythm = [2,1,3,2,2,1,3,2,2,1,3,2,2,1,3,2]
+        var notes: [MusicNote] = []
+        for section in 0..<4 {
+            let start = section * 32
+            notes += phrase(section == 1 ? b : a, durations: rhythm,
+                            instrument: section == 2 ? .xylophone : .synth, start: start)
+        }
+        let drums = stride(from: 0, to: 120, by: 4).map { MusicNote(step: $0, row: 8, instrument: .drums) }
+        return Song(title: "Pluki Pop", tempo: 124,
+                    notes: decorate(notes, with: drums), sheetSteps: 128)
+    }
+
+    private static var animalParade: Song {
+        let calls = [[67,71,74,72,69,72,71,67,69,74,72,71],
+                     [72,74,76,74,72,69,71,74,72,69,71,67]]
+        let rhythm = [2,1,5,2,1,5,2,1,5,2,1,5]
+        let animals: [Instrument] = [.puppy, .frog, .chicken, .pig, .cow, .kitten]
+        var notes: [MusicNote] = []
+        for section in 0..<4 {
+            let start = section * 32
+            notes += phrase(calls[section % 2], durations: rhythm, instrument: .xylophone, start: start)
+            for (index, offset) in [5,13,21,29].enumerated() {
+                notes.append(MusicNote(step: start + offset, row: 5,
+                                       instrument: animals[(section * 4 + index) % animals.count]))
+            }
+        }
+        notes += phrase([72,71,69,67], durations: [4,4,4,4], instrument: .bells, start: 128)
+        return Song(title: "Animal Parade", tempo: 104, notes: notes, sheetSteps: 144)
+    }
+
     static let all: [SampleSong] = [
-        SampleSong(id: "frere-jacques", detail: "Traditional · opening melody · flute and bells",
-            song: Song(title: "Frère Jacques", tempo: 108, loop: true,
-                notes: melody([67,69,71,67,67,69,71,67,71,72,74,71,72,74],
-                    steps: [0,2,4,6,8,10,12,14,16,18,20,24,26,28], instrument: .flute)
-                    + melody([67,67], steps: [0,8], instrument: .bells))),
-        SampleSong(id: "ode-to-joy", detail: "Beethoven · opening melody · piano",
-            song: Song(title: "Ode to Joy", tempo: 112, loop: true,
-                notes: melody([71,71,72,74,74,72,71,69,67,67,69,71,71,69,69],
-                    steps: [0,2,4,6,8,10,12,14,16,18,20,22,24,27,28], instrument: .piano))),
-        SampleSong(id: "animal-parade", detail: "Original · xylophone with puppy, frog and farm friends",
-            song: Song(title: "Animal Parade", tempo: 104, loop: true,
-                notes: melody([67,71,74,72,69,72,71,67,69,74,72,71],
-                    steps: [0,2,3,8,10,11,16,18,19,24,26,27], instrument: .xylophone)
-                    + melody([69], steps: [5], instrument: .puppy)
-                    + melody([69], steps: [13], instrument: .frog)
-                    + melody([69], steps: [21], instrument: .chicken)
-                    + melody([69], steps: [29], instrument: .pig))),
-        SampleSong(id: "twinkle", detail: "Traditional · opening melody · piano and bells",
-            song: Song(title: "Twinkle, Twinkle, Little Star", tempo: 100, loop: true,
-                notes: melody([67,67,74,74,76,76,74,72,72,71,71,69,69,67],
-                    steps: [0,2,4,6,8,10,12,16,18,20,22,24,26,28], instrument: .piano)
-                    + melody([67,74,72,67], steps: [0,12,16,28], instrument: .bells))),
-        SampleSong(id: "old-macdonald", detail: "Traditional · opening melody · farm animal replies",
-            song: Song(title: "Old MacDonald", tempo: 110, loop: true,
-                notes: melody([72,72,72,67,69,69,67,76,76,74,74,72],
-                    steps: [0,2,4,6,8,10,12,16,18,20,22,24], instrument: .xylophone)
-                    + melody([69], steps: [28], instrument: .cow)
-                    + melody([69], steps: [30], instrument: .chicken))),
-        SampleSong(id: "pluki-pop", detail: "Original · upbeat synth, bells and drums",
-            song: Song(title: "Pluki Pop", tempo: 124, loop: true,
-                notes: melody([64,67,69,72,71,67,69,76,74,71,72,69,67,64,67,72],
-                    steps: [0,2,3,6,8,10,11,14,16,18,19,22,24,26,27,30], instrument: .synth)
-                    + melody([72,76,74,72], steps: [0,8,16,24], instrument: .bells)
-                    + melody(Array(repeating: 69, count: 8), steps: [0,4,8,12,16,20,24,28], instrument: .drums)))
+        SampleSong(id: "frere-jacques", detail: "Traditional · flute and xylophone verses", song: frereJacques),
+        SampleSong(id: "ode-to-joy", detail: "Beethoven theme · piano and flute variation", song: odeToJoy),
+        SampleSong(id: "animal-parade", detail: "Original · six animal friends and a bell finale", song: animalParade),
+        SampleSong(id: "twinkle", detail: "Traditional · complete melody with piano and bells", song: twinkle),
+        SampleSong(id: "old-macdonald", detail: "Traditional theme · cow and chicken replies", song: oldMacDonald),
+        SampleSong(id: "pluki-pop", detail: "Original · synth melody, contrast and return", song: plukiPop)
     ]
 }
 

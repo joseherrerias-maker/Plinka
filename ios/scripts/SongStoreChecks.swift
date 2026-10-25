@@ -43,8 +43,16 @@ struct SongStoreChecks {
         precondition(Set(SampleSong.all.map(\.id)).count == SampleSong.all.count)
         for sample in SampleSong.all {
             precondition(!sample.song.notes.isEmpty)
+            precondition(sample.song.stepCount > 32 && sample.song.stepCount <= Song.maximumSteps)
+            precondition(sample.song.notes.contains { $0.step >= 32 })
+            precondition(Set(sample.song.notes.map(\.id)).count == sample.song.notes.count)
+            precondition(Set(sample.song.notes.map { "\($0.step):\($0.row)" }).count == sample.song.notes.count)
+            precondition(!sample.song.loop)
+            let encoded = try JSONEncoder().encode(sample.song)
+            let decoded = try JSONDecoder().decode(Song.self, from: encoded)
+            precondition(decoded == sample.song)
             precondition(sample.song.notes.allSatisfy {
-                (0..<SongStore.steps).contains($0.step) && SongStore.pitches.indices.contains($0.row)
+                (0..<sample.song.stepCount).contains($0.step) && SongStore.pitches.indices.contains($0.row)
             })
             afterDelete.openSample(sample)
             precondition(afterDelete.song == sample.song && afterDelete.hasUnsavedChanges)

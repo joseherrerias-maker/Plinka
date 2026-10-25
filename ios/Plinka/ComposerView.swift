@@ -365,6 +365,8 @@ struct ComposerView: View {
                             VStack(alignment: .leading, spacing: 6) {
                                 Text(sample.song.title).font(.headline)
                                 Text(sample.detail).font(.subheadline).foregroundStyle(.secondary)
+                                Text("\(sample.song.stepCount / 8) measures")
+                                    .font(.caption).foregroundStyle(.secondary)
                             }.frame(maxWidth: .infinity, alignment: .leading).padding(.vertical, 6)
                         }
                     }
