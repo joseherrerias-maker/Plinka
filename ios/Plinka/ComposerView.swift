@@ -19,8 +19,6 @@ struct ComposerView: View {
     @State private var showSettings = false
     @State private var showSongs = false
     @State private var showSamples = false
-    @State private var pendingSample: SampleSong?
-    @State private var confirmSample = false
     @State private var showSave = false
     @State private var saveTitle = ""
     @State private var pendingSong: SavedSong?
@@ -244,7 +242,6 @@ struct ComposerView: View {
         audio.stop()
         store.openSample(sample)
         showSamples = false
-        pendingSample = nil
     }
 
     private var samplesView: some View {
@@ -253,10 +250,7 @@ struct ComposerView: View {
                 Section {
                     ForEach(SampleSong.all) { sample in
                         Button {
-                            if store.hasUnsavedChanges {
-                                pendingSample = sample
-                                confirmSample = true
-                            } else { openSample(sample) }
+                            openSample(sample)
                         } label: {
                             VStack(alignment: .leading, spacing: 6) {
                                 Text(sample.song.title).font(.headline)
@@ -270,18 +264,6 @@ struct ComposerView: View {
             }
             .navigationTitle("Samples")
             .toolbar { ToolbarItem(placement: .confirmationAction) { Button("Done") { showSamples = false } } }
-            .confirmationDialog("Save your current changes before opening a sample?", isPresented: $confirmSample, titleVisibility: .visible) {
-                Button("Save and open") {
-                    if store.saveSong(named: store.song.title), let sample = pendingSample { openSample(sample) }
-                }
-                Button("Open without saving", role: .destructive) {
-                    if let sample = pendingSample { openSample(sample) }
-                }
-                Button("Cancel", role: .cancel) { pendingSample = nil }
-            }
-            .alert("Saved songs", isPresented: Binding(get: { store.libraryError != nil }, set: { if !$0 { store.libraryError = nil } })) {
-                Button("OK") { store.libraryError = nil }
-            } message: { Text(store.libraryError ?? "") }
         }
     }
 
