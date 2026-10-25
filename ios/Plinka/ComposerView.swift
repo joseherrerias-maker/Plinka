@@ -649,7 +649,7 @@ private struct StaffView: View {
     let short: Bool
 
     var body: some View {
-        let metrics = StaffMetrics(height: height, short: short)
+        let metrics = StaffMetrics(height: height, short: short, steps: store.song.stepCount)
         FollowScrollView(audio: audio, metrics: metrics) {
             StaffContent(store: store, audio: audio, metrics: metrics)
         }
@@ -657,7 +657,18 @@ private struct StaffView: View {
         .clipShape(RoundedRectangle(cornerRadius: 22))
         .overlay(RoundedRectangle(cornerRadius: 22).strokeBorder(.white.opacity(0.8), lineWidth: 2))
         .overlay(alignment: .topTrailing) {
-            if store.erasing { Text("Eraser on").font(.caption.bold()).padding(8).background(.thinMaterial, in: Capsule()).padding(8).allowsHitTesting(false) }
+            HStack(spacing: 6) {
+                if store.erasing { Text("Eraser on").font(.caption.bold()) }
+                Button { store.extendSheet() } label: {
+                    Label(store.song.stepCount < Song.maximumSteps ? "Extend sheet" : "Full length", systemImage: "plus")
+                        .font(.system(.caption, design: .rounded, weight: .bold))
+                        .padding(.horizontal, 12).frame(minHeight: 44)
+                        .background(PlukiStyle.paper, in: Capsule())
+                }
+                .buttonStyle(.plain)
+                .disabled(audio.isPlaying || store.song.stepCount >= Song.maximumSteps)
+                .accessibilityHint("Adds four measures of space for notes")
+            }.padding(6)
         }
     }
 }
@@ -665,12 +676,13 @@ private struct StaffView: View {
 private struct StaffMetrics {
     let height: CGFloat
     let short: Bool
+    let steps: Int
     var top: CGFloat { short ? 32 : 60 }
     var bottom: CGFloat { short ? 28 : 48 }
     var row: CGFloat { max(5, (height - top - bottom) / 8) }
     var cell: CGFloat { short ? 60 : 84 }
     var gutter: CGFloat { short ? 60 : 90 }
-    var width: CGFloat { gutter + CGFloat(SongStore.steps) * cell + 16 }
+    var width: CGFloat { gutter + CGFloat(steps) * cell + 16 }
     var sticker: CGFloat { min(short ? 48 : 78, row * (short ? 3.4 : 2.6)) }
     func x(_ step: Double) -> CGFloat { gutter + (CGFloat(step) + 0.5) * cell }
 }
@@ -690,7 +702,7 @@ private struct StaffContent: View {
                     path.addLine(to: CGPoint(x: metrics.width, y: y))
                     context.stroke(path, with: .color(PlukiStyle.ink.opacity(0.85)), lineWidth: 1.6)
                 }
-                for step in 0..<SongStore.steps {
+                for step in 0..<metrics.steps {
                     let x = metrics.x(Double(step))
                     var path = Path()
                     path.move(to: CGPoint(x: x, y: 28))
@@ -711,7 +723,7 @@ private struct StaffContent: View {
                 .frame(width: metrics.gutter - 24, height: metrics.row * 7)
                 .position(x: metrics.gutter * 0.5, y: metrics.top + metrics.row * 4)
                 .allowsHitTesting(false)
-            ForEach(0..<SongStore.steps, id: \.self) { step in
+            ForEach(0..<metrics.steps, id: \.self) { step in
                 Text(step.isMultiple(of: 2) ? "\(step / 2 + 1)" : "·")
                     .font(.system(size: metrics.short ? 11 : 15, weight: .bold, design: .rounded))
                     .foregroundStyle(PlukiStyle.ink.opacity(0.4))

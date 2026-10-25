@@ -88,6 +88,10 @@ struct Song: Codable, Equatable {
     var tempo: Double = 110
     var loop: Bool = false
     var notes: [MusicNote] = []
+    // Optional for backward-compatible decoding of existing drafts and saved songs.
+    var sheetSteps: Int? = nil
+    static let maximumSteps = 256
+    var stepCount: Int { max(32, min(Self.maximumSteps, sheetSteps ?? 32)) }
 }
 
 // Short arrangements made for Pluki's 32-step staff. No commercial recordings.
@@ -276,7 +280,7 @@ final class SongStore: ObservableObject {
            let restored = try? JSONDecoder().decode(Song.self, from: data) {
             var validated = restored
             validated.notes = restored.notes.filter {
-                (0..<Self.steps).contains($0.step) && (0..<Self.pitches.count).contains($0.row)
+                (0..<validated.stepCount).contains($0.step) && (0..<Self.pitches.count).contains($0.row)
             }
             self.song = validated
             self.hasDraft = true
@@ -311,6 +315,12 @@ final class SongStore: ObservableObject {
     var canUndo: Bool { !undoHistory.isEmpty }
     var canRedo: Bool { !redoHistory.isEmpty }
 
+    func extendSheet() {
+        guard song.stepCount < Song.maximumSteps else { return }
+        remember()
+        song.sheetSteps = min(Song.maximumSteps, song.stepCount + 32)
+    }
+
     func choose(_ instrument: Instrument) {
         chosen = instrument
         selectedID = nil
@@ -318,7 +328,7 @@ final class SongStore: ObservableObject {
     }
 
     func tap(step: Int, row: Int) -> MusicNote? {
-        guard (0..<Self.steps).contains(step), (0..<Self.pitches.count).contains(row) else { return nil }
+        guard (0..<song.stepCount).contains(step), (0..<Self.pitches.count).contains(row) else { return nil }
         if let existing = song.notes.first(where: { $0.step == step && $0.row == row }) {
             if erasing {
                 remember()
@@ -340,7 +350,7 @@ final class SongStore: ObservableObject {
     func move(id: UUID, horizontal: Int, vertical: Int) {
         guard let index = song.notes.firstIndex(where: { $0.id == id }) else { return }
         let old = song.notes[index]
-        let newStep = max(0, min(Self.steps - 1, old.step + horizontal))
+        let newStep = max(0, min(song.stepCount - 1, old.step + horizontal))
         let newRow = max(0, min(Self.pitches.count - 1, old.row + vertical))
         guard newStep != old.step || newRow != old.row else { return }
         guard !song.notes.contains(where: { $0.id != id && $0.step == newStep && $0.row == newRow }) else { return }
