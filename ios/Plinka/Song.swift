@@ -90,6 +90,42 @@ struct Song: Codable, Equatable {
     var notes: [MusicNote] = []
 }
 
+// Short arrangements made for Pluki's 32-step staff. No commercial recordings.
+struct SampleSong: Identifiable {
+    let id: String
+    let detail: String
+    let song: Song
+
+    private static func melody(_ pitches: [Int], steps: [Int], instrument: Instrument) -> [MusicNote] {
+        let staff = [77, 76, 74, 72, 71, 69, 67, 65, 64]
+        precondition(pitches.count == steps.count)
+        return zip(pitches, steps).map { pitch, step in
+            guard let row = staff.firstIndex(of: pitch) else { preconditionFailure("Sample pitch outside staff") }
+            return MusicNote(step: step, row: row, instrument: instrument)
+        }
+    }
+
+    static let all: [SampleSong] = [
+        SampleSong(id: "twinkle", detail: "Traditional · opening melody · piano and bells",
+            song: Song(title: "Twinkle, Twinkle, Little Star", tempo: 100, loop: true,
+                notes: melody([67,67,74,74,76,76,74,72,72,71,71,69,69,67],
+                    steps: [0,2,4,6,8,10,12,16,18,20,22,24,26,28], instrument: .piano)
+                    + melody([67,74,72,67], steps: [0,12,16,28], instrument: .bells))),
+        SampleSong(id: "old-macdonald", detail: "Traditional · opening melody · farm animal replies",
+            song: Song(title: "Old MacDonald", tempo: 110, loop: true,
+                notes: melody([72,72,72,67,69,69,67,76,76,74,74,72],
+                    steps: [0,2,4,6,8,10,12,16,18,20,22,24], instrument: .xylophone)
+                    + melody([69], steps: [28], instrument: .cow)
+                    + melody([69], steps: [30], instrument: .chicken))),
+        SampleSong(id: "pluki-pop", detail: "Original · upbeat synth, bells and drums",
+            song: Song(title: "Pluki Pop", tempo: 124, loop: true,
+                notes: melody([64,67,69,72,71,67,69,76,74,71,72,69,67,64,67,72],
+                    steps: [0,2,3,6,8,10,11,14,16,18,19,22,24,26,27,30], instrument: .synth)
+                    + melody([72,76,74,72], steps: [0,8,16,24], instrument: .bells)
+                    + melody(Array(repeating: 69, count: 8), steps: [0,4,8,12,16,20,24,28], instrument: .drums)))
+    ]
+}
+
 struct SavedSong: Codable, Identifiable {
     var id: UUID = UUID()
     var song: Song
@@ -177,6 +213,16 @@ final class SongStore: ObservableObject {
         song = saved.song
         activeSavedID = saved.id
         defaults.set(saved.id.uuidString, forKey: "pluki-active-saved-song")
+        selectedID = nil
+        erasing = false
+        undoHistory.removeAll()
+        redoHistory.removeAll()
+    }
+
+    func openSample(_ sample: SampleSong) {
+        activeSavedID = nil
+        defaults.removeObject(forKey: "pluki-active-saved-song")
+        song = sample.song
         selectedID = nil
         erasing = false
         undoHistory.removeAll()

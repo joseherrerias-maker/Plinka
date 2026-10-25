@@ -16,6 +16,9 @@ struct ComposerView: View {
     @State private var confirmClear = false
     @State private var showSettings = false
     @State private var showSongs = false
+    @State private var showSamples = false
+    @State private var pendingSample: SampleSong?
+    @State private var confirmSample = false
     @State private var showSave = false
     @State private var saveTitle = ""
     @State private var pendingSong: SavedSong?
@@ -57,6 +60,7 @@ struct ComposerView: View {
         .foregroundStyle(PlukiStyle.ink)
         .sheet(isPresented: $showSettings) { settings }
         .sheet(isPresented: $showSongs) { savedSongsView }
+        .sheet(isPresented: $showSamples) { samplesView }
         .alert("Save song", isPresented: $showSave) {
             TextField("Song name", text: $saveTitle)
             Button("Save") { store.saveSong(named: saveTitle) }
@@ -166,12 +170,58 @@ struct ComposerView: View {
             Menu {
                 Button { audio.stop(); showSongs = true } label: { Label("Open", systemImage: "folder") }
                 Button { saveTitle = store.song.title; showSave = true } label: { Label("Save", systemImage: "square.and.arrow.down") }
+                Button { audio.stop(); showSamples = true } label: { Label("Samples", systemImage: "music.note.list") }
                 Button { showSettings = true } label: { Label("Settings", systemImage: "gearshape") }
             } label: {
                 Image(systemName: "line.3.horizontal").font(.system(size: 18, weight: .bold))
                     .frame(width: 44, height: 44)
                     .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 15))
             }.accessibilityLabel("Song menu")
+        }
+    }
+
+    private func openSample(_ sample: SampleSong) {
+        audio.stop()
+        store.openSample(sample)
+        showSamples = false
+        pendingSample = nil
+    }
+
+    private var samplesView: some View {
+        NavigationStack {
+            List {
+                Section {
+                    ForEach(SampleSong.all) { sample in
+                        Button {
+                            if store.hasUnsavedChanges {
+                                pendingSample = sample
+                                confirmSample = true
+                            } else { openSample(sample) }
+                        } label: {
+                            VStack(alignment: .leading, spacing: 6) {
+                                Text(sample.song.title).font(.headline)
+                                Text(sample.detail).font(.subheadline).foregroundStyle(.secondary)
+                            }.frame(maxWidth: .infinity, alignment: .leading).padding(.vertical, 6)
+                        }
+                    }
+                } footer: {
+                    Text("Open a starter, press Play, and make it yours. Save keeps your own copy; the samples always stay available.")
+                }
+            }
+            .navigationTitle("Samples")
+            .toolbar { ToolbarItem(placement: .confirmationAction) { Button("Done") { showSamples = false } } }
+            .confirmationDialog("Save your current changes before opening a sample?", isPresented: $confirmSample, titleVisibility: .visible) {
+                Button("Save and open") {
+                    if store.saveSong(named: store.song.title), let sample = pendingSample { openSample(sample) }
+                }
+                Button("Open without saving", role: .destructive) {
+                    if let sample = pendingSample { openSample(sample) }
+                }
+                Button("Cancel", role: .cancel) { pendingSample = nil }
+            }
+            .alert("Saved songs", isPresented: Binding(get: { store.libraryError != nil }, set: { if !$0 { store.libraryError = nil } })) {
+                Button("OK") { store.libraryError = nil }
+            } message: { Text(store.libraryError ?? "") }
         }
     }
 

@@ -38,6 +38,28 @@ struct SongStoreChecks {
         precondition(afterDelete.hasUnsavedChanges)
         precondition(afterDelete.saveSong(named: working.title))
         precondition(afterDelete.savedSongs[0].id != first.id)
+        // Samples must load as drafts and never overwrite the previously active save.
+        let existing = afterDelete.savedSongs[0]
+        precondition(Set(SampleSong.all.map(\.id)).count == SampleSong.all.count)
+        for sample in SampleSong.all {
+            precondition(!sample.song.notes.isEmpty)
+            precondition(sample.song.notes.allSatisfy {
+                (0..<SongStore.steps).contains($0.step) && SongStore.pitches.indices.contains($0.row)
+            })
+            afterDelete.openSample(sample)
+            precondition(afterDelete.song == sample.song && afterDelete.hasUnsavedChanges)
+            precondition(!afterDelete.canUndo && !afterDelete.canRedo)
+            let draft = SongStore(defaults: defaults)
+            precondition(draft.song == sample.song && draft.hasUnsavedChanges)
+            precondition(draft.saveSong(named: sample.song.title))
+            let copyID = draft.savedSongs.first { $0.song.title == sample.song.title }!.id
+            draft.song.notes.removeAll()
+            precondition(draft.saveSong(named: sample.song.title))
+            precondition(draft.savedSongs.first { $0.id == copyID }!.song.notes.isEmpty)
+            draft.openSample(sample)
+            precondition(draft.song.notes == sample.song.notes)
+            precondition(draft.savedSongs.first { $0.id == existing.id }!.song == existing.song)
+        }
         let broken = Data("not JSON".utf8)
         defaults.set(broken, forKey: "pluki-saved-songs-v1")
         let damaged = SongStore(defaults: defaults)
