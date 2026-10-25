@@ -181,59 +181,84 @@ struct ComposerView: View {
     }
 
     private func instrumentTray(short: Bool) -> some View {
-        VStack(spacing: 2) {
-            HStack(spacing: 6) {
-                ForEach(SoundGroup.allCases) { group in
-                    Button {
-                        soundGroup = group
-                        store.choose(group.instruments[0])
-                    } label: {
-                        Label(group.rawValue, systemImage: group.icon)
-                            .font(.system(size: short ? 11 : 12, weight: .bold, design: .rounded))
-                            .frame(maxWidth: .infinity, minHeight: short ? 24 : 28)
-                            .background(soundGroup == group ? PlukiStyle.blue.opacity(0.16) : .clear,
-                                        in: Capsule())
-                            .contentShape(Rectangle())
-                    }
-                    .buttonStyle(.plain)
-                    .disabled(audio.isPlaying)
-                    .accessibilityAddTraits(soundGroup == group ? [.isSelected] : [])
-                }
-            }.padding(.horizontal, 8).padding(.top, 4)
-            GeometryReader { geometry in
-                ScrollView(.horizontal) {
-                    HStack(spacing: 8) {
-                        ForEach(soundGroup.instruments) { instrument in
-                            Button {
-                                store.choose(instrument)
-                                audio.preview(instrument, row: 5)
-                            } label: {
-                                VStack(spacing: 0) {
-                                    InstrumentSticker(instrument: instrument)
-                                        .frame(height: short ? 41 : 74)
-                                    Text(instrument.label)
-                                        .font(.system(size: short ? 10 : 12, weight: .bold, design: .rounded))
-                                        .lineLimit(1)
-                                }
-                                .frame(width: max(short ? 72 : 92, (geometry.size.width - 16 - 7 * 8) / 8),
-                                       height: short ? 56 : 98)
-                                .background(store.chosen == instrument && !store.erasing
-                                    ? Color(red: 0.86, green: 0.97, blue: 1) : instrument.tint.opacity(0.16),
-                                    in: RoundedRectangle(cornerRadius: 15))
-                                .overlay(RoundedRectangle(cornerRadius: 15).strokeBorder(
-                                    store.chosen == instrument && !store.erasing ? PlukiStyle.blue : .clear, lineWidth: 2))
+        ScrollViewReader { proxy in
+            VStack(spacing: 2) {
+                HStack(spacing: 6) {
+                    ForEach(SoundGroup.allCases) { group in
+                        Button {
+                            withAnimation(.easeInOut(duration: 0.3)) {
+                                proxy.scrollTo(group.instruments[0], anchor: .leading)
                             }
-                            .buttonStyle(.plain).disabled(audio.isPlaying)
-                            .accessibilityLabel(instrument.label)
-                            .accessibilityAddTraits(store.chosen == instrument ? [.isSelected] : [])
+                        } label: {
+                            Label(group.rawValue, systemImage: group.icon)
+                                .font(.system(size: short ? 11 : 12, weight: .bold, design: .rounded))
+                                .frame(maxWidth: .infinity, minHeight: short ? 24 : 28)
+                                .background(soundGroup == group ? PlukiStyle.blue.opacity(0.16) : .clear,
+                                            in: Capsule())
+                                .contentShape(Rectangle())
                         }
-                    }.padding(.horizontal, 8).padding(.vertical, 4)
+                        .buttonStyle(.plain)
+                        .disabled(audio.isPlaying)
+                        .accessibilityAddTraits(soundGroup == group ? [.isSelected] : [])
+                    }
+                }.padding(.horizontal, 8).padding(.top, 4)
+                GeometryReader { geometry in
+                    let cardWidth: CGFloat = max(short ? 72 : 92, (geometry.size.width - 72) / 8)
+                    let funWidth = CGFloat(SoundGroup.fun.instruments.count) * (cardWidth + 8) - 8
+                    let endPadding = max(0, geometry.size.width - 16 - funWidth)
+                    ScrollView(.horizontal) {
+                        HStack(spacing: 8) {
+                            ForEach(Instrument.allCases) { instrument in
+                                Button {
+                                    store.choose(instrument)
+                                    audio.preview(instrument, row: 5)
+                                } label: {
+                                    VStack(spacing: 0) {
+                                        InstrumentSticker(instrument: instrument)
+                                            .frame(height: short ? 41 : 74)
+                                        Text(instrument.label)
+                                            .font(.system(size: short ? 10 : 12, weight: .bold, design: .rounded))
+                                            .lineLimit(1)
+                                    }
+                                    .frame(width: cardWidth, height: short ? 56 : 98)
+                                    .background(store.chosen == instrument && !store.erasing
+                                        ? Color(red: 0.86, green: 0.97, blue: 1) : instrument.tint.opacity(0.16),
+                                        in: RoundedRectangle(cornerRadius: 15))
+                                    .overlay(RoundedRectangle(cornerRadius: 15).strokeBorder(
+                                        store.chosen == instrument && !store.erasing ? PlukiStyle.blue : .clear, lineWidth: 2))
+                                }
+                                .buttonStyle(.plain).disabled(audio.isPlaying)
+                                .id(instrument)
+                                .background(GeometryReader { card in
+                                    Color.clear.preference(key: SoundPositionKey.self, value: [
+                                        instrument: card.frame(in: .named("soundTray")).minX
+                                    ])
+                                })
+                                .accessibilityLabel(instrument.label)
+                                .accessibilityAddTraits(store.chosen == instrument ? [.isSelected] : [])
+                            }
+                        }.padding(.horizontal, 8).padding(.vertical, 4)
+                            .padding(.trailing, endPadding)
+                    }
+                    .coordinateSpace(name: "soundTray")
+                    .onPreferenceChange(SoundPositionKey.self) { positions in
+                        // The category follows the card nearest the leading edge.
+                        if let first = positions.min(by: { abs($0.value - 8) < abs($1.value - 8) })?.key {
+                            let visibleGroup = SoundGroup.group(for: first)
+                            if visibleGroup != soundGroup { soundGroup = visibleGroup }
+                        }
+                    }
+                    .scrollIndicators(.visible)
                 }
-                .id(soundGroup)
-                .scrollIndicators(.visible)
             }
+            .background(PlukiStyle.paper.opacity(0.96), in: RoundedRectangle(cornerRadius: 22))
         }
-        .background(PlukiStyle.paper.opacity(0.96), in: RoundedRectangle(cornerRadius: 22))
+    }
+
+    private var soundCredits: String {
+        guard let url = Bundle.main.url(forResource: "CREDITS", withExtension: "txt", subdirectory: "Sounds"),
+              let text = try? String(contentsOf: url, encoding: .utf8) else { return "Sound credits unavailable." }
+        return text
     }
 
     private var settings: some View {
@@ -243,10 +268,17 @@ struct ComposerView: View {
                     TextField("Song name", text: $store.song.title)
                 }
                 Section("Compose") {
-                    Text("Choose Instruments, Animals, or Fun below the staff, then choose a sound and tap the staff. Move a sticker up or down to change pitch, or sideways to change timing.")
+                    Text("Swipe the sound tray to explore Instruments, Animals, and Fun, or tap a category to jump there. Choose a sound and tap the staff. Move a sticker up or down to change pitch, or sideways to change timing.")
                 }
                 if let error = audio.audioError { Section { Text(error).foregroundStyle(.red) } }
                 Section { Text(versionLabel).foregroundStyle(.secondary) }
+                Section {
+                    NavigationLink("Sound credits") {
+                        ScrollView {
+                            Text(soundCredits).font(.footnote).textSelection(.enabled).padding()
+                        }.navigationTitle("Sound credits")
+                    }
+                }
             }
             .navigationTitle("Song settings")
             .toolbar { ToolbarItem(placement: .confirmationAction) { Button("Done") { showSettings = false } } }
@@ -265,12 +297,22 @@ private enum SoundGroup: String, CaseIterable, Identifiable {
         case .fun: return "star.fill"
         }
     }
+    static func group(for instrument: Instrument) -> SoundGroup {
+        allCases.first { $0.instruments.contains(instrument) } ?? .instruments
+    }
     var instruments: [Instrument] {
         switch self {
         case .instruments: return [.piano, .xylophone, .guitar, .trumpet, .flute, .bells, .synth, .drums]
-        case .animals: return [.puppy, .kitten]
-        case .fun: return [.sparkle, .boing]
+        case .animals: return [.puppy, .kitten, .chicken, .pig, .cow, .frog]
+        case .fun: return [.sparkle, .boing, .bubbles, .whistle, .laser]
         }
+    }
+}
+
+private struct SoundPositionKey: PreferenceKey {
+    static let defaultValue: [Instrument: CGFloat] = [:]
+    static func reduce(value: inout [Instrument: CGFloat], nextValue: () -> [Instrument: CGFloat]) {
+        value.merge(nextValue(), uniquingKeysWith: { _, new in new })
     }
 }
 
@@ -278,8 +320,7 @@ private struct InstrumentSticker: View {
     let instrument: Instrument
     var body: some View {
         Image(instrument.rawValue).resizable().scaledToFit()
-            .saturation(1.25).contrast(1.06)
-            .shadow(color: instrument.tint.opacity(0.25), radius: 1.5, y: 2)
+            .shadow(color: instrument.tint.opacity(0.12), radius: 1, y: 1)
     }
 }
 

@@ -23,14 +23,31 @@ final class PlinkaAudio: ObservableObject {
     private var stepSeconds: TimeInterval = 0
     private var lastStep = 0
     private var looping = false
+    private static let recordedInstruments: [Instrument] = [.puppy, .chicken, .pig, .cow, .frog]
+    private var recordings: [Instrument: [Float]] = [:]
 
     init() {
         engine.attach(player)
         engine.connect(player, to: engine.mainMixerNode, format: format)
         engine.mainMixerNode.outputVolume = 0.72
+        for instrument in Self.recordedInstruments {
+            guard let url = Bundle.main.url(forResource: instrument.rawValue,
+                                            withExtension: "wav", subdirectory: "Sounds"),
+                  let file = try? AVAudioFile(forReading: url),
+                  file.processingFormat.sampleRate == 44_100,
+                  file.processingFormat.channelCount == 1,
+                  let buffer = AVAudioPCMBuffer(pcmFormat: file.processingFormat,
+                                                 frameCapacity: AVAudioFrameCount(file.length)),
+                  (try? file.read(into: buffer)) != nil,
+                  let channel = buffer.floatChannelData?[0], buffer.frameLength > 0 else { continue }
+            recordings[instrument] = Array(UnsafeBufferPointer(start: channel, count: Int(buffer.frameLength)))
+        }
     }
 
     private func prepareAudio() throws {
+        guard recordings.count == Self.recordedInstruments.count else {
+            throw CocoaError(.fileReadCorruptFile)
+        }
         try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default)
         try AVAudioSession.sharedInstance().setActive(true)
         if !engine.isRunning { try engine.start() }
@@ -168,7 +185,12 @@ final class PlinkaAudio: ObservableObject {
         let last = song.notes.map(\.step).max() ?? 0
         // Natural ending after the last note. Repeat at least one measure
         // when looping, so a one-note melody doesn't stutter rapidly.
-        let normalEnd = Double(last) * stepSeconds + 0.63
+        let normalEnd = song.notes.map { note -> Double in
+            let pitch = SongStore.pitches.indices.contains(note.row) ? SongStore.pitches[note.row] : 69
+            let ratio = pow(2.0, Double(pitch - 69) / 12.0)
+            let tail = recordings[note.instrument].map { Double($0.count) / format.sampleRate / ratio } ?? 0.60
+            return Double(note.step) * stepSeconds + tail + 0.03
+        }.max() ?? 0.63
         let duration = max(minimumDuration, song.loop
             ? max(8 * stepSeconds, normalEnd)
             : max(1.4 * stepSeconds, normalEnd))
@@ -185,7 +207,10 @@ final class PlinkaAudio: ObservableObject {
             let offset = Int(Double(note.step) * stepSeconds * format.sampleRate)
             let remaining = Int(frameCount) - offset
             if remaining <= 0 { continue }
-            let sampleCount = min(remaining, Int(0.60 * format.sampleRate))
+            let noteDuration = recordings[note.instrument].map {
+                Double($0.count) / format.sampleRate / (frequency / 440.0)
+            } ?? 0.60
+            let sampleCount = min(remaining, Int(ceil(noteDuration * format.sampleRate)))
             addNote(note.instrument, frequency: frequency, into: samples,
                     offset: offset, count: sampleCount)
         }
@@ -200,6 +225,19 @@ final class PlinkaAudio: ObservableObject {
     private func addNote(_ instrument: Instrument, frequency f: Double,
                          into output: UnsafeMutablePointer<Float>, offset: Int, count: Int) {
         let rate = format.sampleRate
+        if let recording = recordings[instrument] {
+            // Pitch follows the staff; sample tails are included in phrase length.
+            let ratio = f / 440.0
+            for i in 0..<count {
+                let position = Double(i) * ratio
+                let index = Int(position)
+                guard index + 1 < recording.count else { break }
+                let fraction = Float(position - Double(index))
+                let sample = recording[index] * (1 - fraction) + recording[index + 1] * fraction
+                output[offset + i] += sample * 0.28
+            }
+            return
+        }
         let tau = Double.pi * 2
         var seed: UInt32 = UInt32(8_411 + Int(f * 53))
         func random() -> Double {
@@ -251,14 +289,9 @@ final class PlinkaAudio: ObservableObject {
             case .synth:
                 value = (fundamental * 0.65 +
                          sin(tau * f * 1.01 * t) * 0.35) * exp(-3.8 * t)
-            case .puppy:
-                // Two short voiced barks, with a downward pitch sweep.
-                let local = t.truncatingRemainder(dividingBy: 0.19)
-                let phase = tau * f * 0.48 * (local - 0.9 * local * local)
-                let envelope = min(1, local * 120) * exp(-24 * local)
-                    * (t < 0.36 ? 1.0 : exp(-70 * (t - 0.36)))
-                value = (sin(phase) * 0.65 + sin(3 * phase) * 0.23
-                    + random() * 0.12) * envelope
+            case .puppy, .chicken, .pig, .cow, .frog:
+                // Recorded sounds return above. Never substitute a drum oscillator.
+                value = 0
             case .kitten:
                 // A voiced meow: rising then falling pitch and a nasal overtone.
                 let phase = tau * f * (0.85 * t + 0.9 * t * t - t * t * t)
@@ -282,6 +315,23 @@ final class PlinkaAudio: ObservableObject {
                 let phase = tau * f * (0.65 * t + 0.25 * wobble)
                 value = (sin(phase) * 0.78 + sin(2 * phase) * 0.18)
                     * exp(-6 * t)
+            case .bubbles:
+                value = 0
+                for bubble in 0..<3 {
+                    let local = t - Double(bubble) * 0.14
+                    if local >= 0 && local < 0.11 {
+                        let pitch = f * (1.1 + Double(bubble) * 0.3)
+                        let phase = tau * pitch * (local + 5 * local * local)
+                        value += sin(phase) * sin(Double.pi * local / 0.11) * exp(-18 * local)
+                    }
+                }
+            case .whistle:
+                let phase = tau * f * (t + 1.1 * t * t)
+                value = sin(phase) * min(1, t * 30) * exp(-3 * t)
+            case .laser:
+                // Continuous exponential down-glide: a soft cartoon "pew".
+                let phase = tau * f * 2.4 * (1 - exp(-9 * t)) / 9
+                value = (sin(phase) * 0.8 + sin(phase * 2) * 0.12) * exp(-8 * t)
             case .drums:
                 if f < 420 {
                     value = sin(tau * (90 - 58 * min(t, 0.20)) * t) * exp(-18 * t)

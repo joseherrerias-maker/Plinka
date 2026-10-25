@@ -40,3 +40,5 @@ jobs:
         run: |
           python3 ios/scripts/verify-orientations.py \
             "$RUNNER_TEMP/PlinkaDerivedData/Build/Products/Debug-iphonesimulator/Plinka.app/Info.plist"
+          python3 ios/scripts/verify-sound-resources.py \
+            "$RUNNER_TEMP/PlinkaDerivedData/Build/Products/Debug-iphonesimulator/Plinka.app"

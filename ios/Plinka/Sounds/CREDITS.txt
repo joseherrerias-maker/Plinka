@@ -1,0 +1,30 @@
+Pluki animal sound credits
+
+Puppy: “Barking of a dog” by Amada44, CC BY-SA 3.0.
+https://commons.wikimedia.org/wiki/File:Barking_of_a_dog.ogg
+https://creativecommons.org/licenses/by-sa/3.0/
+
+Cow: “Mudchute cow 1” by Secretlondon, CC BY-SA 3.0 (selected license).
+https://commons.wikimedia.org/wiki/File:Mudchute_cow_1.ogg
+https://creativecommons.org/licenses/by-sa/3.0/
+
+Pig: “Pig grunt - Erdie” by Erdie, CC BY 3.0.
+https://commons.wikimedia.org/wiki/File:Pig_grunt_-_Erdie.ogg
+https://www.freesound.org/people/Erdie/sounds/44274/
+https://creativecommons.org/licenses/by/3.0/
+
+Chicken: “Chickens demanding food” by alys / PDSounds, public domain.
+https://commons.wikimedia.org/wiki/File:Chickens_demanding_food.ogg
+
+Frog: “Banded Bull Frog Call” by Inspector, CC BY-SA 3.0 (selected license).
+https://commons.wikimedia.org/wiki/File:Banded_Bull_Frog_Call.ogg
+https://creativecommons.org/licenses/by-sa/3.0/
+
+Changes by the Pluki project: short excerpts, mono 44.1 kHz PCM conversion,
+peak normalization, and edge fades. Playback changes pitch with staff position.
+Each adapted recording retains its stated license; CC BY-SA adaptations are
+available under CC BY-SA 3.0. Downloadable adapted recordings and credits:
+https://github.com/joseherrerias-maker/Plinka/tree/main/ios/Plinka/Sounds
+No endorsement by the original authors is implied.
+
+Kitten and the musical/fun effects are synthesized by Pluki offline.

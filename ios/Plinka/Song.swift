@@ -2,7 +2,7 @@ import SwiftUI
 import Foundation
 
 enum Instrument: String, Codable, CaseIterable, Identifiable {
-    case piano, xylophone, guitar, trumpet, flute, bells, synth, drums, puppy, kitten, sparkle, boing
+    case piano, xylophone, guitar, trumpet, flute, bells, synth, drums, puppy, kitten, chicken, pig, cow, frog, sparkle, boing, bubbles, whistle, laser
 
     var id: String { rawValue }
     var label: String {
@@ -19,6 +19,13 @@ enum Instrument: String, Codable, CaseIterable, Identifiable {
         case .kitten: return "Kitten"
         case .sparkle: return "Sparkle"
         case .boing: return "Boing"
+        case .chicken: return "Chicken"
+        case .pig: return "Pig"
+        case .cow: return "Cow"
+        case .frog: return "Frog"
+        case .bubbles: return "Bubbles"
+        case .whistle: return "Whistle"
+        case .laser: return "Laser"
         }
     }
     var emoji: String {
@@ -35,6 +42,13 @@ enum Instrument: String, Codable, CaseIterable, Identifiable {
         case .kitten: return "🐱"
         case .sparkle: return "⭐️"
         case .boing: return "🌈"
+        case .chicken: return "🐔"
+        case .pig: return "🐷"
+        case .cow: return "🐮"
+        case .frog: return "🐸"
+        case .bubbles: return "🫧"
+        case .whistle: return "🎵"
+        case .laser: return "🚀"
         }
     }
     var tint: Color {
@@ -51,6 +65,13 @@ enum Instrument: String, Codable, CaseIterable, Identifiable {
         case .sparkle: return Color.yellow
         case .boing: return Color.pink
         case .drums: return Color(red: 0.77, green: 0.60, blue: 0.93)
+        case .chicken: return Color.orange
+        case .pig: return Color.pink
+        case .cow: return Color.brown
+        case .frog: return Color.green
+        case .bubbles: return Color.cyan
+        case .whistle: return Color.mint
+        case .laser: return Color.blue
         }
     }
 }

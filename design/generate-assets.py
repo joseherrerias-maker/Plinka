@@ -1,4 +1,4 @@
-"""Editable vector artwork for Pluki V2. Render with Inkscape; no external assets."""
+"""Historical Pluki V2 vector generator; replaced stickers are protected."""
 from pathlib import Path
 import json, subprocess
 root=Path(__file__).resolve().parent
@@ -50,6 +50,10 @@ room+='<path d="M1190 0V91" stroke="#a58a62" stroke-width="6"/><path d="M1110 13
 for x,y in [(930,80),(1010,115),(850,110)]: room+='<ellipse cx="%d" cy="%d" rx="50" ry="22" fill="#74ad83" transform="rotate(-25 %d %d)"/>'%(x,y,x,y)
 art['studio-room']=svg(room,1600,1000)
 for name,source in art.items():
+ # Build 5 stickers use the reference-matched PNG assets. This legacy generator
+ # may still refresh the background, but must not restore the old icon family.
+ if name != 'studio-room':
+  continue
  path=root/(name+'.svg');path.write_text(source)
  folder=assets/(name+'.imageset');folder.mkdir(parents=True,exist_ok=True)
  subprocess.run(['inkscape',str(path),'--export-filename='+str(folder/(name+'.png')),'--export-width='+('1600' if name=='studio-room' else '256')],check=True,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
