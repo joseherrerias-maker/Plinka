@@ -201,7 +201,7 @@ struct ComposerView: View {
     @ViewBuilder
     private func navigationActions(inSong: Bool) -> some View {
         songMenuRow("New song", icon: "plus.circle.fill", color: PlukiStyle.green) {
-            if store.hasUnsavedChanges { confirmNew = true }
+            if inSong && store.hasUnsavedChanges { confirmNew = true }
             else { startNewSong() }
         }
         songMenuRow("Open song", icon: "folder.fill", color: .orange) {
