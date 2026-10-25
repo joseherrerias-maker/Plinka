@@ -60,12 +60,39 @@ struct SongStoreChecks {
             precondition(draft.song.notes == sample.song.notes)
             precondition(draft.savedSongs.first { $0.id == existing.id }!.song == existing.song)
         }
+        // A fresh install starts at Home without a phantom Continue action.
+        let freshSuite = "Pluki-FreshChecks-\(UUID().uuidString)"
+        let freshDefaults = UserDefaults(suiteName: freshSuite)!
+        defer { freshDefaults.removePersistentDomain(forName: freshSuite) }
+        let fresh = SongStore(defaults: freshDefaults)
+        precondition(!fresh.hasDraft && !fresh.hasUnsavedChanges)
+        precondition(!SongStore(defaults: freshDefaults).hasDraft)
+        fresh.newSong()
+        precondition(fresh.hasDraft && !fresh.hasUnsavedChanges)
+        fresh.song.title = "My melody"
+        precondition(fresh.hasUnsavedChanges)
+        fresh.song.notes = [MusicNote(step: 2, row: 3, instrument: .piano)]
+        precondition(fresh.saveSong(named: "My melody"))
+        let savedBeforeNew = fresh.savedSongs[0]
+        let oldSession = fresh.sessionID
+        fresh.newSong()
+        precondition(fresh.sessionID != oldSession)
+        precondition(fresh.song == Song() && !fresh.canUndo && !fresh.canRedo)
+        let continued = SongStore(defaults: freshDefaults)
+        precondition(continued.hasDraft && continued.song == Song())
+        precondition(continued.savedSongs[0].song == savedBeforeNew.song)
+        // Even reusing the old title after New must create a distinct save.
+        continued.song.notes = [MusicNote(step: 6, row: 5, instrument: .bells)]
+        precondition(continued.saveSong(named: "My melody"))
+        precondition(continued.savedSongs.count == 2)
+        precondition(continued.savedSongs.first { $0.id == savedBeforeNew.id }!.song == savedBeforeNew.song)
+        precondition(SongStore(defaults: freshDefaults).song == continued.song)
         let broken = Data("not JSON".utf8)
         defaults.set(broken, forKey: "pluki-saved-songs-v1")
         let damaged = SongStore(defaults: defaults)
         precondition(!damaged.deleteSavedSong(id: first.id))
         precondition(!damaged.saveSong(named: "Must not overwrite"))
         precondition(defaults.data(forKey: "pluki-saved-songs-v1") == broken)
-        print("Song persistence, migration, updates, copies, reopening and corruption protection passed.")
+        print("Song persistence, samples, new-song isolation, draft continuation and corruption protection passed.")
     }
 }

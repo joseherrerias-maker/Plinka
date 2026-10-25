@@ -158,6 +158,8 @@ final class SongStore: ObservableObject {
     @Published var song: Song {
         didSet { persist() }
     }
+    @Published private(set) var sessionID = UUID()
+    @Published private(set) var hasDraft = false
     @Published private(set) var savedSongs: [SavedSong] = []
     @Published var libraryError: String?
     private var activeSavedID: UUID?
@@ -168,7 +170,7 @@ final class SongStore: ObservableObject {
         if let saved = savedSongs.first(where: { $0.id == activeSavedID }) {
             return saved.song != song
         }
-        return !song.notes.isEmpty
+        return song != Song()
     }
 
     @discardableResult
@@ -227,6 +229,7 @@ final class SongStore: ObservableObject {
     }
 
     func openSong(_ saved: SavedSong) {
+        sessionID = UUID()
         song = saved.song
         activeSavedID = saved.id
         defaults.set(saved.id.uuidString, forKey: "pluki-active-saved-song")
@@ -236,7 +239,20 @@ final class SongStore: ObservableObject {
         redoHistory.removeAll()
     }
 
+    func newSong() {
+        sessionID = UUID()
+        activeSavedID = nil
+        defaults.removeObject(forKey: "pluki-active-saved-song")
+        song = Song()
+        chosen = .piano
+        selectedID = nil
+        erasing = false
+        undoHistory.removeAll()
+        redoHistory.removeAll()
+    }
+
     func openSample(_ sample: SampleSong) {
+        sessionID = UUID()
         activeSavedID = nil
         defaults.removeObject(forKey: "pluki-active-saved-song")
         song = sample.song
@@ -258,7 +274,12 @@ final class SongStore: ObservableObject {
         self.defaults = defaults
         if let data = defaults.data(forKey: Self.saveKey),
            let restored = try? JSONDecoder().decode(Song.self, from: data) {
-            self.song = restored
+            var validated = restored
+            validated.notes = restored.notes.filter {
+                (0..<Self.steps).contains($0.step) && (0..<Self.pitches.count).contains($0.row)
+            }
+            self.song = validated
+            self.hasDraft = true
         } else {
             self.song = Song()
         }
@@ -272,12 +293,10 @@ final class SongStore: ObservableObject {
             }
         }
         activeSavedID = defaults.string(forKey: "pluki-active-saved-song").flatMap(UUID.init(uuidString:))
-        self.song.notes = self.song.notes.filter {
-            (0..<Self.steps).contains($0.step) && (0..<Self.pitches.count).contains($0.row)
-        }
     }
 
     private func persist() {
+        hasDraft = true
         if let data = try? JSONEncoder().encode(song) {
             defaults.set(data, forKey: Self.saveKey)
         }

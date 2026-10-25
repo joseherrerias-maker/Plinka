@@ -13,6 +13,8 @@ struct ComposerView: View {
     @StateObject private var store = SongStore()
     @StateObject private var audio = PlinkaAudio()
     @Environment(\.scenePhase) private var scenePhase
+    @State private var showHome = true
+    @State private var confirmNew = false
     @State private var confirmClear = false
     @State private var showSongMenu = false
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -34,67 +36,20 @@ struct ComposerView: View {
 
     var body: some View {
         GeometryReader { geometry in
-            let short = geometry.size.height < 500
-            let narrow = geometry.size.width < 780
-            let padding: CGFloat = short ? 8 : 16
-            let gap: CGFloat = short ? 8 : 12
-            let toolbar: CGFloat = narrow ? 108 : (short ? 52 : 72)
-            let tray: CGFloat = short ? 94 : 140
-            let staffHeight = max(100, geometry.size.height - 2 * padding - 2 * gap - toolbar - tray)
-            VStack(spacing: gap) {
-                toolbarView(narrow: narrow, short: short, iconOnlyBrand: geometry.size.width < 400)
-                    .frame(height: toolbar)
-                StaffView(store: store, audio: audio, height: staffHeight, short: short)
-                    .frame(height: staffHeight)
-                instrumentTray(short: short)
-                    .frame(height: tray)
-            }
-            .padding(padding)
-            .frame(width: geometry.size.width, height: geometry.size.height, alignment: .top)
-            .background {
-                Image("studio-room").resizable().scaledToFill()
-                    .overlay(.white.opacity(0.12)).ignoresSafeArea()
-            }
-            .clipped()
-        }
-        .accessibilityHidden(showSongMenu)
-        .overlay(alignment: .topTrailing) {
-            if showSongMenu {
-                GeometryReader { geometry in
-                    ZStack(alignment: .topTrailing) {
-                        Color.black.opacity(0.08)
-                            .contentShape(Rectangle())
-                            .onTapGesture { dismissSongMenu() }
-                            .accessibilityLabel("Close song menu")
-                            .accessibilityAddTraits(.isButton)
-                        ScrollView {
-                            VStack(spacing: 6) {
-                                songMenuRow("Open song", icon: "folder.fill", color: .orange) {
-                                    audio.stop(); showSongs = true
-                                }
-                                songMenuRow("Save song", icon: "square.and.arrow.down.fill", color: PlukiStyle.green) {
-                                    saveTitle = store.song.title; showSave = true
-                                }
-                                songMenuRow("Samples", icon: "music.note.list", color: .purple) {
-                                    audio.stop(); showSamples = true
-                                }
-                                Divider().overlay(PlukiStyle.ink.opacity(0.08)).padding(.horizontal, 12)
-                                songMenuRow("Settings", icon: "gearshape.fill", color: PlukiStyle.blue) {
-                                    showSettings = true
-                                }
-                            }.padding(12)
-                        }
-                        .frame(width: min(300, geometry.size.width - 24),
-                               height: min(290, max(100, geometry.size.height - 24)))
-                        .background(PlukiStyle.paper, in: RoundedRectangle(cornerRadius: 26))
-                        .overlay(RoundedRectangle(cornerRadius: 26).stroke(.white.opacity(0.9), lineWidth: 2))
-                        .shadow(color: PlukiStyle.ink.opacity(0.18), radius: 16, y: 7)
-                        .padding(12)
-                        .accessibilityAddTraits(.isModal)
-                        .accessibilityAction(.escape) { dismissSongMenu() }
-                    }
+            ZStack {
+                // Keep the composer mounted so Home/Continue preserves its scroll position.
+                composerContent
+                    .opacity(showHome ? 0 : 1)
+                    .allowsHitTesting(!showHome && !showSongMenu)
+                    .accessibilityHidden(showHome || showSongMenu)
+                if showHome {
+                    homeScreen(size: geometry.size)
+                        .accessibilityHidden(showSongMenu)
                 }
-                .transition(.opacity)
+                if showSongMenu {
+                    songMenuOverlay(size: geometry.size)
+                        .transition(.opacity)
+                }
             }
         }
         .foregroundStyle(PlukiStyle.ink)
@@ -111,6 +66,13 @@ struct ComposerView: View {
         .alert("Saved songs", isPresented: Binding(get: { store.libraryError != nil }, set: { if !$0 { store.libraryError = nil } })) {
             Button("OK") { store.libraryError = nil }
         } message: { Text(store.libraryError ?? "") }
+        .confirmationDialog("Save your current song before starting a new one?", isPresented: $confirmNew, titleVisibility: .visible) {
+            Button("Save and start new") {
+                if store.saveSong(named: store.song.title) { startNewSong() }
+            }
+            Button("Start without saving", role: .destructive) { startNewSong() }
+            Button("Cancel", role: .cancel) {}
+        }
         .confirmationDialog("Clear your entire melody?", isPresented: $confirmClear) {
             Button("Clear all notes", role: .destructive) { audio.stop(); store.clear() }
             Button("Cancel", role: .cancel) {}
@@ -118,6 +80,152 @@ struct ComposerView: View {
         .onChange(of: scenePhase) { _, phase in
             if phase != .active { audio.pause() }
         }
+    }
+
+    private var composerContent: some View {
+        GeometryReader { geometry in
+            let short = geometry.size.height < 500
+            let narrow = geometry.size.width < 780
+            let padding: CGFloat = short ? 8 : 16
+            let gap: CGFloat = short ? 8 : 12
+            let toolbar: CGFloat = narrow ? 108 : (short ? 52 : 72)
+            let tray: CGFloat = short ? 94 : 140
+            let staffHeight = max(100, geometry.size.height - 2 * padding - 2 * gap - toolbar - tray)
+            VStack(spacing: gap) {
+                toolbarView(narrow: narrow, short: short, iconOnlyBrand: geometry.size.width < 400)
+                    .frame(height: toolbar)
+                StaffView(store: store, audio: audio, height: staffHeight, short: short)
+                    .id(store.sessionID)
+                    .frame(height: staffHeight)
+                instrumentTray(short: short)
+                    .frame(height: tray)
+            }
+            .padding(padding)
+            .frame(width: geometry.size.width, height: geometry.size.height, alignment: .top)
+            .background {
+                Image("studio-room").resizable().scaledToFill()
+                    .overlay(.white.opacity(0.12)).ignoresSafeArea()
+            }
+            .clipped()
+        }
+    }
+
+    private var homeBrand: some View {
+        VStack(spacing: 12) {
+            wordmark(small: false)
+            Text("Make a little music")
+                .font(.system(.title3, design: .rounded, weight: .bold))
+                .multilineTextAlignment(.center)
+        }
+        .padding(20)
+        .background(PlukiStyle.paper.opacity(0.85), in: RoundedRectangle(cornerRadius: 28))
+    }
+
+    private func homeScreen(size: CGSize) -> some View {
+        ScrollView {
+            Group {
+                if size.height < 500 && size.width > 600 {
+                    HStack(spacing: 28) {
+                        homeBrand
+                        homeMenu
+                    }
+                } else {
+                    VStack(spacing: 24) {
+                        homeBrand
+                        homeMenu
+                    }
+                }
+            }
+            .padding(24)
+            .frame(maxWidth: .infinity)
+            .frame(minHeight: size.height)
+        }
+        .background {
+            Image("studio-room").resizable().scaledToFill()
+                .overlay(.white.opacity(0.18)).ignoresSafeArea()
+        }
+        .clipped()
+    }
+
+    private var homeMenu: some View {
+        VStack(spacing: 6) {
+            navigationActions(inSong: false)
+            if store.hasDraft {
+                Divider().padding(.horizontal, 12)
+                songMenuRow("Continue song", icon: "play.circle.fill", color: PlukiStyle.green) {
+                    showHome = false
+                }
+            }
+        }
+        .padding(14)
+        .frame(maxWidth: 340)
+        .background(PlukiStyle.paper, in: RoundedRectangle(cornerRadius: 28))
+        .overlay(RoundedRectangle(cornerRadius: 28).stroke(.white.opacity(0.9), lineWidth: 2))
+        .shadow(color: PlukiStyle.ink.opacity(0.15), radius: 14, y: 6)
+    }
+
+    private func songMenuOverlay(size: CGSize) -> some View {
+        ZStack {
+            Color.black.opacity(0.15)
+                .contentShape(Rectangle())
+                .onTapGesture { dismissSongMenu() }
+                .accessibilityHidden(true)
+            ScrollView {
+                VStack(spacing: 6) {
+                    HStack {
+                        Text("Song menu").font(.system(.title2, design: .rounded, weight: .bold))
+                        Spacer()
+                        Button { dismissSongMenu() } label: {
+                            Image(systemName: "xmark").font(.headline)
+                                .frame(width: 44, height: 44)
+                                .background(PlukiStyle.blue.opacity(0.12), in: Circle())
+                        }.accessibilityLabel("Close menu")
+                    }.padding(.horizontal, 6)
+                    navigationActions(inSong: true)
+                    Divider().padding(.horizontal, 12)
+                    songMenuRow("Back to home", icon: "house.fill", color: .orange) {
+                        audio.pause()
+                        showHome = true
+                    }
+                }.padding(14)
+            }
+            .frame(width: min(360, size.width - 24), height: min(470, max(100, size.height - 24)))
+            .background(PlukiStyle.paper, in: RoundedRectangle(cornerRadius: 28))
+            .overlay(RoundedRectangle(cornerRadius: 28).stroke(.white.opacity(0.9), lineWidth: 2))
+            .shadow(color: PlukiStyle.ink.opacity(0.18), radius: 16, y: 7)
+            .accessibilityAddTraits(.isModal)
+            .accessibilityAction(.escape) { dismissSongMenu() }
+        }
+    }
+
+    @ViewBuilder
+    private func navigationActions(inSong: Bool) -> some View {
+        songMenuRow("New song", icon: "plus.circle.fill", color: PlukiStyle.green) {
+            if store.hasUnsavedChanges { confirmNew = true }
+            else { startNewSong() }
+        }
+        songMenuRow("Open song", icon: "folder.fill", color: .orange) {
+            audio.stop(); showSongs = true
+        }
+        if inSong {
+            songMenuRow("Save song", icon: "square.and.arrow.down.fill", color: PlukiStyle.green) {
+                saveTitle = store.song.title; showSave = true
+            }
+        }
+        songMenuRow("Samples", icon: "music.note.list", color: .purple) {
+            audio.stop(); showSamples = true
+        }
+        Divider().padding(.horizontal, 12)
+        songMenuRow("Settings", icon: "gearshape.fill", color: PlukiStyle.blue) {
+            showSettings = true
+        }
+    }
+
+    private func startNewSong() {
+        audio.stop()
+        store.newSong()
+        soundGroup = .instruments
+        showHome = false
     }
 
     private func toolbarView(narrow: Bool, short: Bool, iconOnlyBrand: Bool) -> some View {
@@ -208,6 +316,7 @@ struct ComposerView: View {
                 confirmClear = true
             }
             tool("line.3.horizontal", title: "Song menu", selected: showSongMenu) {
+                audio.pause()
                 withAnimation(reduceMotion ? nil : .easeOut(duration: 0.18)) { showSongMenu.toggle() }
             }
         }
@@ -241,6 +350,7 @@ struct ComposerView: View {
     private func openSample(_ sample: SampleSong) {
         audio.stop()
         store.openSample(sample)
+        showHome = false
         showSamples = false
     }
 
@@ -270,6 +380,7 @@ struct ComposerView: View {
     private func openSavedSong(_ saved: SavedSong) {
         audio.stop()
         store.openSong(saved)
+        showHome = false
         showSongs = false
         pendingSong = nil
     }
@@ -446,8 +557,10 @@ struct ComposerView: View {
     private var settings: some View {
         NavigationStack {
             Form {
-                Section("Your song") {
-                    TextField("Song name", text: $store.song.title)
+                if !showHome {
+                    Section("Your song") {
+                        TextField("Song name", text: $store.song.title)
+                    }
                 }
                 Section("Compose") {
                     Text("Swipe the sound tray to explore Instruments, Animals, and Fun, or tap a category to jump there. Choose a sound and tap the staff. Move a sticker up or down to change pitch, or sideways to change timing.")
@@ -462,7 +575,7 @@ struct ComposerView: View {
                     }
                 }
             }
-            .navigationTitle("Song settings")
+            .navigationTitle(showHome ? "Settings" : "Song settings")
             .toolbar { ToolbarItem(placement: .confirmationAction) { Button("Done") { showSettings = false } } }
         }
         .presentationDetents([.medium, .large])
