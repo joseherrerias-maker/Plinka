@@ -106,6 +106,23 @@ struct SampleSong: Identifiable {
     }
 
     static let all: [SampleSong] = [
+        SampleSong(id: "frere-jacques", detail: "Traditional · opening melody · flute and bells",
+            song: Song(title: "Frère Jacques", tempo: 108, loop: true,
+                notes: melody([67,69,71,67,67,69,71,67,71,72,74,71,72,74],
+                    steps: [0,2,4,6,8,10,12,14,16,18,20,24,26,28], instrument: .flute)
+                    + melody([67,67], steps: [0,8], instrument: .bells))),
+        SampleSong(id: "ode-to-joy", detail: "Beethoven · opening melody · piano",
+            song: Song(title: "Ode to Joy", tempo: 112, loop: true,
+                notes: melody([71,71,72,74,74,72,71,69,67,67,69,71,71,69,69],
+                    steps: [0,2,4,6,8,10,12,14,16,18,20,22,24,27,28], instrument: .piano))),
+        SampleSong(id: "animal-parade", detail: "Original · xylophone with puppy, frog and farm friends",
+            song: Song(title: "Animal Parade", tempo: 104, loop: true,
+                notes: melody([67,71,74,72,69,72,71,67,69,74,72,71],
+                    steps: [0,2,3,8,10,11,16,18,19,24,26,27], instrument: .xylophone)
+                    + melody([69], steps: [5], instrument: .puppy)
+                    + melody([69], steps: [13], instrument: .frog)
+                    + melody([69], steps: [21], instrument: .chicken)
+                    + melody([69], steps: [29], instrument: .pig))),
         SampleSong(id: "twinkle", detail: "Traditional · opening melody · piano and bells",
             song: Song(title: "Twinkle, Twinkle, Little Star", tempo: 100, loop: true,
                 notes: melody([67,67,74,74,76,76,74,72,72,71,71,69,69,67],
