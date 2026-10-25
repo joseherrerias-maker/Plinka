@@ -83,11 +83,17 @@ struct MusicNote: Codable, Identifiable, Equatable {
     var instrument: Instrument
 }
 
-struct Song: Codable {
+struct Song: Codable, Equatable {
     var title: String = "My First Song"
     var tempo: Double = 110
     var loop: Bool = false
     var notes: [MusicNote] = []
+}
+
+struct SavedSong: Codable, Identifiable {
+    var id: UUID = UUID()
+    var song: Song
+    var savedAt: Date = Date()
 }
 
 @MainActor
@@ -99,19 +105,86 @@ final class SongStore: ObservableObject {
     @Published var song: Song {
         didSet { persist() }
     }
+    @Published private(set) var savedSongs: [SavedSong] = []
+    @Published var libraryError: String?
+    private var activeSavedID: UUID?
+    private var libraryReadable = true
+    private static let libraryKey = "pluki-saved-songs-v1"
+
+    var hasUnsavedChanges: Bool {
+        if let saved = savedSongs.first(where: { $0.id == activeSavedID }) {
+            return saved.song != song
+        }
+        return !song.notes.isEmpty
+    }
+
+    @discardableResult
+    func saveSong(named name: String) -> Bool {
+        guard libraryReadable else { libraryError = "Saved songs could not be read. Saving is paused to protect them."; return false }
+        var snapshot = song
+        let title = name.trimmingCharacters(in: .whitespacesAndNewlines)
+        snapshot.title = title.isEmpty ? "Untitled Song" : String(title.prefix(80))
+        var entries = savedSongs
+        let id: UUID
+        if let index = entries.firstIndex(where: { $0.id == activeSavedID && $0.song.title == snapshot.title }) {
+            id = entries[index].id
+            entries[index].song = snapshot
+            entries[index].savedAt = Date()
+        } else {
+            let entry = SavedSong(song: snapshot)
+            id = entry.id
+            entries.append(entry)
+        }
+        do {
+            let data = try JSONEncoder().encode(entries)
+            defaults.set(data, forKey: Self.libraryKey)
+            savedSongs = entries.sorted { $0.savedAt > $1.savedAt }
+            activeSavedID = id
+            defaults.set(id.uuidString, forKey: "pluki-active-saved-song")
+            song = snapshot
+            return true
+        } catch {
+            libraryError = "Your song could not be saved. Please try again."
+            return false
+        }
+    }
+
+    func openSong(_ saved: SavedSong) {
+        song = saved.song
+        activeSavedID = saved.id
+        defaults.set(saved.id.uuidString, forKey: "pluki-active-saved-song")
+        selectedID = nil
+        erasing = false
+        undoHistory.removeAll()
+        redoHistory.removeAll()
+    }
+
     @Published var chosen: Instrument = .piano
     @Published var erasing = false
     @Published var selectedID: UUID?
     private var undoHistory: [Song] = []
     private var redoHistory: [Song] = []
 
-    init() {
-        if let data = UserDefaults.standard.data(forKey: Self.saveKey),
+    private let defaults: UserDefaults
+
+    init(defaults: UserDefaults = .standard) {
+        self.defaults = defaults
+        if let data = defaults.data(forKey: Self.saveKey),
            let restored = try? JSONDecoder().decode(Song.self, from: data) {
             self.song = restored
         } else {
             self.song = Song()
         }
+        if let data = defaults.data(forKey: Self.libraryKey) {
+            do {
+                savedSongs = try JSONDecoder().decode([SavedSong].self, from: data)
+                    .sorted { $0.savedAt > $1.savedAt }
+            } catch {
+                libraryReadable = false
+                libraryError = "Saved songs could not be read. Your current melody is safe; the saved collection has not been changed."
+            }
+        }
+        activeSavedID = defaults.string(forKey: "pluki-active-saved-song").flatMap(UUID.init(uuidString:))
         self.song.notes = self.song.notes.filter {
             (0..<Self.steps).contains($0.step) && (0..<Self.pitches.count).contains($0.row)
         }
@@ -119,7 +192,7 @@ final class SongStore: ObservableObject {
 
     private func persist() {
         if let data = try? JSONEncoder().encode(song) {
-            UserDefaults.standard.set(data, forKey: Self.saveKey)
+            defaults.set(data, forKey: Self.saveKey)
         }
     }
 

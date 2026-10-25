@@ -15,6 +15,11 @@ struct ComposerView: View {
     @Environment(\.scenePhase) private var scenePhase
     @State private var confirmClear = false
     @State private var showSettings = false
+    @State private var showSongs = false
+    @State private var showSave = false
+    @State private var saveTitle = ""
+    @State private var pendingSong: SavedSong?
+    @State private var confirmOpen = false
     @State private var soundGroup: SoundGroup = .instruments
 
     private var versionLabel: String {
@@ -49,6 +54,17 @@ struct ComposerView: View {
         }
         .foregroundStyle(PlukiStyle.ink)
         .sheet(isPresented: $showSettings) { settings }
+        .sheet(isPresented: $showSongs) { savedSongsView }
+        .alert("Save song", isPresented: $showSave) {
+            TextField("Song name", text: $saveTitle)
+            Button("Save") { store.saveSong(named: saveTitle) }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("Keep this song on this device. Use a different name to save a new copy.")
+        }
+        .alert("Saved songs", isPresented: Binding(get: { store.libraryError != nil }, set: { if !$0 { store.libraryError = nil } })) {
+            Button("OK") { store.libraryError = nil }
+        } message: { Text(store.libraryError ?? "") }
         .confirmationDialog("Clear your entire melody?", isPresented: $confirmClear) {
             Button("Clear all notes", role: .destructive) { audio.stop(); store.clear() }
             Button("Cancel", role: .cancel) {}
@@ -145,7 +161,60 @@ struct ComposerView: View {
             tool("trash", title: "Clear all notes", disabled: audio.isPlaying || store.song.notes.isEmpty) {
                 confirmClear = true
             }
-            tool("gearshape.fill", title: "Song settings") { showSettings = true }
+            Menu {
+                Button { audio.stop(); showSongs = true } label: { Label("Open", systemImage: "folder") }
+                Button { saveTitle = store.song.title; showSave = true } label: { Label("Save", systemImage: "square.and.arrow.down") }
+                Button { showSettings = true } label: { Label("Settings", systemImage: "gearshape") }
+            } label: {
+                Image(systemName: "line.3.horizontal").font(.system(size: 18, weight: .bold))
+                    .frame(width: 44, height: 44)
+                    .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 15))
+            }.accessibilityLabel("Song menu")
+        }
+    }
+
+    private func openSavedSong(_ saved: SavedSong) {
+        audio.stop()
+        store.openSong(saved)
+        showSongs = false
+        pendingSong = nil
+    }
+
+    private var savedSongsView: some View {
+        NavigationStack {
+            List {
+                if store.savedSongs.isEmpty {
+                    ContentUnavailableView("No saved songs yet", systemImage: "music.note.list",
+                        description: Text("Choose Save from the song menu to keep your melody."))
+                }
+                ForEach(store.savedSongs) { saved in
+                    Button {
+                        if store.hasUnsavedChanges {
+                            pendingSong = saved
+                            confirmOpen = true
+                        } else { openSavedSong(saved) }
+                    } label: {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(saved.song.title).font(.headline)
+                            Text("\(saved.song.notes.count) notes · \(Int(saved.song.tempo)) BPM")
+                                .font(.subheadline).foregroundStyle(.secondary)
+                            Text(saved.savedAt, style: .date).font(.caption).foregroundStyle(.secondary)
+                        }
+                    }
+                }
+            }
+            .navigationTitle("Open song")
+            .toolbar { ToolbarItem(placement: .confirmationAction) { Button("Done") { showSongs = false } } }
+            .confirmationDialog("Save your current changes before opening another song?", isPresented: $confirmOpen, titleVisibility: .visible) {
+                Button("Save and open") {
+                    if store.saveSong(named: store.song.title), let id = pendingSong?.id,
+                       let saved = store.savedSongs.first(where: { $0.id == id }) { openSavedSong(saved) }
+                }
+                Button("Open without saving", role: .destructive) {
+                    if let saved = pendingSong { openSavedSong(saved) }
+                }
+                Button("Cancel", role: .cancel) { pendingSong = nil }
+            }
         }
     }
 
