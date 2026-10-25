@@ -149,6 +149,30 @@ final class SongStore: ObservableObject {
         }
     }
 
+    @discardableResult
+    func deleteSavedSong(id: UUID) -> Bool {
+        guard libraryReadable else {
+            libraryError = "Saved songs could not be read. Deletion is paused to protect them."
+            return false
+        }
+        guard savedSongs.contains(where: { $0.id == id }) else { return true }
+        let remaining = savedSongs.filter { $0.id != id }
+        do {
+            let data = try JSONEncoder().encode(remaining)
+            defaults.set(data, forKey: Self.libraryKey)
+            savedSongs = remaining
+            if activeSavedID == id {
+                activeSavedID = nil
+                defaults.removeObject(forKey: "pluki-active-saved-song")
+            }
+            // Keep the working melody and its autosave intact.
+            return true
+        } catch {
+            libraryError = "This saved song could not be deleted. Please try again."
+            return false
+        }
+    }
+
     func openSong(_ saved: SavedSong) {
         song = saved.song
         activeSavedID = saved.id

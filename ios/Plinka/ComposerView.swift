@@ -20,6 +20,8 @@ struct ComposerView: View {
     @State private var saveTitle = ""
     @State private var pendingSong: SavedSong?
     @State private var confirmOpen = false
+    @State private var pendingDelete: SavedSong?
+    @State private var confirmDelete = false
     @State private var soundGroup: SoundGroup = .instruments
 
     private var versionLabel: String {
@@ -188,6 +190,7 @@ struct ComposerView: View {
                         description: Text("Choose Save from the song menu to keep your melody."))
                 }
                 ForEach(store.savedSongs) { saved in
+                    HStack {
                     Button {
                         if store.hasUnsavedChanges {
                             pendingSong = saved
@@ -199,9 +202,27 @@ struct ComposerView: View {
                             Text("\(saved.song.notes.count) notes · \(Int(saved.song.tempo)) BPM")
                                 .font(.subheadline).foregroundStyle(.secondary)
                             Text(saved.savedAt, style: .date).font(.caption).foregroundStyle(.secondary)
-                        }
+                        }.frame(maxWidth: .infinity, alignment: .leading).contentShape(Rectangle())
+                    }.buttonStyle(.borderless)
+                    Button(role: .destructive) {
+                        pendingDelete = saved
+                        confirmDelete = true
+                    } label: {
+                        Image(systemName: "trash").frame(width: 44, height: 44)
+                    }
+                    .buttonStyle(.borderless)
+                    .accessibilityLabel("Delete \(saved.song.title)")
                     }
                 }
+            }
+            .alert("Delete saved song?", isPresented: $confirmDelete) {
+                Button("Delete", role: .destructive) {
+                    if let saved = pendingDelete { store.deleteSavedSong(id: saved.id) }
+                    pendingDelete = nil
+                }
+                Button("Cancel", role: .cancel) { pendingDelete = nil }
+            } message: {
+                Text("Remove \"\(pendingDelete?.song.title ?? "this song")\" from saved songs? This cannot be undone. Your current melody will stay open.")
             }
             .navigationTitle("Open song")
             .toolbar { ToolbarItem(placement: .confirmationAction) { Button("Done") { showSongs = false } } }
