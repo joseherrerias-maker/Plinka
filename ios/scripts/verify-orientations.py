@@ -8,6 +8,7 @@ Usage:
 Use this after compiling/packaging and BEFORE Codemagic publishing.
 """
 import plistlib
+import re
 import sys
 import zipfile
 from pathlib import Path
@@ -46,6 +47,15 @@ def main():
         return 2
     try:
         info = load_info(path)
+        project = Path(__file__).resolve().parents[1] / "Plinka.xcodeproj/project.pbxproj"
+        releases = set(re.findall(r"PLUKI_RELEASE_BUILD = (\d+);", project.read_text()))
+        if len(releases) != 1:
+            raise ValueError("Debug and Release must declare the same release build number.")
+        expected_build = releases.pop()
+        release_build = info.get("PlukiReleaseBuild")
+        if not isinstance(release_build, str) or release_build != expected_build:
+            raise ValueError(f"Missing or incorrect release label: {release_build!r}; expected Build {expected_build}.")
+        print(f"Verified settings label: Build {release_build}")
         supported = info.get("UISupportedInterfaceOrientations")
         ipad = next(
             (value for key, value in info.items()
