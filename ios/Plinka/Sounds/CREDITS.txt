@@ -13,12 +13,14 @@ https://commons.wikimedia.org/wiki/File:Pig_grunt_-_Erdie.ogg
 https://www.freesound.org/people/Erdie/sounds/44274/
 https://creativecommons.org/licenses/by/3.0/
 
-Chicken: “Chickens demanding food” by alys / PDSounds, public domain.
-https://commons.wikimedia.org/wiki/File:Chickens_demanding_food.ogg
+Chicken: “Chicken Single Alarm Call” by Rudmer_Rotteveel, CC0 1.0.
+https://freesound.org/people/Rudmer_Rotteveel/sounds/316920/
+https://creativecommons.org/publicdomain/zero/1.0/
 
-Frog: “Banded Bull Frog Call” by Inspector, CC BY-SA 3.0 (selected license).
-https://commons.wikimedia.org/wiki/File:Banded_Bull_Frog_Call.ogg
-https://creativecommons.org/licenses/by-sa/3.0/
+Frog: “Frog.ogg” by egomassive, CC0 1.0.
+Original recording: “R01-47-Frog Ribbits” by Craig Smith, CC0.
+https://freesound.org/people/egomassive/sounds/536759/
+https://creativecommons.org/publicdomain/zero/1.0/
 
 Changes by the Pluki project: short excerpts, mono 44.1 kHz PCM conversion,
 peak normalization, and edge fades. Playback changes pitch with staff position.
