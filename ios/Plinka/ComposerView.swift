@@ -14,6 +14,8 @@ struct ComposerView: View {
     @StateObject private var audio = PlinkaAudio()
     @Environment(\.scenePhase) private var scenePhase
     @State private var confirmClear = false
+    @State private var showSongMenu = false
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var showSettings = false
     @State private var showSongs = false
     @State private var showSamples = false
@@ -56,6 +58,46 @@ struct ComposerView: View {
                     .overlay(.white.opacity(0.12)).ignoresSafeArea()
             }
             .clipped()
+        }
+        .accessibilityHidden(showSongMenu)
+        .overlay(alignment: .topTrailing) {
+            if showSongMenu {
+                GeometryReader { geometry in
+                    ZStack(alignment: .topTrailing) {
+                        Color.black.opacity(0.08)
+                            .contentShape(Rectangle())
+                            .onTapGesture { dismissSongMenu() }
+                            .accessibilityLabel("Close song menu")
+                            .accessibilityAddTraits(.isButton)
+                        ScrollView {
+                            VStack(spacing: 6) {
+                                songMenuRow("Open song", icon: "folder.fill", color: .orange) {
+                                    audio.stop(); showSongs = true
+                                }
+                                songMenuRow("Save song", icon: "square.and.arrow.down.fill", color: PlukiStyle.green) {
+                                    saveTitle = store.song.title; showSave = true
+                                }
+                                songMenuRow("Samples", icon: "music.note.list", color: .purple) {
+                                    audio.stop(); showSamples = true
+                                }
+                                Divider().overlay(PlukiStyle.ink.opacity(0.08)).padding(.horizontal, 12)
+                                songMenuRow("Settings", icon: "gearshape.fill", color: PlukiStyle.blue) {
+                                    showSettings = true
+                                }
+                            }.padding(12)
+                        }
+                        .frame(width: min(300, geometry.size.width - 24),
+                               height: min(290, max(100, geometry.size.height - 24)))
+                        .background(PlukiStyle.paper, in: RoundedRectangle(cornerRadius: 26))
+                        .overlay(RoundedRectangle(cornerRadius: 26).stroke(.white.opacity(0.9), lineWidth: 2))
+                        .shadow(color: PlukiStyle.ink.opacity(0.18), radius: 16, y: 7)
+                        .padding(12)
+                        .accessibilityAddTraits(.isModal)
+                        .accessibilityAction(.escape) { dismissSongMenu() }
+                    }
+                }
+                .transition(.opacity)
+            }
         }
         .foregroundStyle(PlukiStyle.ink)
         .sheet(isPresented: $showSettings) { settings }
@@ -167,17 +209,35 @@ struct ComposerView: View {
             tool("trash", title: "Clear all notes", disabled: audio.isPlaying || store.song.notes.isEmpty) {
                 confirmClear = true
             }
-            Menu {
-                Button { audio.stop(); showSongs = true } label: { Label("Open", systemImage: "folder") }
-                Button { saveTitle = store.song.title; showSave = true } label: { Label("Save", systemImage: "square.and.arrow.down") }
-                Button { audio.stop(); showSamples = true } label: { Label("Samples", systemImage: "music.note.list") }
-                Button { showSettings = true } label: { Label("Settings", systemImage: "gearshape") }
-            } label: {
-                Image(systemName: "line.3.horizontal").font(.system(size: 18, weight: .bold))
-                    .frame(width: 44, height: 44)
-                    .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 15))
-            }.accessibilityLabel("Song menu")
+            tool("line.3.horizontal", title: "Song menu", selected: showSongMenu) {
+                withAnimation(reduceMotion ? nil : .easeOut(duration: 0.18)) { showSongMenu.toggle() }
+            }
         }
+    }
+
+    private func dismissSongMenu() {
+        withAnimation(reduceMotion ? nil : .easeOut(duration: 0.18)) { showSongMenu = false }
+    }
+
+    private func songMenuRow(_ title: String, icon: String, color: Color,
+                             action: @escaping () -> Void) -> some View {
+        Button {
+            dismissSongMenu()
+            action()
+        } label: {
+            HStack(spacing: 14) {
+                Image(systemName: icon)
+                    .font(.system(size: 23, weight: .semibold))
+                    .foregroundStyle(color)
+                    .frame(width: 46, height: 46)
+                    .background(color.opacity(0.13), in: RoundedRectangle(cornerRadius: 14))
+                Text(title).font(.system(.headline, design: .rounded, weight: .bold))
+                    .foregroundStyle(PlukiStyle.ink)
+                Spacer(minLength: 0)
+            }
+            .padding(6)
+            .contentShape(RoundedRectangle(cornerRadius: 16))
+        }.buttonStyle(.plain)
     }
 
     private func openSample(_ sample: SampleSong) {

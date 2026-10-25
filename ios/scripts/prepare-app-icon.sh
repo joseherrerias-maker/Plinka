@@ -1,5 +1,5 @@
 #!/bin/bash
-# Build the approved temporary Pluki iOS icon from the checked-in image source.
+# Build the approved green P-note Pluki iOS icon from the checked-in image source.
 # The source is a compact JPEG encoding of the user's approved artwork.
 # It stays in Git to support repeatable Codemagic and GitHub Actions builds.
 set -euo pipefail
