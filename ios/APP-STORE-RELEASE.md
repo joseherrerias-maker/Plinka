@@ -4,7 +4,7 @@ Build 11 is a TestFlight candidate, not an App Store submission. Updated October
 
 ## Prepared in the app
 
-Offline Help and Privacy policy; sound attribution screen; Photos add-only permission preceded by a single-use parent check; no app login, tracking, ads or analytics. Local song storage uses UserDefaults, declared with CA92.1. No network client or third-party SDK was found in the native app source reviewed for this build. Recheck these claims if dependencies or data flows change.
+Offline Help and Privacy policy; sound attribution screen; initial Photos add-only permission preceded by a single-use parent check; no app login, tracking, ads or analytics. Local song storage uses UserDefaults, declared with CA92.1. No network client or third-party SDK was found in the native app source reviewed for this build. Recheck these claims if dependencies or data flows change.
 
 ## Decisions and account work still open
 
@@ -32,13 +32,13 @@ Do not add “for kids” metadata until the Kids-category decision is finalized
 
 No account or demo credentials are required. Start with New song or Samples. Select a sound and tap the sheet to place notes; use Play for playback. Open the song menu to save, open, export or return Home. Saved songs and the draft are local.
 
-For video export, create a song with notes, choose Export video, select a format and Create video. Save to Photos presents a parent challenge: enter the four displayed number words in reverse order using digits. Complete it to request add-only Photos access. The challenge is new for each save; it does not collect identity or persist an unlocked state. Declining Photos access leaves composition available. No microphone, camera, existing-photo reading or screen recording is used.
+For video export, create a song with notes, choose Export video, select a format and Create video. When Photos permission has not yet been requested, Save to Photos presents a parent challenge: enter the displayed number words as digits in the same order. Complete it to request add-only Photos access. Once permission is granted, later saves proceed directly. The challenge does not collect identity or persist an unlocked state. Declining Photos access leaves composition available. No microphone, camera, existing-photo reading or screen recording is used.
 
 ## Final device acceptance (record results before submission)
 
 - iPhone and iPad, both orientations: Home/menu, Help/Privacy, sound tray, keyboard, parent challenge and video preview fit without clipping.
 - Install over Build 10: saved projects, active draft, notes near the end and song names survive. New/Continue retain the visible grid.
-- Parent challenge: incorrect input, Cancel, swipe-to-dismiss and background/return never save or request Photos access. Correct input grants only the pending save, including on a second export with Photos already authorized.
+- Parent challenge: incorrect input, Cancel, swipe-to-dismiss and background/return never save or request Photos access. Correct input authorizes the initial Photos permission request. A second export with Photos already authorized saves directly without a challenge. Denied or restricted permission shows guidance without repeating a puzzle; resetting permission to not-determined requires a fresh parent check.
 - Photos: first grant, denial, later retry, low storage, background during generation, cancellation and both export formats.
 - Longer songs: add/move near the end through the 500-beat cap, undo/redo, save/reopen, playback and export. Measure time/memory on real hardware; the audio engine renders the whole song into memory.
 - Accessibility: larger text, VoiceOver labels, button touch sizes and reduced-motion playback.

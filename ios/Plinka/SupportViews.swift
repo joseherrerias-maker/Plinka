@@ -11,7 +11,7 @@ struct PlukiHelpView: View {
             Section("Keep your creations") {
                 tip("Save and open", icon: "folder.fill", detail: "Use the song menu to Save song. Open song lists your saved projects and lets you delete them. Songs are kept on this device; saving under a different name makes a new copy.")
                 tip("Try a sample", icon: "music.note.list", detail: "Samples open immediately. Save your current work first if you want to keep it. A saved sample becomes your own editable copy.")
-                tip("Make a video", icon: "video.fill", detail: "Choose Export video in the song menu, pick a format and create your video. A grown-up can save it to Photos after a parent check. Keep Pluki open while the video is being made.")
+                tip("Make a video", icon: "video.fill", detail: "Choose Export video in the song menu, pick a format and create your video. A grown-up completes a parent check when first enabling Photos saving. After permission is granted, videos save directly. Keep Pluki open while the video is being made.")
             }
             Section("Troubleshooting") {
                 tip("No sound?", icon: "speaker.wave.2.fill", detail: "Turn up media volume and check whether audio is playing through Bluetooth headphones or a speaker. Stop the song and try Play again.")
@@ -67,11 +67,11 @@ struct PlukiParentGate: View {
                         .font(.system(size: 48)).foregroundStyle(.green)
                     Text("For a grown-up")
                         .font(.system(.title2, design: .rounded, weight: .bold))
-                    Text("To save this video to Photos, enter these four numbers in reverse order.")
+                    Text("To enable saving videos to Photos, type these four numbers as digits, in the order shown.")
                     Text(approval.prompt).font(.system(.title3, design: .rounded, weight: .bold))
                     TextField("Four digits", text: $answer)
                         .keyboardType(.numberPad).textFieldStyle(.roundedBorder)
-                        .accessibilityLabel("Four digits in reverse order")
+                        .accessibilityLabel("Four digits in the order shown")
                         .onChange(of: answer) { _, value in
                             answer = String(value.filter { $0 >= "0" && $0 <= "9" }.prefix(4))
                         }

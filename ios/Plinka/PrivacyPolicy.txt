@@ -10,7 +10,7 @@ Song names, notes, tempo, loop settings, saved projects and the current draft ar
 Video and Photos
 Video creation happens on your device using the included sounds and artwork. Pluki does not record your microphone, camera or screen. The song title is included in the exported video, so avoid personal information in titles you plan to share.
 
-A parent check is required before saving a video to Photos. Pluki requests add-only Photos permission when you choose to save; it does not read your existing photos or videos. You can decline permission and continue composing. You can change permission in device Settings. Videos already saved to Photos are managed and deleted in Photos, and may sync through iCloud Photos according to your Apple settings.
+A parent check is required before first requesting Photos permission. Once add-only access is granted, videos save directly without another parent check. Pluki requests add-only Photos permission when you choose to save; it does not read your existing photos or videos. You can decline permission and continue composing. You can change permission in device Settings. Videos already saved to Photos are managed and deleted in Photos, and may sync through iCloud Photos according to your Apple settings.
 
 Temporary files
 Pluki creates temporary audio and video files while exporting. It removes them when an export is cancelled, fails, or its preview is closed during normal operation. Files left by an unexpected app termination may remain in the app's temporary storage until the system removes them or the app is deleted.

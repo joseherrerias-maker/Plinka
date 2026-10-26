@@ -1,6 +1,6 @@
 import Foundation
 
-/// Reading/order challenge for a parent action, not identity or age verification.
+/// Reading challenge for a parent action, not identity or age verification.
 struct ParentApproval {
     private(set) var digits: [Int]
     private var approved = false
@@ -14,7 +14,7 @@ struct ParentApproval {
     var prompt: String { digits.map { Self.words[$0] }.joined(separator: " · ") }
     mutating func submit(_ answer: String) -> Bool {
         guard active else { return false }
-        approved = answer == digits.reversed().map(String.init).joined()
+        approved = answer == digits.map(String.init).joined()
         if !approved { digits = Array((1...9).shuffled().prefix(4)) }
         return approved
     }

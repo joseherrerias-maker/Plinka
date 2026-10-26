@@ -40,7 +40,11 @@ struct SongVideoExportView: View {
                         Button(model.saved ? "Saved to Photos" : "Save to Photos", systemImage: model.saved ? "checkmark.circle.fill" : "square.and.arrow.down") {
                             model.player?.pause()
                             parentApproved = false
-                            showParentGate = true
+                            if PHPhotoLibrary.authorizationStatus(for: .addOnly) == .notDetermined {
+                                showParentGate = true
+                            } else {
+                                model.saveToPhotos()
+                            }
                         }
                         .buttonStyle(.borderedProminent).tint(.green)
                         .disabled(model.saving || model.saved)
@@ -84,7 +88,7 @@ struct SongVideoExportView: View {
         .sheet(isPresented: $showParentGate, onDismiss: {
             let maySave = parentApproved && scenePhase == .active
             parentApproved = false
-            if maySave { model.saveToPhotos() }
+            if maySave { model.saveToPhotos(parentApproved: true) }
         }) {
             PlukiParentGate { parentApproved = true }
         }
@@ -163,14 +167,25 @@ private final class SongVideoExportModel: ObservableObject {
 
     func close() { cancel(); clearPreview() }
 
-    func saveToPhotos() {
+    func saveToPhotos(parentApproved: Bool = false) {
         guard let output, !saving, !saved else { return }
         player?.pause()
         saving = true
         message = nil
         Task {
             defer { saving = false }
-            let permission = await PHPhotoLibrary.requestAuthorization(for: .addOnly)
+            var permission = PHPhotoLibrary.authorizationStatus(for: .addOnly)
+            if permission == .notDetermined {
+                guard parentApproved else {
+                    message = "Tap Save to Photos again to enable saving with a grown-up."
+                    return
+                }
+                permission = await PHPhotoLibrary.requestAuthorization(for: .addOnly)
+            }
+            if permission == .restricted {
+                message = "Photos access is restricted on this device. A grown-up can check Screen Time or device restrictions."
+                return
+            }
             guard permission == .authorized || permission == .limited else {
                 message = SongVideoError.photosDenied.localizedDescription
                 return
