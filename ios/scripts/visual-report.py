@@ -14,7 +14,7 @@ for folder in sorted(root.iterdir()):
         with Image.open(p) as source:
             im=source.convert('RGB')
             if p.stem.startswith('landscape') and im.height > im.width:
-                im=im.transpose(Image.Transpose.ROTATE_90)
+                im=im.transpose(Image.Transpose.ROTATE_270)
                 im.save(p)
             im.thumbnail((280,420))
             x=(i%4)*300+(300-im.width)//2; y=(i//4)*480+45

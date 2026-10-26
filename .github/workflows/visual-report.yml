@@ -1,0 +1,35 @@
+name: Pluki Visual Report
+on:
+  workflow_run:
+    workflows: ['Pluki Visual Review']
+    types: [completed]
+  workflow_dispatch:
+    inputs:
+      run_id:
+        description: 'Visual Review run ID to rebuild the gallery from'
+        required: true
+        type: string
+permissions:
+  contents: read
+  actions: read
+jobs:
+  report:
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' || github.event.workflow_run.conclusion == 'failure'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          run-id: ${{ inputs.run_id || github.event.workflow_run.id }}
+          pattern: screens-*
+          merge-multiple: true
+          path: visual-report
+      - run: python3 -m pip install Pillow
+      - run: python3 ios/scripts/visual-report.py visual-report
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: Pluki-Visual-Report
+          path: visual-report
+          retention-days: 30
