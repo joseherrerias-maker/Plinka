@@ -38,5 +38,9 @@ Build 12 is the last user-confirmed compiled build. Keep compiled archives 10, 1
 - [Debug/Release, persistence, parent approval and bundle checks](https://github.com/joseherrerias-maker/Plinka/actions/runs/40397115655) passed on commit `9f6c2d8`.
 - [Video media checks](https://github.com/joseherrerias-maker/Plinka/actions/runs/40395138051) passed; portrait and landscape footer frames were visually inspected. The later change only adjusts Save-sheet focus timing.
 - The 11-inch iPad portrait screenshot confirms the full wordmark fits.
-- [Final focused capture run](https://github.com/joseherrerias-maker/Plinka/actions/runs/40397115682) verifies both orientations of iPhone SE and 11-inch iPad. Final keyboard screenshot approval is pending: the local review environment disconnected before those images were available. Do not interpret capture success alone as keyboard/layout approval.
-- Signed Codemagic compilation and physical-device acceptance remain pending.
+- [Final focused capture run](https://github.com/joseherrerias-maker/Plinka/actions/runs/40397115682) verifies both orientations of iPhone SE and 11-inch iPad. The completed captures were inspected after reconnecting. The final iPhone SE Save screenshot still does not display the keyboard, so the keyboard-open layout and automatic focus remain unverified. Test tapping the name field on the signed build; do not interpret capture success alone as keyboard/layout approval.
+- Signed Codemagic compilation was confirmed by Jose on October 26, 2026. Physical-device acceptance remains pending.
+
+## Compiled archive confirmation
+
+Jose confirmed Build 13 compiled successfully on October 26, 2026. The RC1 source snapshot at `20b8697865fc39ddc6e16f08a22da890ee3d8b43` was archived. Rolling compiled archives now retain Builds 11, 12 and 13. Compilation is not device acceptance.

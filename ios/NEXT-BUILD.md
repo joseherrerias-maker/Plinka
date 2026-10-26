@@ -1,5 +1,5 @@
-# Build 13 — Release Candidate 1
+# Compiled Build 13 — RC1
 
-Build 13 is prepared from user-confirmed Build 12. It includes the iPad portrait wordmark fix, keyboard-aware Save sheet and lowercase “Made with pluki!” video footer. See VERSION-13.md for verification and device acceptance.
+Jose confirmed successful compilation on October 26, 2026. Source archive retained with Builds 11 and 12. Device acceptance remains pending.
 
-Signed compilation and user device acceptance are pending. Do not archive 13 until the user confirms compilation; keep compiled archives 10, 11 and 12 in the meantime.
+The final simulator Save capture still shows no keyboard; verify automatic focus and tapping the name field in both orientations on the signed app. See VERSION-13.md. Do not mark keyboard-open layout approved from capture completion alone.
