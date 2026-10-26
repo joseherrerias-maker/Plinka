@@ -90,10 +90,9 @@ struct Song: Codable, Equatable {
     var notes: [MusicNote] = []
     // Optional for backward-compatible decoding of existing drafts and saved songs.
     var sheetSteps: Int? = nil
-    // Keep Build 9's storage range so existing longer projects are never truncated.
-    static let maximumSteps = 256
     // Each numbered beat contains two note positions (the number and the dot).
-    static let automaticSheetLimit = 100 * 2
+    static let automaticSheetLimit = 500 * 2
+    static let maximumSteps = automaticSheetLimit
     var stepCount: Int { max(32, min(Self.maximumSteps, sheetSteps ?? 32)) }
 }
 
