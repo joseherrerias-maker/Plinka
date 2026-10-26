@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Capture real simulator screens with an app/host handshake, never private user data."""
-import json, subprocess, sys, time
+import os, json, subprocess, sys, time
 from pathlib import Path
 
 def run(*args):
@@ -8,6 +8,7 @@ def run(*args):
 
 app, device_name, output = sys.argv[1:]
 out = Path(output); out.mkdir(parents=True, exist_ok=True)
+(out / 'scope.json').write_text(os.environ.get('VISUAL_EXPECTED_DEVICES', '[]'))
 types = json.loads(run('xcrun', 'simctl', 'list', 'devicetypes', '-j'))['devicetypes']
 kind = next((d['identifier'] for d in types if d['name'] == device_name), None)
 if not kind:
@@ -50,7 +51,7 @@ try:
         raise TimeoutError('Visual tour timed out')
     if driver.wait(timeout=60) != 0:
         raise RuntimeError('Device orientation driver failed; see driver.log')
-    (out / 'device.json').write_text(json.dumps({'device':device_name, 'runtime':runtime, 'screens':sorted(seen)}, indent=2))
+    (out / 'device.json').write_text(json.dumps({'device':device_name, 'runtime':runtime, 'screens':sorted(seen), 'expected_devices':json.loads(os.environ.get('VISUAL_EXPECTED_DEVICES', '[]'))}, indent=2))
 finally:
     if 'driver' in locals() and driver.poll() is None: driver.terminate()
     subprocess.run(['xcrun','simctl','shutdown',uid], check=False)

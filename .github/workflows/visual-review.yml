@@ -1,6 +1,11 @@
 name: Pluki Visual Review
 on:
   workflow_dispatch:
+    inputs:
+      focused:
+        description: 'Check the two RC1 layout-fix devices only (SE and 11-inch iPad)'
+        type: boolean
+        default: false
   push:
     branches: [main]
     paths: ['.github/workflows/visual-review.yml']
@@ -36,13 +41,8 @@ jobs:
       fail-fast: false
       max-parallel: 6
       matrix:
-        include:
-          - {key: iphone-small, device: 'iPhone SE (3rd generation)'}
-          - {key: iphone-standard, device: 'iPhone 16'}
-          - {key: iphone-max, device: 'iPhone 16 Pro Max'}
-          - {key: ipad-mini, device: 'iPad mini (A17 Pro)'}
-          - {key: ipad-11, device: 'iPad Pro 11-inch (M4)'}
-          - {key: ipad-13, device: 'iPad Pro 13-inch (M4)'}
+        include: >-
+          ${{ fromJSON((inputs.focused || contains(github.event.head_commit.message, '[visual-focused]')) && '[{"key": "iphone-small", "device": "iPhone SE (3rd generation)"}, {"key": "ipad-11", "device": "iPad Pro 11-inch (M4)"}]' || '[{"key": "iphone-small", "device": "iPhone SE (3rd generation)"}, {"key": "iphone-standard", "device": "iPhone 16"}, {"key": "iphone-max", "device": "iPhone 16 Pro Max"}, {"key": "ipad-mini", "device": "iPad mini (A17 Pro)"}, {"key": "ipad-11", "device": "iPad Pro 11-inch (M4)"}, {"key": "ipad-13", "device": "iPad Pro 13-inch (M4)"}]') }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
@@ -58,6 +58,7 @@ jobs:
         env:
           VISUAL_DEVICE: ${{ matrix.device }}
           VISUAL_KEY: ${{ matrix.key }}
+          VISUAL_EXPECTED_DEVICES: ${{ (inputs.focused || contains(github.event.head_commit.message, '[visual-focused]')) && '["iphone-small","ipad-11"]' || '["iphone-small","iphone-standard","iphone-max","ipad-mini","ipad-11","ipad-13"]' }}
         run: python3 ios/scripts/capture-visual-tour.py "$RUNNER_TEMP/app/Plinka.app" "$VISUAL_DEVICE" "$RUNNER_TEMP/screens/$VISUAL_KEY"
       - uses: actions/upload-artifact@v4
         if: always()

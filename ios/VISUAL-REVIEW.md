@@ -11,3 +11,5 @@ A green Action means capture completed, not that every layout looks good. Review
 This first matrix covers full-screen, standard-text layouts on the runner's newest installed iOS runtime. A small XCTest driver rotates the simulated device and waits for the tour to finish; it does not automate taps, VoiceOver, larger accessibility text, iPad multitasking, old OS versions, physical-device rotation or Photos permissions. Those require separate targeted checks. Video preview uses a short excerpt to avoid rendering a whole song six times; audio/export correctness has its own media check.
 
 To regenerate a gallery without running simulators, run **Pluki Visual Report** manually and supply the original Visual Review run ID. The gallery uses the current reporting script against the original captured images.
+
+For a focused RC1 regression check, select **focused** when running the workflow. It captures only the iPhone SE and 11-inch iPad (32 images). Leave it off for all six devices (96 images). Reports verify the declared device set, not just a screenshot count. A workflow-file commit marked `[visual-check] [visual-focused]` bootstraps the focused run.

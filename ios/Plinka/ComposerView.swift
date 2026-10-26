@@ -24,6 +24,7 @@ struct ComposerView: View {
     @State private var showSave = false
     @State private var showVideoExport = false
     @State private var saveTitle = ""
+    @FocusState private var saveNameFocused: Bool
     @State private var pendingSong: SavedSong?
     @State private var confirmOpen = false
     @State private var pendingDelete: SavedSong?
@@ -75,13 +76,7 @@ struct ComposerView: View {
         .sheet(isPresented: $showSongs) { savedSongsView }
         .sheet(isPresented: $showSamples) { samplesView }
         .sheet(isPresented: $showVideoExport) { SongVideoExportView(song: store.song) }
-        .alert("Save song", isPresented: $showSave) {
-            TextField("Song name", text: $saveTitle)
-            Button("Save") { store.saveSong(named: saveTitle) }
-            Button("Cancel", role: .cancel) {}
-        } message: {
-            Text("Keep this song on this device. Use a different name to save a new copy.")
-        }
+        .sheet(isPresented: $showSave, onDismiss: { saveNameFocused = false }) { saveSongSheet }
         .alert("Saved songs", isPresented: Binding(get: { store.libraryError != nil }, set: { if !$0 { store.libraryError = nil } })) {
             Button("OK") { store.libraryError = nil }
         } message: { Text(store.libraryError ?? "") }
@@ -101,10 +96,46 @@ struct ComposerView: View {
         }
     }
 
+    private var saveSongSheet: some View {
+        NavigationStack {
+            Form {
+                Section {
+                    TextField("Song name", text: $saveTitle)
+                        .focused($saveNameFocused)
+                        .submitLabel(.done)
+                        .onSubmit { finishSavingSong() }
+                        .accessibilityIdentifier("save-song-name")
+                } footer: {
+                    Text("Keep this song on this device. Use a different name to save a new copy.")
+                }
+            }
+            .navigationTitle("Save song")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") { showSave = false }
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Save") { finishSavingSong() }
+                        .fontWeight(.semibold)
+                }
+            }
+            .task { saveNameFocused = true }
+        }
+        .presentationDetents([.medium, .large])
+        .presentationDragIndicator(.visible)
+    }
+
+    private func finishSavingSong() {
+        _ = store.saveSong(named: saveTitle)
+        saveNameFocused = false
+        showSave = false
+    }
+
     private var composerContent: some View {
         GeometryReader { geometry in
             let short = geometry.size.height < 500
-            let narrow = geometry.size.width < 780
+            let narrow = geometry.size.width < (short ? 780 : 900)
             let padding: CGFloat = short ? 8 : 16
             let gap: CGFloat = short ? 8 : 12
             let toolbar: CGFloat = narrow ? 108 : (short ? 52 : 72)
@@ -291,7 +322,7 @@ struct ComposerView: View {
     private func wordmark(small: Bool) -> some View {
         HStack(spacing: 5) {
             Image(systemName: "music.note").foregroundStyle(PlukiStyle.green)
-            Text("pluki!").tracking(-1)
+            Text("pluki!").tracking(-1).fixedSize(horizontal: true, vertical: false)
         }
         .font(.system(size: small ? 25 : 35, weight: .black, design: .rounded))
         .padding(.horizontal, small ? 10 : 18)

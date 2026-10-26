@@ -1,7 +1,5 @@
-# Changes after compiled Build 12
+# Build 13 — Release Candidate 1
 
-- Build 12 compiled successfully and the user approved its video layout.
-- Added a manual GitHub visual-review workflow with six simulator sizes, both orientations, real screen captures and a downloadable HTML/contact-sheet report. Debug-only capture hooks do not run in signed builds.
-- Pending product polish: change the video footer from “Made with Pluki” to “Made with pluki!” to match the header; this text change is not yet applied.
+Build 13 is prepared from user-confirmed Build 12. It includes the iPad portrait wordmark fix, keyboard-aware Save sheet and lowercase “Made with pluki!” video footer. See VERSION-13.md for verification and device acceptance.
 
-Build label remains 12 until the next build is requested. Compiled archives retain 10, 11 and 12.
+Signed compilation and user device acceptance are pending. Do not archive 13 until the user confirms compilation; keep compiled archives 10, 11 and 12 in the meantime.

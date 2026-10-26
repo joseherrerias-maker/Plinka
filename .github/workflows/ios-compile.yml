@@ -52,6 +52,25 @@ jobs:
             "$RUNNER_TEMP/PlinkaDerivedData/Build/Products/Debug-iphonesimulator/Plinka.app"
       - name: Verify bundled privacy information
         run: python3 ios/scripts/verify-privacy.py "$RUNNER_TEMP/PlinkaDerivedData/Build/Products/Debug-iphonesimulator/Plinka.app"
+      - name: Build and validate release configuration
+        shell: bash
+        run: |
+          set -o pipefail
+          xcodebuild -project ios/Plinka.xcodeproj -scheme Plinka -configuration Release -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' -derivedDataPath "$RUNNER_TEMP/PlinkaRelease" CODE_SIGNING_ALLOWED=NO build > "$RUNNER_TEMP/pluki-release.log" 2>&1 || { tail -100 "$RUNNER_TEMP/pluki-release.log"; exit 1; }
+          release_app="$RUNNER_TEMP/PlinkaRelease/Build/Products/Release-iphonesimulator/Plinka.app"
+          python3 ios/scripts/verify-orientations.py "$release_app/Info.plist"
+          python3 ios/scripts/verify-sound-resources.py "$release_app"
+          python3 ios/scripts/verify-privacy.py "$release_app"
+          python3 - "$release_app/Info.plist" <<'PYCODE'
+          import plistlib, re, sys
+          from pathlib import Path
+          with open(sys.argv[1], 'rb') as f: info = plistlib.load(f)
+          project = Path('ios/Plinka.xcodeproj/project.pbxproj').read_text()
+          for key, setting in [('PlukiReleaseBuild', 'PLUKI_RELEASE_BUILD'), ('CFBundleShortVersionString', 'MARKETING_VERSION')]:
+              expected = re.findall(rf'{setting} = ([^;]+);', project)
+              assert expected and all(v == info[key] for v in expected), (key, info.get(key), expected)
+          print('Release build label and marketing version verified.')
+          PYCODE
       - name: Check video export media
         if: contains(github.event.head_commit.message, '[video-check]')
         timeout-minutes: 10

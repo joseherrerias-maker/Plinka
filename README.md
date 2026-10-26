@@ -45,10 +45,10 @@ No software license is granted by including this README. This is an unpublished 
 
 **Branding note (October 2026):** The app's public name is **Pluki**, accepted in App Store Connect. The GitHub repository URL, Xcode project/scheme, SKU `PLINKA-IOS-001`, and registered bundle identifier `com.joseherrerias.plinka` remain unchanged to preserve existing development and Apple signing configuration.
 
-## Native iOS app (Build 12)
+## Native iOS app (Build 13 RC1)
 
-The native SwiftUI source and Xcode project are under [`ios/`](ios/). Build 12 enlarges the exported video sheet, restores the two-line Pluki footer and simplifies the initial Photos permission check. Build 11 compiled successfully; Build 12 awaits signed compilation and device testing. See [Build 12 release notes](ios/VERSION-12.md) and [iOS build notes](ios/README.md).
+The native SwiftUI source and Xcode project are under [`ios/`](ios/). Build 13 RC1 fixes the iPad portrait wordmark and landscape Save sheet, and matches the video footer to the lowercase brand. Build 12 compiled successfully; RC1 awaits signed compilation and device acceptance. See [Build 13 release notes](ios/VERSION-13.md) and [iOS build notes](ios/README.md).
 
 ## Build iOS with Codemagic
 
-The root [`codemagic.yaml`](codemagic.yaml) provides one manual workflow: **Pluki Build 12 - TestFlight and iPad ZIP** (`pluki-ios-dual-export`). Select branch **main**. One signed archive produces the TestFlight IPA and iPad Ad Hoc ZIP using the existing Apple signing setup. GitHub Actions separately checks unsigned compilation; Codemagic builds do not start automatically.
+The root [`codemagic.yaml`](codemagic.yaml) provides one manual workflow: **Pluki Build 13 RC1 - TestFlight and iPad ZIP** (`pluki-ios-dual-export`). Select branch **main**. One signed archive produces the TestFlight IPA and iPad Ad Hoc ZIP using the existing Apple signing setup. GitHub Actions separately checks unsigned compilation; Codemagic builds do not start automatically.
