@@ -30,6 +30,10 @@ struct ComposerView: View {
     @State private var confirmDelete = false
     @State private var soundGroup: SoundGroup = .instruments
 
+    #if DEBUG
+    @State private var visualStage = "starting"
+    #endif
+
     private var versionLabel: String {
         let build = Bundle.main.object(forInfoDictionaryKey: "PlukiReleaseBuild") as? String ?? "?"
         return "Build \(build)"
@@ -54,6 +58,14 @@ struct ComposerView: View {
             }
         }
         .foregroundStyle(PlukiStyle.ink)
+        .overlay(alignment: .topLeading) {
+            #if DEBUG
+            if ProcessInfo.processInfo.arguments.contains("--visual-tour") {
+                Text(visualStage).font(.system(size: 1)).opacity(0.01)
+                    .accessibilityIdentifier("visual-stage")
+            }
+            #endif
+        }
         .task {
             #if DEBUG
             await runVisualTourIfRequested()
@@ -1049,7 +1061,12 @@ extension ComposerView {
                 guard let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene else {
                     throw NSError(domain: "VisualTourScene", code: 3)
                 }
-                scene.requestGeometryUpdate(.iOS(interfaceOrientations: landscape ? .landscapeRight : .portrait))
+                visualStage = landscape ? "rotate-landscape" : "rotate-portrait"
+                // XCTest rotates the simulated hardware, including iPad multitasking scenes.
+                for _ in 0..<120 {
+                    if scene.interfaceOrientation.isLandscape == landscape { break }
+                    try await pause(0.5)
+                }
                 try await pause(2)
                 let prefix = landscape ? "landscape" : "portrait"
                 showHome = true
@@ -1090,8 +1107,10 @@ extension ComposerView {
                 try await pause()
                 try? FileManager.default.removeItem(at: folder.appendingPathComponent("visual-preview-ready.txt"))
             }
+            visualStage = "finished"
             try "PASS: captured 16 screens; human visual review required.".write(to: folder.appendingPathComponent("visual-result.txt"), atomically: true, encoding: .utf8)
         } catch {
+            visualStage = "failed"
             try? "FAIL: \(error)".write(to: folder.appendingPathComponent("visual-result.txt"), atomically: true, encoding: .utf8)
         }
     }

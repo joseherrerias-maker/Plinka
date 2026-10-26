@@ -24,8 +24,9 @@ try:
         run('xcrun', 'simctl', 'spawn', uid, 'defaults', 'write', 'com.apple.keyboard.preferences', key, '-bool', 'YES')
     run('xcrun', 'simctl', 'install', uid, app)
     folder = Path(run('xcrun', 'simctl', 'get_app_container', uid, 'com.joseherrerias.plinka', 'data')) / 'Documents'
-    run('xcrun', 'simctl', 'launch', uid, 'com.joseherrerias.plinka', '--visual-tour')
-    seen = set(); deadline = time.monotonic() + 300
+    driver_log = (out / 'driver.log').open('w')
+    driver = subprocess.Popen(['xcodebuild', 'test', '-project', 'ios/VisualDriver/VisualDriver.xcodeproj', '-scheme', 'VisualDriver', '-destination', f'id={uid}', '-parallel-testing-enabled', 'NO', 'CODE_SIGNING_ALLOWED=NO'], stdout=driver_log, stderr=subprocess.STDOUT)
+    seen = set(); deadline = time.monotonic() + 600
     while time.monotonic() < deadline:
         result = folder / 'visual-result.txt'
         if result.exists():
@@ -45,7 +46,10 @@ try:
         time.sleep(.3)
     else:
         raise TimeoutError('Visual tour timed out')
+    if driver.wait(timeout=60) != 0:
+        raise RuntimeError('Device orientation driver failed; see driver.log')
     (out / 'device.json').write_text(json.dumps({'device':device_name, 'runtime':runtime, 'screens':sorted(seen)}, indent=2))
 finally:
+    if 'driver' in locals() and driver.poll() is None: driver.terminate()
     subprocess.run(['xcrun','simctl','shutdown',uid], check=False)
     subprocess.run(['xcrun','simctl','delete',uid], check=False)

@@ -1,0 +1,21 @@
+name: VisualDriver
+options:
+  deploymentTarget:
+    iOS: '17.0'
+targets:
+  VisualDriver:
+    type: bundle.ui-testing
+    platform: iOS
+    sources: [VisualDriver.swift]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.joseherreriastests.pluki.visual
+        GENERATE_INFOPLIST_FILE: YES
+        SWIFT_VERSION: '5.0'
+schemes:
+  VisualDriver:
+    build:
+      targets:
+        VisualDriver: [test]
+    test:
+      targets: [VisualDriver]
