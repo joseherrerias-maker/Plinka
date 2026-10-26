@@ -319,7 +319,7 @@ private struct VideoArtwork {
         }
         text("pluki!", rect: CGRect(x: logo.minX + 79, y: logo.midY - 29, width: 180, height: 60), font: 46, centered: false)
         text(song.title, rect: CGRect(x: 50, y: vertical ? 145 : 92, width: size.width - 100, height: 54), font: vertical ? 30 : 25, centered: true)
-        text("Available in the App Store", rect: CGRect(x: 32, y: paper.maxY + 32, width: size.width - 64, height: 48), font: 32, centered: true)
+        text("Available in the App Store", rect: CGRect(x: 32, y: paper.maxY + 32, width: size.width - 64, height: 48), font: 28.75, centered: true)
         let gutter: CGFloat = vertical ? 85 : 100
         let left = paper.minX + gutter
         let right = paper.maxX - 20
