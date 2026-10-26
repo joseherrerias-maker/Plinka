@@ -336,10 +336,11 @@ private struct VideoArtwork {
         if let background { drawImage(background, in: CGRect(origin: .zero, size: size), fill: true) }
         UIColor.white.withAlphaComponent(0.30).setFill()
         context.fill(CGRect(origin: .zero, size: size))
-        let paper = CGRect(x: 32, y: vertical ? 230 : 135, width: size.width - 64, height: vertical ? 830 : 490)
+        // Keep the sheet dominant while reserving a compact header and two-line footer.
+        let paper = CGRect(x: 24, y: vertical ? 170 : 120, width: size.width - 48, height: vertical ? 1010 : 500)
         UIColor(red: 1, green: 0.98, blue: 0.93, alpha: 1).setFill()
         UIBezierPath(roundedRect: paper, cornerRadius: 32).fill()
-        let logo = CGRect(x: (size.width - 280) / 2, y: vertical ? 55 : 16, width: 280, height: vertical ? 80 : 68)
+        let logo = CGRect(x: (size.width - 280) / 2, y: vertical ? 24 : 12, width: 280, height: vertical ? 72 : 60)
         UIColor.white.withAlphaComponent(0.82).setFill()
         UIBezierPath(roundedRect: logo, cornerRadius: 26).fill()
         let green = UIColor(red: 0.20, green: 0.75, blue: 0.43, alpha: 1)
@@ -348,15 +349,16 @@ private struct VideoArtwork {
                       in: CGRect(x: logo.minX + 25, y: logo.midY - 27, width: 43, height: 54))
         }
         text("pluki!", rect: CGRect(x: logo.minX + 79, y: logo.midY - 29, width: 180, height: 60), font: 46, centered: false)
-        text(song.title, rect: CGRect(x: 50, y: vertical ? 145 : 92, width: size.width - 100, height: 54), font: vertical ? 30 : 25, centered: true)
-        text("Available in the App Store", rect: CGRect(x: 32, y: paper.maxY + 32, width: size.width - 64, height: 48), font: 28.75, centered: true)
+        text(song.title, rect: CGRect(x: 50, y: vertical ? 110 : 80, width: size.width - 100, height: 54), font: vertical ? 30 : 25, centered: true)
+        text("Made with Pluki", rect: CGRect(x: 24, y: paper.maxY + 12, width: size.width - 48, height: 36), font: 28.75, centered: true)
+        text("Available in the App Store", rect: CGRect(x: 24, y: paper.maxY + 51, width: size.width - 48, height: 30), font: 22, centered: true)
         let gutter: CGFloat = vertical ? 85 : 100
         let left = paper.minX + gutter
         let right = paper.maxX - 20
         let top = paper.minY + 95
         let bottom = paper.maxY - 75
         let rowHeight = (bottom - top) / 8
-        let cell: CGFloat = vertical ? 125 : 145
+        let cell: CGFloat = vertical ? 140 : 145
         let step = time / (30 / max(65, min(160, song.tempo)))
         let last = Double(song.notes.map(\.step).max() ?? 0)
         let playStep = min(step, last + 0.6)
