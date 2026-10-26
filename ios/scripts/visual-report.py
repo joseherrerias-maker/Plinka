@@ -12,7 +12,11 @@ for folder in sorted(root.iterdir()):
     cards=[]; sheet=Image.new('RGB',(1200,4*480),'#eff6f5'); draw=ImageDraw.Draw(sheet)
     for i,p in enumerate(pictures):
         with Image.open(p) as source:
-            im=source.convert('RGB'); im.thumbnail((280,420))
+            im=source.convert('RGB')
+            if p.stem.startswith('landscape') and im.height > im.width:
+                im=im.transpose(Image.Transpose.ROTATE_90)
+                im.save(p)
+            im.thumbnail((280,420))
             x=(i%4)*300+(300-im.width)//2; y=(i//4)*480+45
             sheet.paste(im,(x,y)); draw.text(((i%4)*300+8,(i//4)*480+8),p.stem,fill='#203952')
         url=html.escape(p.relative_to(root).as_posix())

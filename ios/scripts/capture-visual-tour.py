@@ -20,6 +20,8 @@ try:
     run('xcrun', 'simctl', 'boot', uid)
     run('xcrun', 'simctl', 'bootstatus', uid, '-b')
     run('xcrun', 'simctl', 'status_bar', uid, 'override', '--time', '9:41', '--batteryState', 'charged', '--batteryLevel', '100')
+    for key in ['DidShowContinuousPathIntroduction', 'UIKeyboardDidShowInternationalInfoIntroduction']:
+        run('xcrun', 'simctl', 'spawn', uid, 'defaults', 'write', 'com.apple.keyboard.preferences', key, '-bool', 'YES')
     run('xcrun', 'simctl', 'install', uid, app)
     folder = Path(run('xcrun', 'simctl', 'get_app_container', uid, 'com.joseherrerias.plinka', 'data')) / 'Documents'
     run('xcrun', 'simctl', 'launch', uid, 'com.joseherrerias.plinka', '--visual-tour')
