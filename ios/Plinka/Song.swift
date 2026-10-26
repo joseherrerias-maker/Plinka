@@ -90,7 +90,10 @@ struct Song: Codable, Equatable {
     var notes: [MusicNote] = []
     // Optional for backward-compatible decoding of existing drafts and saved songs.
     var sheetSteps: Int? = nil
+    // Keep Build 9's storage range so existing longer projects are never truncated.
     static let maximumSteps = 256
+    // Each numbered beat contains two note positions (the number and the dot).
+    static let automaticSheetLimit = 100 * 2
     var stepCount: Int { max(32, min(Self.maximumSteps, sheetSteps ?? 32)) }
 }
 
@@ -384,10 +387,12 @@ final class SongStore: ObservableObject {
     var canUndo: Bool { !undoHistory.isEmpty }
     var canRedo: Bool { !redoHistory.isEmpty }
 
-    func extendSheet() {
-        guard song.stepCount < Song.maximumSteps else { return }
-        remember()
-        song.sheetSteps = min(Song.maximumSteps, song.stepCount + 32)
+    private func growSheetIfNeeded(_ updated: inout Song, through step: Int) {
+        let length = updated.stepCount
+        // Leave room ahead once a note enters the last four numbered beats.
+        // Growth belongs to the note edit, so one Undo restores both together.
+        guard length < Song.automaticSheetLimit, step >= length - 8 else { return }
+        updated.sheetSteps = min(Song.automaticSheetLimit, length + 32)
     }
 
     func choose(_ instrument: Instrument) {
@@ -411,7 +416,10 @@ final class SongStore: ObservableObject {
         if erasing { return nil }
         remember()
         let added = MusicNote(step: step, row: row, instrument: chosen)
-        song.notes.append(added)
+        var updated = song
+        updated.notes.append(added)
+        growSheetIfNeeded(&updated, through: step)
+        song = updated
         selectedID = added.id
         return added
     }
@@ -424,8 +432,11 @@ final class SongStore: ObservableObject {
         guard newStep != old.step || newRow != old.row else { return }
         guard !song.notes.contains(where: { $0.id != id && $0.step == newStep && $0.row == newRow }) else { return }
         remember()
-        song.notes[index].step = newStep
-        song.notes[index].row = newRow
+        var updated = song
+        updated.notes[index].step = newStep
+        updated.notes[index].row = newRow
+        growSheetIfNeeded(&updated, through: newStep)
+        song = updated
         selectedID = id
     }
 

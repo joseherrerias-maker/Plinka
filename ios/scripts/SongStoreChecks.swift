@@ -97,23 +97,64 @@ struct SongStoreChecks {
         precondition(SongStore(defaults: freshDefaults).song == continued.song)
         let longSong = SongStore(defaults: freshDefaults)
         longSong.newSong()
-        longSong.extendSheet()
+        // Adding notes away from the end does not expand the sheet.
+        let earlyNote = longSong.tap(step: 0, row: 4)!
+        precondition(longSong.song.stepCount == 32)
+        let edgeNote = longSong.tap(step: 24, row: 4)!
         precondition(longSong.song.stepCount == 64)
         longSong.undo()
-        precondition(longSong.song.stepCount == 32)
+        precondition(longSong.song.stepCount == 32 && longSong.song.notes == [earlyNote])
         longSong.redo()
-        precondition(longSong.song.stepCount == 64)
-        let lateNote = longSong.tap(step: 60, row: 4)!
-        longSong.move(id: lateNote.id, horizontal: 3, vertical: 0)
-        precondition(longSong.song.notes[0].step == 63)
+        precondition(longSong.song.stepCount == 64 && longSong.song.notes.contains(edgeNote))
+        // Moving a note into the final measure grows space with the same edit.
+        longSong.move(id: edgeNote.id, horizontal: 32, vertical: 0)
+        precondition(longSong.song.stepCount == 96 && longSong.song.notes[1].step == 56)
+        longSong.undo()
+        precondition(longSong.song.stepCount == 64 && longSong.song.notes[1].step == 24)
+        longSong.redo()
         precondition(longSong.saveSong(named: "Long song"))
         let longRestored = SongStore(defaults: freshDefaults)
-        precondition(longRestored.song.stepCount == 64 && longRestored.song.notes[0].step == 63)
+        precondition(longRestored.song == longSong.song)
         longRestored.openSong(longRestored.savedSongs.first { $0.song.title == "Long song" }!)
-        precondition(longRestored.song.notes[0].step == 63)
-        for _ in 0..<20 { longRestored.extendSheet() }
-        precondition(longRestored.song.stepCount == Song.maximumSteps)
-        precondition(longRestored.tap(step: Song.maximumSteps, row: 4) == nil)
+        precondition(!longRestored.hasUnsavedChanges)
+        // Keep composing naturally, including the partial final growth to beat 100.
+        while longRestored.song.stepCount < Song.automaticSheetLimit {
+            let oldLength = longRestored.song.stepCount
+            precondition(longRestored.tap(step: oldLength - 8, row: 3) != nil)
+            precondition(longRestored.song.stepCount > oldLength)
+        }
+        precondition(longRestored.song.stepCount == 200)
+        let finalNote = longRestored.tap(step: 199, row: 4)!
+        precondition(longRestored.song.stepCount == 200)
+        precondition(longRestored.tap(step: 200, row: 4) == nil)
+        longRestored.move(id: finalNote.id, horizontal: 10, vertical: 0)
+        precondition(longRestored.song.notes.contains { $0.id == finalNote.id && $0.step == 199 })
+        longRestored.remove(id: finalNote.id)
+        precondition(longRestored.song.stepCount == 200) // Deletion must not collapse the viewport.
+        precondition(longRestored.saveSong(named: "At the limit"))
+        precondition(SongStore(defaults: freshDefaults).song == longRestored.song)
+        // Selection, erasing and invalid taps cannot grow a legacy short sheet.
+        longRestored.newSong()
+        longRestored.song.notes = [MusicNote(step: 31, row: 4, instrument: .piano)]
+        _ = longRestored.tap(step: 31, row: 4)
+        precondition(longRestored.song.stepCount == 32)
+        longRestored.erasing = true
+        _ = longRestored.tap(step: 30, row: 4)
+        _ = longRestored.tap(step: 31, row: 4)
+        precondition(longRestored.song.stepCount == 32 && longRestored.song.notes.isEmpty)
+        precondition(longRestored.tap(step: 31, row: 9) == nil)
+        // Existing Build 9 saves beyond the new growth limit retain all notes.
+        let oldLong = Song(title: "Build 9 long song", notes: [MusicNote(step: 255, row: 4, instrument: .frog)], sheetSteps: 256)
+        longRestored.newSong()
+        longRestored.song = oldLong
+        precondition(longRestored.saveSong(named: oldLong.title))
+        let legacyLongRestored = SongStore(defaults: freshDefaults)
+        precondition(legacyLongRestored.song == oldLong)
+        legacyLongRestored.openSong(legacyLongRestored.savedSongs.first { $0.song.title == oldLong.title }!)
+        precondition(legacyLongRestored.song == oldLong && !legacyLongRestored.hasUnsavedChanges)
+        precondition(legacyLongRestored.tap(step: 254, row: 3) != nil)
+        precondition(legacyLongRestored.song.stepCount == 256)
+        precondition(legacyLongRestored.song.notes.contains { $0.step == 255 })
         let broken = Data("not JSON".utf8)
         defaults.set(broken, forKey: "pluki-saved-songs-v1")
         let damaged = SongStore(defaults: defaults)

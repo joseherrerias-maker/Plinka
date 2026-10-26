@@ -667,18 +667,12 @@ private struct StaffView: View {
         .clipShape(RoundedRectangle(cornerRadius: 22))
         .overlay(RoundedRectangle(cornerRadius: 22).strokeBorder(.white.opacity(0.8), lineWidth: 2))
         .overlay(alignment: .topTrailing) {
-            HStack(spacing: 6) {
-                if store.erasing { Text("Eraser on").font(.caption.bold()) }
-                Button { store.extendSheet() } label: {
-                    Label(store.song.stepCount < Song.maximumSteps ? "Extend sheet" : "Full length", systemImage: "plus")
-                        .font(.system(.caption, design: .rounded, weight: .bold))
-                        .padding(.horizontal, 12).frame(minHeight: 44)
-                        .background(PlukiStyle.paper, in: Capsule())
-                }
-                .buttonStyle(.plain)
-                .disabled(audio.isPlaying || store.song.stepCount >= Song.maximumSteps)
-                .accessibilityHint("Adds four measures of space for notes")
-            }.padding(6)
+            if store.erasing {
+                Text("Eraser on").font(.caption.bold())
+                    .padding(8)
+                    .background(PlukiStyle.paper, in: Capsule())
+                    .padding(6)
+            }
         }
     }
 }
