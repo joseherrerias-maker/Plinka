@@ -309,9 +309,17 @@ private struct VideoArtwork {
         let paper = CGRect(x: 32, y: vertical ? 230 : 135, width: size.width - 64, height: vertical ? 830 : 490)
         UIColor(red: 1, green: 0.98, blue: 0.93, alpha: 1).setFill()
         UIBezierPath(roundedRect: paper, cornerRadius: 32).fill()
-        text("pluki!", rect: CGRect(x: 42, y: vertical ? 65 : 30, width: size.width - 84, height: 65), font: 46, centered: true)
+        let logo = CGRect(x: (size.width - 280) / 2, y: vertical ? 55 : 16, width: 280, height: vertical ? 80 : 68)
+        UIColor.white.withAlphaComponent(0.82).setFill()
+        UIBezierPath(roundedRect: logo, cornerRadius: 26).fill()
+        let green = UIColor(red: 0.20, green: 0.75, blue: 0.43, alpha: 1)
+        if let note = UIImage(systemName: "music.note", withConfiguration: UIImage.SymbolConfiguration(pointSize: 46, weight: .black)) {
+            drawImage(note.withTintColor(green, renderingMode: .alwaysOriginal),
+                      in: CGRect(x: logo.minX + 25, y: logo.midY - 27, width: 43, height: 54))
+        }
+        text("pluki!", rect: CGRect(x: logo.minX + 79, y: logo.midY - 29, width: 180, height: 60), font: 46, centered: false)
         text(song.title, rect: CGRect(x: 50, y: vertical ? 145 : 92, width: size.width - 100, height: 54), font: vertical ? 30 : 25, centered: true)
-        text("Made with Pluki", rect: CGRect(x: 32, y: paper.maxY + 36, width: size.width - 64, height: 45), font: 23, centered: true)
+        text("Available in the App Store", rect: CGRect(x: 32, y: paper.maxY + 32, width: size.width - 64, height: 48), font: 32, centered: true)
         let gutter: CGFloat = vertical ? 85 : 100
         let left = paper.minX + gutter
         let right = paper.maxX - 20

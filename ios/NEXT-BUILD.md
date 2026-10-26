@@ -1,5 +1,7 @@
-# After Build 10 preparation
+# Changes after Build 10
 
-The automatic sheet growth and staff/grid rendering changes are included in [Build 10](VERSION-10.md). No additional changes are queued here.
+- Exported videos use the app's green musical-note and navy pluki! wordmark in a light rounded panel, in portrait and landscape.
+- Footer now reads “Available in the App Store” in larger 32-point rounded bold text (previously 23-point “Made with Pluki”). This is launch branding; public availability is not yet confirmed.
+- Staff area, audio, timing and export duration are unchanged.
 
-Build 10 is prepared for manual Codemagic compilation and device testing. Build 9 remains the user-approved device baseline until the new build is tested. Archive Build 10 after the user confirms successful signed compilation, retaining the latest three compiled archives.
+Build 10 compiled successfully; user confirmed sheet growth and grid appearance on iPhone, and video appearance. Release label remains Build 10 until the next build is requested. Device acceptance for this change: check the logo and footer in both exported video formats.
