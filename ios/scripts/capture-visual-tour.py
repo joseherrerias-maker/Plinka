@@ -28,6 +28,8 @@ try:
     driver = subprocess.Popen(['xcodebuild', 'test', '-project', 'ios/VisualDriver/VisualDriver.xcodeproj', '-scheme', 'VisualDriver', '-destination', f'id={uid}', '-parallel-testing-enabled', 'NO', 'CODE_SIGNING_ALLOWED=NO'], stdout=driver_log, stderr=subprocess.STDOUT)
     seen = set(); deadline = time.monotonic() + 600
     while time.monotonic() < deadline:
+        if driver.poll() is not None and driver.returncode != 0:
+            raise RuntimeError('Device rotation driver stopped; see driver.log')
         result = folder / 'visual-result.txt'
         if result.exists():
             message = result.read_text()
