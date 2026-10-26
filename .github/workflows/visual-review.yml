@@ -1,3 +1,4 @@
+# Captures keyboard focus after the native Save sheet finishes presenting.
 name: Pluki Visual Review
 on:
   workflow_dispatch:

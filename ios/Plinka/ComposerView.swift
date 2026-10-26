@@ -120,7 +120,12 @@ struct ComposerView: View {
                         .fontWeight(.semibold)
                 }
             }
-            .task { saveNameFocused = true }
+            .task {
+                // Focus after the sheet has attached its text field to the window.
+                try? await Task.sleep(for: .milliseconds(500))
+                guard !Task.isCancelled else { return }
+                saveNameFocused = true
+            }
         }
         .presentationDetents([.medium, .large])
         .presentationDragIndicator(.visible)
