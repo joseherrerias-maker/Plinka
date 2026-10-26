@@ -1,4 +1,16 @@
-# Pluki — Native iOS prototype (Build 1: simulator compile passed)
+# Pluki — Native iOS app
+
+## Current release: Build 10
+
+See [Build 10 release notes](VERSION-10.md) for automatic sheet growth to 500 numbered beats and the staff/grid rendering fix. Settings displays **Build 10**. Build 9 is the latest user-approved device baseline; Build 10 awaits signed compilation and device testing.
+
+In Codemagic, choose **main → Pluki Build 10 - TestFlight and iPad ZIP** (`pluki-ios-dual-export`). This is the single manual workflow: one signed archive produces a TestFlight IPA and an iPad Ad Hoc ZIP. GitHub Actions separately checks unsigned compilation and saved-song behavior. Current signing configuration is in [`codemagic.yaml`](../codemagic.yaml); setup notes are in [VERSION-3.md](VERSION-3.md).
+
+The app now includes 19 sounds across Instruments, Animals and Fun; continuous sound browsing; a home screen and song menu; save/open/delete; six editable samples; smooth playback following; and video export to Photos. The original web prototype remains separate at the repository root.
+
+## Historical Build 1 notes
+
+The initial setup and feature notes below describe Build 1 and are retained for context. Use the current release notes and workflow above for new builds.
 
 This is a **standalone SwiftUI iPhone + iPad app**. The public-facing name is **Pluki**, while the GitHub repository, Xcode target and bundle identifier retain their original internal Plinka names. The web prototype remains at the repository root as GitHub Pages `index.html`. No web backend or subscription is needed.
 
