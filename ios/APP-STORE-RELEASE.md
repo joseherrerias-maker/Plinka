@@ -1,6 +1,6 @@
 # Pluki launch preparation
 
-Build 11 is a TestFlight candidate, not an App Store submission. Updated October 26, 2026.
+Build 12 is a TestFlight candidate, not an App Store submission. Updated October 26, 2026.
 
 ## Prepared in the app
 
@@ -13,7 +13,7 @@ Offline Help and Privacy policy; sound attribution screen; initial Photos add-on
 - Target price is $3.99 USD, paid download, with launch features included. Confirm availability, paid agreement, tax and banking details in App Store Connect. No in-app paywall, subscription or StoreKit purchase flow is needed for the intended paid-download model.
 - Complete App Privacy answers from the actual released app and SDK inventory. Candidate answer is Data Not Collected by the developer; local songs and local Photos export do not imply server collection. Reassess any future support form or analytics.
 - Supply review contact details, privacy/support URLs, copyright/developer name, current screenshots from iPhone and iPad, keywords and description. No screenshots or review submission have been uploaded by this task.
-- Decide whether 0.9.0 will remain the beta version or bump to 1.0 for the final App Store build.
+- Decide whether 0.9.1 will remain the beta version or bump to 1.0 for the final App Store build.
 
 ## Listing copy draft
 
@@ -37,7 +37,7 @@ For video export, create a song with notes, choose Export video, select a format
 ## Final device acceptance (record results before submission)
 
 - iPhone and iPad, both orientations: Home/menu, Help/Privacy, sound tray, keyboard, parent challenge and video preview fit without clipping.
-- Install over Build 10: saved projects, active draft, notes near the end and song names survive. New/Continue retain the visible grid.
+- Install over Build 11: saved projects, active draft, notes near the end and song names survive. New/Continue retain the visible grid.
 - Parent challenge: incorrect input, Cancel, swipe-to-dismiss and background/return never save or request Photos access. Correct input authorizes the initial Photos permission request. A second export with Photos already authorized saves directly without a challenge. Denied or restricted permission shows guidance without repeating a puzzle; resetting permission to not-determined requires a fresh parent check.
 - Photos: first grant, denial, later retry, low storage, background during generation, cancellation and both export formats.
 - Longer songs: add/move near the end through the 500-beat cap, undo/redo, save/reopen, playback and export. Measure time/memory on real hardware; the audio engine renders the whole song into memory.
