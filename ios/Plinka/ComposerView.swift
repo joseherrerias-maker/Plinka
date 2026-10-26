@@ -677,7 +677,7 @@ private struct StaffView: View {
     }
 }
 
-private struct StaffMetrics {
+private struct StaffMetrics: Equatable {
     let height: CGFloat
     let short: Bool
     let steps: Int
@@ -698,23 +698,6 @@ private struct StaffContent: View {
 
     var body: some View {
         ZStack(alignment: .topLeading) {
-            Canvas { context, _ in
-                for row in stride(from: 0, through: 8, by: 2) {
-                    let y = metrics.top + CGFloat(row) * metrics.row
-                    var path = Path()
-                    path.move(to: CGPoint(x: metrics.gutter - 12, y: y))
-                    path.addLine(to: CGPoint(x: metrics.width, y: y))
-                    context.stroke(path, with: .color(PlukiStyle.ink.opacity(0.85)), lineWidth: 1.6)
-                }
-                for step in 0..<metrics.steps {
-                    let x = metrics.x(Double(step))
-                    var path = Path()
-                    path.move(to: CGPoint(x: x, y: 28))
-                    path.addLine(to: CGPoint(x: x, y: metrics.height - 15))
-                    context.stroke(path, with: .color(PlukiStyle.ink.opacity(step.isMultiple(of: 2) ? 0.12 : 0.05)),
-                                   style: StrokeStyle(lineWidth: 1, dash: [5, 6]))
-                }
-            }.frame(width: metrics.width, height: metrics.height)
             Rectangle().fill(.clear).contentShape(Rectangle())
                 .frame(width: metrics.width, height: metrics.height)
                 .onTapGesture { location in
@@ -767,6 +750,68 @@ private struct StaffContent: View {
     }
 }
 
+/// The lines use a viewport-sized backing surface even for a 500-beat song.
+/// Keeping this separate from the wide SwiftUI note content avoids oversized
+/// Canvas textures and lets scrolling, rotation and returning Home redraw it.
+@MainActor
+private final class StaffGridView: UIView {
+    private var metrics: StaffMetrics
+    private var offset = CGPoint.zero
+
+    init(metrics: StaffMetrics) {
+        self.metrics = metrics
+        super.init(frame: .zero)
+        backgroundColor = .clear
+        isOpaque = false
+        isUserInteractionEnabled = false
+        isAccessibilityElement = false
+        contentMode = .redraw
+        clipsToBounds = true
+    }
+    required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
+
+    func update(metrics: StaffMetrics, offset: CGPoint) {
+        guard self.metrics != metrics || self.offset != offset else { return }
+        self.metrics = metrics
+        self.offset = offset
+        setNeedsDisplay()
+    }
+
+    override func didMoveToWindow() {
+        super.didMoveToWindow()
+        setNeedsDisplay()
+    }
+
+    override func draw(_ rect: CGRect) {
+        guard let context = UIGraphicsGetCurrentContext(), bounds.width > 0 else { return }
+        let ink = UIColor(red: 0.13, green: 0.22, blue: 0.34, alpha: 1)
+        let left = max(0, metrics.gutter - 12 - offset.x)
+        let right = min(bounds.width, metrics.width - offset.x)
+        guard right > left else { return }
+        context.setStrokeColor(ink.withAlphaComponent(0.85).cgColor)
+        context.setLineWidth(1.6)
+        for row in stride(from: 0, through: 8, by: 2) {
+            let y = metrics.top + CGFloat(row) * metrics.row - offset.y
+            context.move(to: CGPoint(x: left, y: y))
+            context.addLine(to: CGPoint(x: right, y: y))
+        }
+        context.strokePath()
+        // Include one column outside either edge for fractional scroll positions.
+        let first = max(0, Int(floor((offset.x - metrics.gutter) / metrics.cell)) - 1)
+        let last = min(metrics.steps - 1, Int(ceil((offset.x + bounds.width - metrics.gutter) / metrics.cell)) + 1)
+        guard first <= last else { return }
+        context.setLineWidth(1)
+        context.setLineDash(phase: 0, lengths: [5, 6])
+        for step in first...last {
+            let x = metrics.x(Double(step)) - offset.x
+            context.setStrokeColor(ink.withAlphaComponent(step.isMultiple(of: 2) ? 0.12 : 0.05).cgColor)
+            context.move(to: CGPoint(x: x, y: 28 - offset.y))
+            context.addLine(to: CGPoint(x: x, y: metrics.height - 15 - offset.y))
+            context.strokePath()
+        }
+    }
+}
+
 /// The staff is hosted in a real scroll view. A display link moves only the
 /// lightweight playhead and scroll offset; SwiftUI doesn't rebuild at 60 Hz.
 private struct FollowScrollView<Content: View>: UIViewControllerRepresentable {
@@ -794,11 +839,12 @@ private final class FrameTarget: NSObject {
 }
 
 @MainActor
-private final class FollowController<Content: View>: UIViewController {
+private final class FollowController<Content: View>: UIViewController, UIScrollViewDelegate {
     let audio: PlinkaAudio
     var metrics: StaffMetrics
     let host: UIHostingController<Content>
     private let scroll = UIScrollView()
+    private let grid: StaffGridView
     private let playhead = UIView()
     private let marker = UIView()
     private let target = FrameTarget()
@@ -807,6 +853,7 @@ private final class FollowController<Content: View>: UIViewController {
 
     init(audio: PlinkaAudio, metrics: StaffMetrics, content: Content) {
         self.audio = audio; self.metrics = metrics
+        grid = StaffGridView(metrics: metrics)
         host = UIHostingController(rootView: content)
         super.init(nibName: nil, bundle: nil)
     }
@@ -815,6 +862,8 @@ private final class FollowController<Content: View>: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .clear
+        view.addSubview(grid)
+        scroll.delegate = self
         scroll.backgroundColor = .clear
         scroll.contentInsetAdjustmentBehavior = .never
         scroll.showsHorizontalScrollIndicator = true
@@ -838,6 +887,7 @@ private final class FollowController<Content: View>: UIViewController {
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        grid.setNeedsDisplay()
         if link == nil {
             let display = CADisplayLink(target: target, selector: #selector(FrameTarget.frame))
             display.preferredFrameRateRange = CAFrameRateRange(minimum: 30, maximum: 60, preferred: 60)
@@ -853,10 +903,16 @@ private final class FollowController<Content: View>: UIViewController {
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
+        grid.frame = view.bounds
         scroll.frame = view.bounds
         host.view.frame = CGRect(x: 0, y: 0, width: metrics.width, height: metrics.height)
         scroll.contentSize = host.view.frame.size
+        grid.update(metrics: metrics, offset: scroll.contentOffset)
         advanceFrame()
+    }
+
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        grid.update(metrics: metrics, offset: scrollView.contentOffset)
     }
 
     private func advanceFrame() {
@@ -881,3 +937,64 @@ private final class FollowController<Content: View>: UIViewController {
         scroll.setContentOffset(CGPoint(x: desired, y: 0), animated: false)
     }
 }
+
+#if DEBUG
+/// Opt-in drawing regression: render short and long sheets at multiple scroll
+/// positions using the actual grid view, including a hide/show and resize.
+@MainActor
+enum StaffGridSmokeCheck {
+    static func runIfRequested() {
+        guard ProcessInfo.processInfo.arguments.contains("--check-staff-grid") else { return }
+        let directory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+        var passed = true
+        for short in [false, true] {
+            let size = short ? CGSize(width: 820, height: 240) : CGSize(width: 390, height: 600)
+            let grid = StaffGridView(metrics: StaffMetrics(height: size.height, short: short, steps: 32))
+            grid.frame = CGRect(origin: .zero, size: CGSize(width: 200, height: 200))
+            grid.isHidden = true
+            grid.frame = CGRect(origin: .zero, size: size)
+            grid.isHidden = false
+            for steps in [32, 256, Song.maximumSteps] {
+                let metrics = StaffMetrics(height: size.height, short: short, steps: steps)
+                for fraction: CGFloat in [0, 0.5, 1] {
+                    let offset = max(0, metrics.width - size.width) * fraction
+                    grid.update(metrics: metrics, offset: CGPoint(x: offset, y: 0))
+                    grid.layer.displayIfNeeded()
+                    let format = UIGraphicsImageRendererFormat()
+                    format.scale = 1
+                    let image = UIGraphicsImageRenderer(size: size, format: format).image { renderer in
+                        grid.layer.render(in: renderer.cgContext)
+                    }
+                    // Missing-grid regression: every staff line must leave visible ink.
+                    for row in stride(from: 0, through: 8, by: 2) {
+                        let point = CGPoint(x: size.width / 2, y: metrics.top + CGFloat(row) * metrics.row)
+                        passed = passed && pixelAlpha(image, at: point) > 100
+                    }
+                    // The dashed timing guide must also render away from staff lines.
+                    let step = max(0, Int(ceil((offset + 10 - metrics.gutter) / metrics.cell)))
+                    let point = CGPoint(x: metrics.x(Double(step)) - offset, y: 30)
+                    passed = passed && pixelAlpha(image, at: point) > 2
+                    if steps == Song.maximumSteps {
+                        let name = "grid-\(short ? "landscape" : "portrait")-\(Int(fraction * 100)).png"
+                        try? image.pngData()?.write(to: directory.appendingPathComponent(name))
+                    }
+                }
+            }
+        }
+        let result = passed ? "PASS: grid visible for 32/256/1000 positions, start/middle/end, portrait/landscape, hide/show and resize" : "FAIL: missing grid pixels"
+        try? result.write(to: directory.appendingPathComponent("grid-check.txt"), atomically: true, encoding: .utf8)
+    }
+
+    private static func pixelAlpha(_ image: UIImage, at point: CGPoint) -> UInt8 {
+        guard let pixel = image.cgImage?.cropping(to: CGRect(x: floor(point.x), y: floor(point.y), width: 1, height: 1)) else { return 0 }
+        var bytes = [UInt8](repeating: 0, count: 4)
+        bytes.withUnsafeMutableBytes { buffer in
+            let context = CGContext(data: buffer.baseAddress, width: 1, height: 1, bitsPerComponent: 8,
+                                    bytesPerRow: 4, space: CGColorSpaceCreateDeviceRGB(),
+                                    bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)
+            context?.draw(pixel, in: CGRect(x: 0, y: 0, width: 1, height: 1))
+        }
+        return bytes[3]
+    }
+}
+#endif

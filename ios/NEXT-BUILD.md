@@ -1,5 +1,6 @@
 # Changes after the compiled Build 9 baseline
 
+- Fixed disappearing staff/grid lines by drawing them in a viewport-sized UIKit surface, refreshed on scroll, layout and appearance. The note canvas no longer allocates one full-song drawing surface.
 - Removed the Extend sheet command. Adding or moving a note into the last four numbered beats automatically adds room ahead, without changing the current scroll position.
 - Automatic growth stops at 500 numbered beats (1,000 half-beat note positions). This is a timeline length limit, not a limit on the number of stickers.
 - Existing Build 9 projects remain intact and editable. New projects start with the original compact sheet. Erasing and selecting do not expand the sheet; deletion does not shrink it.

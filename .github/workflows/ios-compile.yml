@@ -57,3 +57,14 @@ jobs:
           name: Pluki-video-check
           path: ${{ runner.temp }}/PlukiVideoCheck
           retention-days: 7
+      - name: Check staff grid drawing
+        if: contains(github.event.head_commit.message, '[grid-check]')
+        timeout-minutes: 10
+        run: bash ios/scripts/check-staff-grid.sh "$RUNNER_TEMP/PlinkaDerivedData/Build/Products/Debug-iphonesimulator/Plinka.app"
+      - name: Keep grid check frames
+        if: always() && contains(github.event.head_commit.message, '[grid-check]')
+        uses: actions/upload-artifact@v4
+        with:
+          name: Pluki-grid-check
+          path: ${{ runner.temp }}/PlukiGridCheck
+          retention-days: 7

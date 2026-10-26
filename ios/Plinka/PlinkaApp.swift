@@ -8,6 +8,7 @@ struct PlinkaApp: App {
                 .task {
                     #if DEBUG
                     await VideoExportSmokeCheck.runIfRequested()
+                    StaffGridSmokeCheck.runIfRequested()
                     #endif
                 }
         }
