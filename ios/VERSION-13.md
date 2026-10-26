@@ -32,3 +32,11 @@ Record device, OS, result and any crash before calling the candidate approved. A
 ## Archives
 
 Build 12 is the last user-confirmed compiled build. Keep compiled archives 10, 11 and 12 until the user confirms Build 13 compiled successfully; then archive 13 and retain 11, 12 and 13.
+
+## Recorded checks
+
+- [Debug/Release, persistence, parent approval and bundle checks](https://github.com/joseherrerias-maker/Plinka/actions/runs/40397115655) passed on commit `9f6c2d8`.
+- [Video media checks](https://github.com/joseherrerias-maker/Plinka/actions/runs/40395138051) passed; portrait and landscape footer frames were visually inspected. The later change only adjusts Save-sheet focus timing.
+- The 11-inch iPad portrait screenshot confirms the full wordmark fits.
+- [Final focused capture run](https://github.com/joseherrerias-maker/Plinka/actions/runs/40397115682) verifies both orientations of iPhone SE and 11-inch iPad. Final keyboard screenshot approval is pending: the local review environment disconnected before those images were available. Do not interpret capture success alone as keyboard/layout approval.
+- Signed Codemagic compilation and physical-device acceptance remain pending.
