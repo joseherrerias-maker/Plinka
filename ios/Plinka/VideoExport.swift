@@ -92,6 +92,20 @@ struct SongVideoExportView: View {
         }) {
             PlukiParentGate { parentApproved = true }
         }
+        .task {
+            #if DEBUG
+            if ProcessInfo.processInfo.arguments.contains("--visual-tour") {
+                var previewSong = song
+                previewSong.notes = Array(song.notes.filter { $0.step < 4 })
+                model.start(song: previewSong, shape: .vertical)
+                while model.working { try? await Task.sleep(nanoseconds: 100_000_000) }
+                if model.player != nil {
+                    let folder = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+                    try? "ready".write(to: folder.appendingPathComponent("visual-preview-ready.txt"), atomically: true, encoding: .utf8)
+                }
+            }
+            #endif
+        }
         .interactiveDismissDisabled(model.saving)
         .onDisappear { model.close() }
         .onChange(of: scenePhase) { _, phase in

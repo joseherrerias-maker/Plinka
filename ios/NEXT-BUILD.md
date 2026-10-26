@@ -1,5 +1,7 @@
-# Build 12 prepared
+# Changes after compiled Build 12
 
-The changes after compiled Build 11 are included in [Build 12 release notes](VERSION-12.md). No additional changes are pending.
+- Build 12 compiled successfully and the user approved its video layout.
+- Added a manual GitHub visual-review workflow with six simulator sizes, both orientations, real screen captures and a downloadable HTML/contact-sheet report. Debug-only capture hooks do not run in signed builds.
+- Pending product polish: change the video footer from “Made with Pluki” to “Made with pluki!” to match the header; this text change is not yet applied.
 
-Build 12 awaits user-confirmed signed compilation and device testing. Keep compiled archives 9, 10 and 11 until successful compilation is reported, then retain 10, 11 and 12.
+Build label remains 12 until the next build is requested. Compiled archives retain 10, 11 and 12.

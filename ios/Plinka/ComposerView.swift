@@ -54,6 +54,11 @@ struct ComposerView: View {
             }
         }
         .foregroundStyle(PlukiStyle.ink)
+        .task {
+            #if DEBUG
+            await runVisualTourIfRequested()
+            #endif
+        }
         .sheet(isPresented: $showSettings) { settings }
         .sheet(isPresented: $showSongs) { savedSongsView }
         .sheet(isPresented: $showSamples) { samplesView }
@@ -1000,6 +1005,95 @@ enum StaffGridSmokeCheck {
             context?.draw(pixel, in: CGRect(x: 0, y: 0, width: 1, height: 1))
         }
         return bytes[3]
+    }
+}
+#endif
+
+#if DEBUG
+// Only runs in a disposable simulator when explicitly launched by the visual workflow.
+// Drive existing views through their normal state; do not maintain duplicate mock layouts.
+extension ComposerView {
+    @MainActor private func runVisualTourIfRequested() async {
+        guard ProcessInfo.processInfo.arguments.contains("--visual-tour") else { return }
+        let folder = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+        func pause(_ seconds: Double = 1.5) async throws {
+            try await Task.sleep(nanoseconds: UInt64(seconds * 1_000_000_000))
+        }
+        func capture(_ name: String, landscape: Bool) async throws {
+            try await pause()
+            guard let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                  scene.interfaceOrientation.isLandscape == landscape else {
+                throw NSError(domain: "VisualTourOrientation", code: 1)
+            }
+            let request = folder.appendingPathComponent("visual-ready.txt")
+            let ack = folder.appendingPathComponent("visual-ack.txt")
+            try? FileManager.default.removeItem(at: ack)
+            try name.write(to: request, atomically: true, encoding: .utf8)
+            for _ in 0..<180 {
+                if (try? String(contentsOf: ack, encoding: .utf8)) == name {
+                    try? FileManager.default.removeItem(at: request)
+                    return
+                }
+                try await pause(0.5)
+            }
+            throw NSError(domain: "VisualTourCaptureTimeout", code: 2)
+        }
+        do {
+            try await pause(2)
+            store.openSample(SampleSong.all.first { $0.song.title == "Pluki Pop" }!)
+            _ = store.saveSong(named: "A very long song name for checking saved project rows and the Save keyboard")
+            store.openSample(SampleSong.all.first { $0.song.title == "Ode to Joy" }!)
+            _ = store.saveSong(named: "Ode to Joy")
+            store.openSample(SampleSong.all.first { $0.song.title == "Pluki Pop" }!)
+            for landscape in [false, true] {
+                guard let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene else {
+                    throw NSError(domain: "VisualTourScene", code: 3)
+                }
+                scene.requestGeometryUpdate(.iOS(interfaceOrientations: landscape ? .landscapeRight : .portrait))
+                try await pause(2)
+                let prefix = landscape ? "landscape" : "portrait"
+                showHome = true
+                try await capture(prefix + "-01-home", landscape: landscape)
+                showHome = false
+                try await capture(prefix + "-02-composer", landscape: landscape)
+                showSongMenu = true
+                try await capture(prefix + "-03-menu", landscape: landscape)
+                showSongMenu = false
+                showSongs = true
+                try await capture(prefix + "-04-open", landscape: landscape)
+                showSongs = false
+                try await pause()
+                saveTitle = "A very long song name for checking the Save keyboard"
+                showSave = true
+                try await capture(prefix + "-05-save-keyboard", landscape: landscape)
+                showSave = false
+                try await pause()
+                showSamples = true
+                try await capture(prefix + "-06-samples", landscape: landscape)
+                showSamples = false
+                try await pause()
+                showSettings = true
+                try await capture(prefix + "-07-settings", landscape: landscape)
+                showSettings = false
+                try await pause()
+                showVideoExport = true
+                // The export screen prepares a short real preview in visual-tour mode.
+                for _ in 0..<120 {
+                    if FileManager.default.fileExists(atPath: folder.appendingPathComponent("visual-preview-ready.txt").path) { break }
+                    try await pause(0.5)
+                }
+                guard FileManager.default.fileExists(atPath: folder.appendingPathComponent("visual-preview-ready.txt").path) else {
+                    throw NSError(domain: "VisualTourPreviewTimeout", code: 4)
+                }
+                try await capture(prefix + "-08-video-preview", landscape: landscape)
+                showVideoExport = false
+                try await pause()
+                try? FileManager.default.removeItem(at: folder.appendingPathComponent("visual-preview-ready.txt"))
+            }
+            try "PASS: captured 16 screens; human visual review required.".write(to: folder.appendingPathComponent("visual-result.txt"), atomically: true, encoding: .utf8)
+        } catch {
+            try? "FAIL: \(error)".write(to: folder.appendingPathComponent("visual-result.txt"), atomically: true, encoding: .utf8)
+        }
     }
 }
 #endif

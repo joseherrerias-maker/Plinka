@@ -1,0 +1,82 @@
+name: Pluki Visual Review
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/visual-review.yml']
+permissions:
+  contents: read
+concurrency:
+  group: pluki-visual-review
+  cancel-in-progress: false
+jobs:
+  build:
+    if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[visual-check]')
+    runs-on: macos-26
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - run: bash ios/scripts/prepare-app-icon.sh
+      - name: Build simulator app once
+        shell: bash
+        run: |
+          set -o pipefail
+          xcodebuild -project ios/Plinka.xcodeproj -scheme Plinka -configuration Debug -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' -derivedDataPath "$RUNNER_TEMP/VisualBuild" CODE_SIGNING_ALLOWED=NO build > "$RUNNER_TEMP/build.log" 2>&1 || { tail -100 "$RUNNER_TEMP/build.log"; exit 1; }
+          ditto -c -k --keepParent "$RUNNER_TEMP/VisualBuild/Build/Products/Debug-iphonesimulator/Plinka.app" "$RUNNER_TEMP/Plinka.zip"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: visual-simulator-app
+          path: ${{ runner.temp }}/Plinka.zip
+          retention-days: 3
+  capture:
+    needs: build
+    runs-on: macos-26
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      max-parallel: 3
+      matrix:
+        include:
+          - {key: iphone-small, device: 'iPhone SE (3rd generation)'}
+          - {key: iphone-standard, device: 'iPhone 16'}
+          - {key: iphone-max, device: 'iPhone 16 Pro Max'}
+          - {key: ipad-mini, device: 'iPad mini (A17 Pro)'}
+          - {key: ipad-11, device: 'iPad Pro 11-inch (M4)'}
+          - {key: ipad-13, device: 'iPad Pro 13-inch (M4)'}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: visual-simulator-app
+          path: ${{ runner.temp }}/app
+      - run: ditto -x -k "$RUNNER_TEMP/app/Plinka.zip" "$RUNNER_TEMP/app"
+      - name: Capture portrait and landscape screens
+        env:
+          VISUAL_DEVICE: ${{ matrix.device }}
+          VISUAL_KEY: ${{ matrix.key }}
+        run: python3 ios/scripts/capture-visual-tour.py "$RUNNER_TEMP/app/Plinka.app" "$VISUAL_DEVICE" "$RUNNER_TEMP/screens/$VISUAL_KEY"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: screens-${{ matrix.key }}
+          path: ${{ runner.temp }}/screens
+          retention-days: 14
+  report:
+    needs: capture
+    if: always() && needs.capture.result != 'skipped'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: screens-*
+          merge-multiple: true
+          path: visual-report
+      - run: python3 -m pip install Pillow
+      - run: python3 ios/scripts/visual-report.py visual-report
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: Pluki-Visual-Report
+          path: visual-report
+          retention-days: 30
