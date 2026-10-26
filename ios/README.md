@@ -1,10 +1,10 @@
 # Pluki — Native iOS app
 
-## Current release: Build 10
+## Current release: Build 11
 
-See [Build 10 release notes](VERSION-10.md) for automatic sheet growth to 500 numbered beats and the staff/grid rendering fix. Settings displays **Build 10**. Build 9 is the latest user-approved device baseline; Build 10 awaits signed compilation and device testing.
+See [Build 11 release notes](VERSION-11.md) for video branding, Help/Privacy, a Photos parent check and packaged privacy declarations. Settings displays **Build 11**. Build 10 is the latest user-approved device baseline; Build 11 awaits signed compilation and device testing.
 
-In Codemagic, choose **main → Pluki Build 10 - TestFlight and iPad ZIP** (`pluki-ios-dual-export`). This is the single manual workflow: one signed archive produces a TestFlight IPA and an iPad Ad Hoc ZIP. GitHub Actions separately checks unsigned compilation and saved-song behavior. Current signing configuration is in [`codemagic.yaml`](../codemagic.yaml); setup notes are in [VERSION-3.md](VERSION-3.md).
+In Codemagic, choose **main → Pluki Build 11 - TestFlight and iPad ZIP** (`pluki-ios-dual-export`). This is the single manual workflow: one signed archive produces a TestFlight IPA and an iPad Ad Hoc ZIP. GitHub Actions separately checks unsigned compilation and saved-song behavior. Current signing configuration is in [`codemagic.yaml`](../codemagic.yaml); setup notes are in [VERSION-3.md](VERSION-3.md).
 
 The app now includes 19 sounds across Instruments, Animals and Fun; continuous sound browsing; a home screen and song menu; save/open/delete; six editable samples; smooth playback following; and video export to Photos. The original web prototype remains separate at the repository root.
 

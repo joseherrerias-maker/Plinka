@@ -14,6 +14,10 @@
 		A01000000000000000000005 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A02000000000000000000006 /* Assets.xcassets */; };
 		A01000000000000000000006 /* Sounds in Resources */ = {isa = PBXBuildFile; fileRef = A02000000000000000000007 /* Sounds */; };
 		A01000000000000000000008 /* VideoExport.swift in Sources */ = {isa = PBXBuildFile; fileRef = A02000000000000000000008 /* VideoExport.swift */; };
+		A01000000000000000000009 /* SupportViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = A02000000000000000000009 /* SupportViews.swift */; };
+		A01000000000000000000010 /* ParentApproval.swift in Sources */ = {isa = PBXBuildFile; fileRef = A02000000000000000000010 /* ParentApproval.swift */; };
+		A01000000000000000000011 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = A02000000000000000000011 /* PrivacyInfo.xcprivacy */; };
+		A01000000000000000000012 /* PrivacyPolicy.txt in Resources */ = {isa = PBXBuildFile; fileRef = A02000000000000000000012 /* PrivacyPolicy.txt */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -25,6 +29,10 @@
 		A02000000000000000000006 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A02000000000000000000007 /* Sounds */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Sounds; sourceTree = "<group>"; };
 		A02000000000000000000008 /* VideoExport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoExport.swift; sourceTree = "<group>"; };
+		A02000000000000000000009 /* SupportViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupportViews.swift; sourceTree = "<group>"; };
+		A02000000000000000000010 /* ParentApproval.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParentApproval.swift; sourceTree = "<group>"; };
+		A02000000000000000000011 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		A02000000000000000000012 /* PrivacyPolicy.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = PrivacyPolicy.txt; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -53,6 +61,10 @@
 				A02000000000000000000002 /* Song.swift */,
 				A02000000000000000000003 /* AudioPlayer.swift */,
 				A02000000000000000000004 /* ComposerView.swift */,
+				A02000000000000000000009 /* SupportViews.swift */,
+				A02000000000000000000010 /* ParentApproval.swift */,
+				A02000000000000000000011 /* PrivacyInfo.xcprivacy */,
+				A02000000000000000000012 /* PrivacyPolicy.txt */,
 				A02000000000000000000008 /* VideoExport.swift */,
 				A02000000000000000000006 /* Assets.xcassets */,
 				A02000000000000000000007 /* Sounds */,
@@ -127,6 +139,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				A01000000000000000000005 /* Assets.xcassets in Resources */,
+				A01000000000000000000011 /* PrivacyInfo.xcprivacy in Resources */,
+				A01000000000000000000012 /* PrivacyPolicy.txt in Resources */,
 				A01000000000000000000006 /* Sounds in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -142,6 +156,8 @@
 				A01000000000000000000002 /* Song.swift in Sources */,
 				A01000000000000000000003 /* AudioPlayer.swift in Sources */,
 				A01000000000000000000004 /* ComposerView.swift in Sources */,
+				A01000000000000000000009 /* SupportViews.swift in Sources */,
+				A01000000000000000000010 /* ParentApproval.swift in Sources */,
 				A01000000000000000000008 /* VideoExport.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -187,19 +203,19 @@
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 11;
+				CURRENT_PROJECT_VERSION = 12;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = Pluki;
 				INFOPLIST_KEY_CFBundleName = Pluki;
 				INFOPLIST_FILE = Plinka/Info.plist;
-				PLUKI_RELEASE_BUILD = 10;
+				PLUKI_RELEASE_BUILD = 11;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				MARKETING_VERSION = 0.8.0;
+				MARKETING_VERSION = 0.9.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.joseherrerias.plinka;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -215,19 +231,19 @@
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 11;
+				CURRENT_PROJECT_VERSION = 12;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = Pluki;
 				INFOPLIST_KEY_CFBundleName = Pluki;
 				INFOPLIST_FILE = Plinka/Info.plist;
-				PLUKI_RELEASE_BUILD = 10;
+				PLUKI_RELEASE_BUILD = 11;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				MARKETING_VERSION = 0.8.0;
+				MARKETING_VERSION = 0.9.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.joseherrerias.plinka;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";

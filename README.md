@@ -45,10 +45,10 @@ No software license is granted by including this README. This is an unpublished 
 
 **Branding note (October 2026):** The app's public name is **Pluki**, accepted in App Store Connect. The GitHub repository URL, Xcode project/scheme, SKU `PLINKA-IOS-001`, and registered bundle identifier `com.joseherrerias.plinka` remain unchanged to preserve existing development and Apple signing configuration.
 
-## Native iOS app (Build 10)
+## Native iOS app (Build 11)
 
-The native SwiftUI source and Xcode project are under [`ios/`](ios/). Build 10 adds automatic sheet growth up to 500 numbered beats and a fix for disappearing staff/grid lines. Build 9 was compiled and tested on iPhone, including video export to Photos; Build 10 awaits signed compilation and device testing. See [Build 10 release notes](ios/VERSION-10.md) and [iOS build notes](ios/README.md).
+The native SwiftUI source and Xcode project are under [`ios/`](ios/). Build 11 adds video branding, Help/Privacy screens, a parent check for Photos saves and packaged privacy declarations. Build 10 was compiled and tested on iPhone; Build 11 awaits signed compilation and device testing. See [Build 11 release notes](ios/VERSION-11.md) and [iOS build notes](ios/README.md).
 
 ## Build iOS with Codemagic
 
-The root [`codemagic.yaml`](codemagic.yaml) provides one manual workflow: **Pluki Build 10 - TestFlight and iPad ZIP** (`pluki-ios-dual-export`). Select branch **main**. One signed archive produces the TestFlight IPA and iPad Ad Hoc ZIP using the existing Apple signing setup. GitHub Actions separately checks unsigned compilation; Codemagic builds do not start automatically.
+The root [`codemagic.yaml`](codemagic.yaml) provides one manual workflow: **Pluki Build 11 - TestFlight and iPad ZIP** (`pluki-ios-dual-export`). Select branch **main**. One signed archive produces the TestFlight IPA and iPad Ad Hoc ZIP using the existing Apple signing setup. GitHub Actions separately checks unsigned compilation; Codemagic builds do not start automatically.

@@ -22,6 +22,8 @@ struct SongVideoExportView: View {
     let song: Song
     @StateObject private var model = SongVideoExportModel()
     @State private var shape: VideoShape = .vertical
+    @State private var showParentGate = false
+    @State private var parentApproved = false
     @Environment(\.dismiss) private var dismiss
     @Environment(\.scenePhase) private var scenePhase
 
@@ -36,7 +38,9 @@ struct SongVideoExportView: View {
                             .frame(maxHeight: 420)
                             .clipShape(RoundedRectangle(cornerRadius: 20))
                         Button(model.saved ? "Saved to Photos" : "Save to Photos", systemImage: model.saved ? "checkmark.circle.fill" : "square.and.arrow.down") {
-                            model.saveToPhotos()
+                            model.player?.pause()
+                            parentApproved = false
+                            showParentGate = true
                         }
                         .buttonStyle(.borderedProminent).tint(.green)
                         .disabled(model.saving || model.saved)
@@ -77,10 +81,21 @@ struct SongVideoExportView: View {
                 }
             }
         }
+        .sheet(isPresented: $showParentGate, onDismiss: {
+            let maySave = parentApproved && scenePhase == .active
+            parentApproved = false
+            if maySave { model.saveToPhotos() }
+        }) {
+            PlukiParentGate { parentApproved = true }
+        }
         .interactiveDismissDisabled(model.saving)
         .onDisappear { model.close() }
         .onChange(of: scenePhase) { _, phase in
             if phase != .active { model.player?.pause() }
+            if phase == .background {
+                parentApproved = false
+                showParentGate = false
+            }
             if phase == .background && model.working {
                 model.cancel()
                 model.message = "Export paused when Pluki closed. Tap Create video to try again."

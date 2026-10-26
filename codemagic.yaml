@@ -1,8 +1,8 @@
 # One manually selected workflow: TestFlight upload and iPad Ad Hoc ZIP.
-# Signing setup: ios/VERSION-3.md. Current changes: ios/VERSION-10.md.
+# Signing setup: ios/VERSION-3.md. Current changes: ios/VERSION-11.md.
 workflows:
   pluki-ios-dual-export:
-    name: Pluki Build 10 - TestFlight and iPad ZIP
+    name: Pluki Build 11 - TestFlight and iPad ZIP
     instance_type: mac_mini_m2
     max_build_duration: 30
     integrations:
@@ -49,6 +49,8 @@ workflows:
           python3 "$CM_BUILD_DIR/ios/scripts/verify-orientations.py" "$CM_BUILD_DIR/build/ipad/Pluki-iPad-AdHoc.ipa"
           python3 "$CM_BUILD_DIR/ios/scripts/package-ipad.py" \
             "$CM_BUILD_DIR/build/ipad/Pluki-iPad-AdHoc.ipa" "$CM_BUILD_DIR/build/Pluki-iPad-AdHoc.zip"
+          python3 "$CM_BUILD_DIR/ios/scripts/verify-privacy.py" "$CM_BUILD_DIR/build/testflight/Plinka.ipa"
+          python3 "$CM_BUILD_DIR/ios/scripts/verify-privacy.py" "$CM_BUILD_DIR/build/ipad/Pluki-iPad-AdHoc.ipa"
           touch "$CM_BUILD_DIR/build/exports-verified"
     artifacts:
       - build/testflight/*.ipa

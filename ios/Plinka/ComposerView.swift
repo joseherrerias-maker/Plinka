@@ -572,12 +572,17 @@ struct ComposerView: View {
                         TextField("Song name", text: $store.song.title)
                     }
                 }
-                Section("Compose") {
-                    Text("Swipe the sound tray to explore Instruments, Animals, and Fun, or tap a category to jump there. Choose a sound and tap the staff. Move a sticker up or down to change pitch, or sideways to change timing.")
+                Section("Help") {
+                    NavigationLink { PlukiHelpView() } label: {
+                        Label("How to play & help", systemImage: "questionmark.circle.fill")
+                    }
                 }
                 if let error = audio.audioError { Section { Text(error).foregroundStyle(.red) } }
-                Section { Text(versionLabel).foregroundStyle(.secondary) }
-                Section {
+                Section("About Pluki") {
+                    Text(versionLabel).foregroundStyle(.secondary)
+                    NavigationLink { PlukiPrivacyView() } label: {
+                        Label("Privacy policy", systemImage: "hand.raised.fill")
+                    }
                     NavigationLink("Sound credits") {
                         ScrollView {
                             Text(soundCredits).font(.footnote).textSelection(.enabled).padding()
