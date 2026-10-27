@@ -13,14 +13,18 @@ final class ParentKeypadTests: XCTestCase {
             reveal(save, in: app)
             save.tap()
             let prompt = app.staticTexts["parent-prompt"]
-            XCTAssertTrue(prompt.waitForExistence(timeout: 10))
+            XCTAssertTrue(app.navigationBars["Parent check"].waitForExistence(timeout: 10))
+            reveal(prompt, in: app)
+            XCTAssertTrue(prompt.exists)
             let next = app.buttons["parent-continue"]
             let answer = app.staticTexts["parent-answer"]
+            reveal(next, in: app)
             XCTAssertFalse(next.isEnabled)
             let one = app.buttons["parent-digit-1"]
             reveal(one, in: app)
             one.tap()
             XCTAssertEqual(app.state, .runningForeground, "First digit must not restart the app")
+            reveal(answer, in: app)
             XCTAssertEqual(answer.value as? String, "1")
             XCTAssertEqual(app.keyboards.count, 0)
             let screenshot = XCTAttachment(screenshot: app.screenshot())
@@ -30,21 +34,29 @@ final class ParentKeypadTests: XCTestCase {
             let delete = app.buttons["Delete last digit"]
             reveal(delete, in: app)
             delete.tap()
+            reveal(answer, in: app)
             XCTAssertEqual(answer.value as? String, "None")
             // Generated challenges contain distinct digits, so 9999 is always wrong.
-            for _ in 0..<4 { app.buttons["parent-digit-9"].tap() }
+            let nine = app.buttons["parent-digit-9"]
+            reveal(nine, in: app)
+            for _ in 0..<4 { nine.tap() }
             XCTAssertFalse(app.buttons["parent-digit-9"].isEnabled)
-            XCTAssertTrue(next.isEnabled)
             reveal(next, in: app)
+            XCTAssertTrue(next.isEnabled)
             next.tap()
-            XCTAssertTrue(app.staticTexts["Please try the new numbers above."].waitForExistence(timeout: 5))
+            let retry = app.staticTexts["Please try the new numbers above."]
+            reveal(retry, in: app)
+            XCTAssertTrue(retry.exists)
+            reveal(answer, in: app)
             XCTAssertEqual(answer.value as? String, "None")
             reveal(one, in: app)
             one.tap()
             let clear = app.buttons["Clear"]
             reveal(clear, in: app)
             clear.tap()
+            reveal(answer, in: app)
             XCTAssertEqual(answer.value as? String, "None")
+            reveal(next, in: app)
             XCTAssertFalse(next.isEnabled)
             app.buttons["Cancel"].tap()
             XCTAssertTrue(save.waitForExistence(timeout: 10))

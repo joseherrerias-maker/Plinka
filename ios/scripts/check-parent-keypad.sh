@@ -14,8 +14,10 @@ for device_type in 'com.apple.CoreSimulator.SimDeviceType.iPhone-SE-3rd-generati
       -only-testing:VisualDriver/ParentKeypadTests \
       -resultBundlePath "$RUNNER_TEMP/PlukiParentCheck/$device_type.xcresult" \
       CODE_SIGNING_ALLOWED=NO > "$RUNNER_TEMP/PlukiParentCheck/$device_type.log" 2>&1 || {
+        xcrun xcresulttool export attachments --path "$RUNNER_TEMP/PlukiParentCheck/$device_type.xcresult" --output-path "$RUNNER_TEMP/PlukiParentCheck/$device_type-attachments" || true
         tail -100 "$RUNNER_TEMP/PlukiParentCheck/$device_type.log"; exit 1;
       }
+    xcrun xcresulttool export attachments --path "$RUNNER_TEMP/PlukiParentCheck/$device_type.xcresult" --output-path "$RUNNER_TEMP/PlukiParentCheck/$device_type-attachments"
     xcrun simctl shutdown "$keypad_device"
     xcrun simctl delete "$keypad_device"
     trap - EXIT
