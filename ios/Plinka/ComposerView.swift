@@ -22,6 +22,9 @@ struct ComposerView: View {
     @State private var showSongs = false
     @State private var showSamples = false
     @State private var showSave = false
+    @State private var showRename = false
+    @State private var renameTitle = ""
+    @FocusState private var renameFocused: Bool
     @State private var showVideoExport = false
     @State private var saveTitle = ""
     @FocusState private var saveNameFocused: Bool
@@ -72,6 +75,7 @@ struct ComposerView: View {
             await runVisualTourIfRequested()
             #endif
         }
+        .sheet(isPresented: $showRename) { renameSongSheet }
         .sheet(isPresented: $showSettings) { settings }
         .sheet(isPresented: $showSongs) { savedSongsView }
         .sheet(isPresented: $showSamples) { samplesView }
@@ -94,6 +98,46 @@ struct ComposerView: View {
         .onChange(of: scenePhase) { _, phase in
             if phase != .active { audio.pause() }
         }
+    }
+
+    private var renameSongSheet: some View {
+        NavigationStack {
+            Form {
+                Section {
+                    TextField("Song name", text: $renameTitle)
+                        .focused($renameFocused)
+                        .submitLabel(.done)
+                        .onSubmit { finishRenamingSong() }
+                        .accessibilityIdentifier("rename-song-name")
+                } footer: {
+                    Text("Updates the current song title. Use Save song to keep it in your saved projects.")
+                }
+            }
+            .navigationTitle("Rename song")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") { showRename = false }
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Done") { finishRenamingSong() }.fontWeight(.semibold)
+                }
+            }
+            .task {
+                try? await Task.sleep(for: .milliseconds(500))
+                guard !Task.isCancelled else { return }
+                renameFocused = true
+            }
+        }
+        .presentationDetents([.medium, .large])
+        .presentationDragIndicator(.visible)
+    }
+
+    private func finishRenamingSong() {
+        let title = renameTitle.trimmingCharacters(in: .whitespacesAndNewlines)
+        store.song.title = title.isEmpty ? "Untitled Song" : String(title.prefix(80))
+        renameFocused = false
+        showRename = false
     }
 
     private var saveSongSheet: some View {
@@ -236,6 +280,24 @@ struct ComposerView: View {
                                 .background(PlukiStyle.blue.opacity(0.12), in: Circle())
                         }.accessibilityLabel("Close menu")
                     }.padding(.horizontal, 6)
+                    Button {
+                        renameTitle = store.song.title
+                        dismissSongMenu()
+                        showRename = true
+                    } label: {
+                        HStack {
+                            Text(store.song.title).lineLimit(2).multilineTextAlignment(.leading)
+                            Spacer(minLength: 8)
+                            Image(systemName: "pencil")
+                        }
+                        .font(.system(.headline, design: .rounded))
+                        .padding(12)
+                        .frame(maxWidth: .infinity, minHeight: 44)
+                        .background(PlukiStyle.blue.opacity(0.10), in: RoundedRectangle(cornerRadius: 14))
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel("Rename song, \(store.song.title)")
+                    .accessibilityIdentifier("rename-song")
                     navigationActions(inSong: true)
                     Divider().padding(.horizontal, 12)
                     songMenuRow("Back to home", icon: "house.fill", color: .orange) {
@@ -620,11 +682,6 @@ struct ComposerView: View {
     private var settings: some View {
         NavigationStack {
             Form {
-                if !showHome {
-                    Section("Your song") {
-                        TextField("Song name", text: $store.song.title)
-                    }
-                }
                 Section("Help") {
                     NavigationLink { PlukiHelpView() } label: {
                         Label("How to play & help", systemImage: "questionmark.circle.fill")
