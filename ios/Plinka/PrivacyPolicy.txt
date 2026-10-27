@@ -20,3 +20,6 @@ Pluki does not ask for a child's name, age, location, email address or other pro
 
 Apple services
 Apple handles app distribution, purchases, optional device backups and Photos services under its own terms and privacy practices. Pluki does not receive your payment details. Feedback you voluntarily send through TestFlight is handled by Apple and may be provided to the developer.
+
+Contact
+A parent or guardian can contact support@pebblesoftapps.com for help or privacy questions. If you email us, we receive your email address and whatever information you include so we can respond. Please do not send children's personal information. Support email is handled through Microsoft 365 from GoDaddy; it is separate from the offline app.
