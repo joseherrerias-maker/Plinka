@@ -340,7 +340,7 @@ struct ComposerView: View {
             audio.stop(); showSamples = true
         }
         Divider().padding(.horizontal, 12)
-        songMenuRow("Settings", icon: "gearshape.fill", color: PlukiStyle.blue) {
+        songMenuRow("Help & About", icon: "info.circle.fill", color: PlukiStyle.blue) {
             showSettings = true
         }
     }
@@ -715,7 +715,7 @@ struct ComposerView: View {
                 }
             }
             .navigationDestination(for: SettingsRoute.self) { _ in PlukiContactView() }
-            .navigationTitle(showHome ? "Settings" : "Song settings")
+            .navigationTitle("Help & About")
             .toolbar { ToolbarItem(placement: .confirmationAction) { Button("Done") { showSettings = false } } }
         }
         .presentationDetents([.medium, .large])

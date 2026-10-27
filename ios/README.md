@@ -1,10 +1,10 @@
 # Pluki — Native iOS app
 
-## Current candidate: Build 14 — RC2
+## Current candidate: Build 15 — RC3
 
-See [Build 14 release notes](VERSION-14.md) for song naming in the menu, Pebblesoft Apps branding and gated support links. Settings displays **Build 14**, marketing version **1.0**. Build 13 compiled successfully. Build 14 passed GitHub Debug/Release compilation; signed compilation and final device acceptance remain pending.
+See [Build 15 release notes](VERSION-15.md) for the Help & About menu and screen naming update. The information sheet displays **Build 15**, marketing version **1.0**. Build 14 compiled successfully, confirmed by the owner. Build 15 compilation and final device acceptance remain pending.
 
-In Codemagic, choose **main → Pluki Build 14 RC2 - TestFlight and iPad ZIP** (`pluki-ios-dual-export`). This is the single manual workflow: one signed archive produces a TestFlight IPA and an iPad Ad Hoc ZIP. GitHub checks Debug and Release compilation, saved-song behavior, parent approval and resources. Signing setup is unchanged in [`codemagic.yaml`](../codemagic.yaml).
+In Codemagic, choose **main → Pluki Build 15 RC3 - TestFlight and iPad ZIP** (`pluki-ios-dual-export`). This is the single manual workflow: one signed archive produces a TestFlight IPA and an iPad Ad Hoc ZIP. GitHub checks Debug and Release compilation, saved-song behavior, parent approval and resources. Signing setup is unchanged in [`codemagic.yaml`](../codemagic.yaml).
 
 The app now includes 19 sounds across Instruments, Animals and Fun; continuous sound browsing; a home screen and song menu; save/open/delete; six editable samples; smooth playback following; and video export to Photos. The original web prototype remains separate at the repository root.
 

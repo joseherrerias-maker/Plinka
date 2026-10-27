@@ -45,10 +45,10 @@ No software license is granted by including this README. This is an unpublished 
 
 **Branding note (October 2026):** The app's public name is **Pluki**, accepted in App Store Connect. The GitHub repository URL, Xcode project/scheme, SKU `PLINKA-IOS-001`, and registered bundle identifier `com.joseherrerias.plinka` remain unchanged to preserve existing development and Apple signing configuration.
 
-## Native iOS app (Build 14 RC2)
+## Native iOS app (Build 15 RC3)
 
-The native SwiftUI source and Xcode project are under [`ios/`](ios/). Build 14 RC2 brings song naming into the song menu and adds Pebblesoft Apps branding and support links. Build 13 is the last owner-confirmed signed build. Build 14 passed GitHub Debug/Release compilation; signed compilation and final device acceptance remain pending. See [Build 14 release notes](ios/VERSION-14.md) and [iOS build notes](ios/README.md).
+The native SwiftUI source and Xcode project are under [`ios/`](ios/). Build 15 RC3 renames Settings to Help & About in both menus and the information sheet, using a blue information icon. Build 14 is the last owner-confirmed compiled build. Build 15 compilation and final device acceptance must be recorded separately. See [Build 15 release notes](ios/VERSION-15.md) and [iOS build notes](ios/README.md).
 
 ## Build iOS with Codemagic
 
-The root [`codemagic.yaml`](codemagic.yaml) provides one manual workflow: **Pluki Build 14 RC2 - TestFlight and iPad ZIP** (`pluki-ios-dual-export`). Select branch **main**. One signed archive produces the TestFlight IPA and iPad Ad Hoc ZIP using the existing Apple signing setup. GitHub Actions separately checks unsigned compilation; Codemagic builds do not start automatically.
+The root [`codemagic.yaml`](codemagic.yaml) provides one manual workflow: **Pluki Build 15 RC3 - TestFlight and iPad ZIP** (`pluki-ios-dual-export`). Select branch **main**. One signed archive produces the TestFlight IPA and iPad Ad Hoc ZIP using the existing Apple signing setup. GitHub Actions separately checks unsigned compilation; Codemagic builds do not start automatically.

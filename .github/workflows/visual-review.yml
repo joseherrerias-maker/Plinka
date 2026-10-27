@@ -1,4 +1,4 @@
-# Build 14: include Rename keyboard and Contact screens in the visual tour.
+# Build 15: review Help & About in the home menu, song menu and information sheet.
 name: Pluki Visual Review
 on:
   workflow_dispatch:

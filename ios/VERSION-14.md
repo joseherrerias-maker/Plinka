@@ -1,6 +1,6 @@
 # Pluki Build 14 — Release Candidate 2
 
-Prepared October 27, 2026. Marketing version remains 1.0. Build 13 is the last owner-confirmed signed compilation; this file does not claim Build 14 has compiled or passed device acceptance.
+Prepared October 27, 2026. Marketing version remains 1.0. The owner confirmed Build 14 compiled successfully on October 27, 2026. GitHub Debug/Release compilation and both focused screenshot captures passed (iPhone capture on retry). Capture success does not establish human visual or final device acceptance.
 
 ## Changes
 
@@ -24,4 +24,4 @@ Complete the remaining hardware acceptance and store listing steps in APP-STORE-
 
 ## Archives
 
-Keep compiled archives 11, 12 and 13 until the owner confirms Build 14 compiled successfully. Then archive 14 and retain 12, 13 and 14.
+Build 14 compiled-source archive saved after owner confirmation. Retained compiled archives: 12, 13 and 14. Build 11 archive moved to Trash.
