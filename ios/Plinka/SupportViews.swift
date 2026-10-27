@@ -66,8 +66,8 @@ struct PlukiContactView: View {
         }
         var instruction: String {
             self == .email
-                ? "To open your email app, type these four numbers as digits, in the order shown."
-                : "To open the website, type these four numbers as digits, in the order shown."
+                ? "To open your email app, tap these four numbers on the number pad, in the order shown."
+                : "To open the website, tap these four numbers on the number pad, in the order shown."
         }
     }
 
@@ -126,13 +126,51 @@ struct PlukiContactView: View {
 
 /// A fresh, local challenge for one parent action; never persists an unlocked state.
 struct PlukiParentGate: View {
-    var instruction = "To enable saving videos to Photos, type these four numbers as digits, in the order shown."
+    var instruction = "To enable saving videos to Photos, tap these four numbers on the number pad, in the order shown."
     let onApproved: () -> Void
     @Environment(\.dismiss) private var dismiss
     @Environment(\.scenePhase) private var scenePhase
     @State private var approval = ParentApproval()
     @State private var answer = ""
     @State private var incorrect = false
+
+    // Buttons avoid keyboard focus and text-field updates inside stacked sheets.
+    // This is the same input path on iPhone and iPad, including external-keyboard devices.
+    private var numberPad: some View {
+        LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 12), count: 3), spacing: 12) {
+            ForEach(1...9, id: \.self) { digit in
+                digitButton(digit)
+            }
+            Button { answer = "" } label: {
+                Text("Clear").frame(maxWidth: .infinity, minHeight: 48)
+            }
+            .disabled(answer.isEmpty)
+            digitButton(0)
+            Button {
+                if !answer.isEmpty { answer.removeLast() }
+            } label: {
+                Image(systemName: "delete.left")
+                    .frame(maxWidth: .infinity, minHeight: 48)
+            }
+            .accessibilityLabel("Delete last digit")
+            .disabled(answer.isEmpty)
+        }
+        .buttonStyle(.bordered)
+        .tint(.primary)
+    }
+
+    private func digitButton(_ digit: Int) -> some View {
+        Button {
+            guard answer.count < 4 else { return }
+            answer.append(contentsOf: String(digit))
+        } label: {
+            Text(String(digit))
+                .font(.system(.title2, design: .rounded, weight: .semibold))
+                .frame(maxWidth: .infinity, minHeight: 48)
+        }
+        .accessibilityLabel(String(digit))
+        .disabled(answer.count >= 4)
+    }
 
     var body: some View {
         NavigationStack {
@@ -144,12 +182,13 @@ struct PlukiParentGate: View {
                         .font(.system(.title2, design: .rounded, weight: .bold))
                     Text(instruction)
                     Text(approval.prompt).font(.system(.title3, design: .rounded, weight: .bold))
-                    TextField("Four digits", text: $answer)
-                        .keyboardType(.numberPad).textFieldStyle(.roundedBorder)
-                        .accessibilityLabel("Four digits in the order shown")
-                        .onChange(of: answer) { _, value in
-                            answer = String(value.filter { $0 >= "0" && $0 <= "9" }.prefix(4))
-                        }
+                    Text(answer.isEmpty ? "— — — —" : answer.map(String.init).joined(separator: "  "))
+                        .font(.system(.title2, design: .monospaced, weight: .semibold))
+                        .frame(maxWidth: .infinity, minHeight: 48)
+                        .background(.white, in: RoundedRectangle(cornerRadius: 12))
+                        .accessibilityLabel("Entered digits")
+                        .accessibilityValue(answer.isEmpty ? "None" : answer.map(String.init).joined(separator: ", "))
+                    numberPad
                     if incorrect {
                         Text("Please try the new numbers above.").foregroundStyle(.secondary)
                     }
