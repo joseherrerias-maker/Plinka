@@ -22,3 +22,12 @@ On the signed build, install over Build 14 and confirm saved songs and draft sur
 ## Archives
 
 Retain compiled archives 12, 13 and 14 until the owner confirms Build 15 compiled successfully. Then archive 15 and retain 13, 14 and 15.
+
+## GitHub validation results — October 27, 2026
+
+Code commit: 6196d1e7b04a4fae0575d979f718654fd6d4cc82.
+
+- Debug and Release compilation passed with Xcode 26.6, along with saved-song persistence, parent approval, orientation, sound resources, privacy and release metadata checks: https://github.com/joseherrerias-maker/Plinka/actions/runs/40555928094
+- Both focused device captures passed, 20 screens each: https://github.com/joseherrerias-maker/Plinka/actions/runs/40555928180
+- Reviewed Home, song menu and information sheet captures in both orientations. The Home label and Help & About heading fit on the iPhone SE and iPad Pro 11-inch. The song menu retains its existing scroll behavior; the Help & About row is below the initial viewport, so these captures do not verify the entire scrolled row. Confirm it on TestFlight. The information sheet also requires expansion/scrolling for lower content.
+- This label/icon update did not rerun the optional grid or rendered-video checks. No signed build, device acceptance or App Review submission is claimed.

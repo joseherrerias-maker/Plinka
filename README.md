@@ -47,7 +47,7 @@ No software license is granted by including this README. This is an unpublished 
 
 ## Native iOS app (Build 15 RC3)
 
-The native SwiftUI source and Xcode project are under [`ios/`](ios/). Build 15 RC3 renames Settings to Help & About in both menus and the information sheet, using a blue information icon. Build 14 is the last owner-confirmed compiled build. Build 15 compilation and final device acceptance must be recorded separately. See [Build 15 release notes](ios/VERSION-15.md) and [iOS build notes](ios/README.md).
+The native SwiftUI source and Xcode project are under [`ios/`](ios/). Build 15 RC3 renames Settings to Help & About in both menus and the information sheet, using a blue information icon. Build 14 is the last owner-confirmed compiled build. Build 15 passed GitHub Debug/Release compilation and focused iPhone/iPad screenshot capture. Signed compilation and final device acceptance remain pending. See [Build 15 release notes](ios/VERSION-15.md) and [iOS build notes](ios/README.md).
 
 ## Build iOS with Codemagic
 
