@@ -16,7 +16,7 @@ Offline Help and Privacy policy; sound attribution screen; initial Photos add-on
 - Target price is $3.99 USD, paid download, with launch features included. Confirm availability, paid agreement, tax and banking details in App Store Connect. No in-app paywall, subscription or StoreKit purchase flow is needed for the intended paid-download model.
 - Complete App Privacy answers from the actual released app and SDK inventory. Candidate answer is Data Not Collected by the developer; local songs and local Photos export do not imply server collection. Reassess any future support form or analytics.
 - Supply review contact details, privacy/support URLs, copyright/developer name, current screenshots from iPhone and iPad, keywords and description. No screenshots or review submission have been uploaded by this task.
-- Version 1.0 is prepared for RC1. Select the accepted signed build for the matching version in App Store Connect after testing.
+- Version 1.0 is prepared for RC2. Select the accepted signed build for the matching version in App Store Connect after testing.
 
 ## Listing copy draft
 
