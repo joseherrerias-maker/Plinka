@@ -169,6 +169,7 @@ struct PlukiParentGate: View {
                 .frame(maxWidth: .infinity, minHeight: 48)
         }
         .accessibilityLabel(String(digit))
+        .accessibilityIdentifier("parent-digit-\(digit)")
         .disabled(answer.count >= 4)
     }
 
@@ -182,10 +183,12 @@ struct PlukiParentGate: View {
                         .font(.system(.title2, design: .rounded, weight: .bold))
                     Text(instruction)
                     Text(approval.prompt).font(.system(.title3, design: .rounded, weight: .bold))
+                        .accessibilityIdentifier("parent-prompt")
                     Text(answer.isEmpty ? "— — — —" : answer.map(String.init).joined(separator: "  "))
                         .font(.system(.title2, design: .monospaced, weight: .semibold))
                         .frame(maxWidth: .infinity, minHeight: 48)
                         .background(.white, in: RoundedRectangle(cornerRadius: 12))
+                        .accessibilityIdentifier("parent-answer")
                         .accessibilityLabel("Entered digits")
                         .accessibilityValue(answer.isEmpty ? "None" : answer.map(String.init).joined(separator: ", "))
                     numberPad
@@ -204,6 +207,7 @@ struct PlukiParentGate: View {
                     }
                     .buttonStyle(.borderedProminent).tint(.green)
                     .disabled(answer.count != 4)
+                    .accessibilityIdentifier("parent-continue")
                 }
                 .multilineTextAlignment(.center)
                 .padding(24).frame(maxWidth: 420).frame(maxWidth: .infinity)

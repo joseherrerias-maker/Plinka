@@ -94,7 +94,7 @@ struct SongVideoExportView: View {
         }
         .task {
             #if DEBUG
-            if ProcessInfo.processInfo.arguments.contains("--visual-tour") {
+            if ProcessInfo.processInfo.arguments.contains("--visual-tour") || ProcessInfo.processInfo.arguments.contains("--parent-keypad-check") {
                 var previewSong = song
                 previewSong.notes = Array(song.notes.filter { $0.step < 4 })
                 model.start(song: previewSong, shape: .vertical)
@@ -450,6 +450,8 @@ enum VideoExportSmokeCheck {
             let notes = [MusicNote(step: 0, row: 4, instrument: .piano),
                          MusicNote(step: 2, row: 2, instrument: .chicken),
                          MusicNote(step: 4, row: 6, instrument: .frog),
+                         MusicNote(step: 6, row: 4, instrument: .cow),
+                         MusicNote(step: 12, row: 4, instrument: .pig),
                          MusicNote(step: 34, row: 4, instrument: .puppy)]
             let song = Song(title: "Export check", tempo: 160, loop: true, notes: notes, sheetSteps: 64)
             for shape in VideoShape.allCases {

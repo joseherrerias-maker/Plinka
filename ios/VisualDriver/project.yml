@@ -6,7 +6,7 @@ targets:
   VisualDriver:
     type: bundle.ui-testing
     platform: iOS
-    sources: [VisualDriver.swift]
+    sources: [VisualDriver.swift, ParentKeypadTests.swift]
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.joseherreriastests.pluki.visual

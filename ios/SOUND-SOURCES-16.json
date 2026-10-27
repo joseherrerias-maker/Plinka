@@ -1,0 +1,44 @@
+[
+  {
+    "instrument": "puppy",
+    "title": "Dog bark 3",
+    "author": "Sadiquecat",
+    "source_url": "https://freesound.org/people/Sadiquecat/sounds/850824/",
+    "license": "CC0-1.0",
+    "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "verified_on": "2026-10-27",
+    "download_url": "https://cdn.freesound.org/previews/850/850824_5287430-hq.mp3",
+    "download_sha256": "ba240df067eec77906b6006f44ae96590ff35039ab1685ce175eac478fdc8aa2",
+    "bundled_sha256": "ce738ed165f01eb0e26a00ea1626dad89a0b711eb49208df537c9e96e29214be",
+    "processing": "Freesound HQ MP3 preview decoded to mono 44100 Hz 16-bit PCM; peak normalized to -3 dBFS; 5 ms linear edge fades; full one-shot retained.",
+    "seconds": 0.433015873015873
+  },
+  {
+    "instrument": "cow",
+    "title": "Cow - Moo 2 - 96kHz.wav",
+    "author": "JarredGibb",
+    "source_url": "https://freesound.org/people/JarredGibb/sounds/233129/",
+    "license": "CC0-1.0",
+    "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "verified_on": "2026-10-27",
+    "download_url": "https://cdn.freesound.org/previews/233/233129_4056007-hq.mp3",
+    "download_sha256": "e07d41f040d1895db68594aa4182aebdaf933f2ec47365af79fa153f30d3d6ea",
+    "bundled_sha256": "f82993de90a49a27342ab3d51baf4ede1285329871d5171a48f37661f2b1f3cf",
+    "processing": "Freesound HQ MP3 preview decoded to mono 44100 Hz 16-bit PCM; peak normalized to -3 dBFS; 5 ms linear edge fades; full one-shot retained.",
+    "seconds": 2.1774149659863946
+  },
+  {
+    "instrument": "pig",
+    "title": "Pig - Grunt 2 - 96kHz.wav",
+    "author": "JarredGibb",
+    "source_url": "https://freesound.org/people/JarredGibb/sounds/233170/",
+    "license": "CC0-1.0",
+    "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "verified_on": "2026-10-27",
+    "download_url": "https://cdn.freesound.org/previews/233/233170_4056007-hq.mp3",
+    "download_sha256": "42dda49aec471a3f8eaf73cfc3e5d897075ec37d3d74d4a59679eba7897c53ab",
+    "bundled_sha256": "c6924f57e669036b3f98c3b0212d6e02e94fa964cf3aa42bf258d7dbcfce9055",
+    "processing": "Freesound HQ MP3 preview decoded to mono 44100 Hz 16-bit PCM; peak normalized to -3 dBFS; 5 ms linear edge fades; full one-shot retained.",
+    "seconds": 1.123061224489796
+  }
+]

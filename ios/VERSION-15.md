@@ -31,3 +31,7 @@ Code commit: 6196d1e7b04a4fae0575d979f718654fd6d4cc82.
 - Both focused device captures passed, 20 screens each: https://github.com/joseherrerias-maker/Plinka/actions/runs/40555928180
 - Reviewed Home, song menu and information sheet captures in both orientations. The Home label and Help & About heading fit on the iPhone SE and iPad Pro 11-inch. The song menu retains its existing scroll behavior; the Help & About row is below the initial viewport, so these captures do not verify the entire scrolled row. Confirm it on TestFlight. The information sheet also requires expansion/scrolling for lower content.
 - This label/icon update did not rerun the optional grid or rendered-video checks. No signed build, device acceptance or App Review submission is claimed.
+
+## Owner feedback
+
+The owner confirmed Build 15 compiled successfully and approved the Help & About menus. The source archive was saved; compiled archives 13, 14 and 15 are retained. Subsequent iPad testing found the app closes/restarts after entering the first digit in the video-save parent check. Build 16 replaces that text field on every device; the underlying exception has not been diagnosed from a crash report. Build 15 is not approved for public release.

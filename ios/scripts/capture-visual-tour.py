@@ -26,7 +26,7 @@ try:
     run('xcrun', 'simctl', 'install', uid, app)
     folder = Path(run('xcrun', 'simctl', 'get_app_container', uid, 'com.joseherrerias.plinka', 'data')) / 'Documents'
     driver_log = (out / 'driver.log').open('w')
-    driver = subprocess.Popen(['xcodebuild', 'test', '-project', 'ios/VisualDriver/VisualDriver.xcodeproj', '-scheme', 'VisualDriver', '-destination', f'id={uid}', '-parallel-testing-enabled', 'NO', 'CODE_SIGNING_ALLOWED=NO'], stdout=driver_log, stderr=subprocess.STDOUT)
+    driver = subprocess.Popen(['xcodebuild', 'test', '-project', 'ios/VisualDriver/VisualDriver.xcodeproj', '-scheme', 'VisualDriver', '-destination', f'id={uid}', '-parallel-testing-enabled', 'NO', '-only-testing:VisualDriver/VisualDriver', 'CODE_SIGNING_ALLOWED=NO'], stdout=driver_log, stderr=subprocess.STDOUT)
     seen = set(); deadline = time.monotonic() + 600
     while time.monotonic() < deadline:
         if driver.poll() is not None and driver.returncode != 0:

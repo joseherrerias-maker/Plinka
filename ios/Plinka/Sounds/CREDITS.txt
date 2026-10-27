@@ -1,17 +1,16 @@
 Pluki animal sound credits
 
-Puppy: “Barking of a dog” by Amada44, CC BY-SA 3.0.
-https://commons.wikimedia.org/wiki/File:Barking_of_a_dog.ogg
-https://creativecommons.org/licenses/by-sa/3.0/
+Puppy: “Dog bark 3” by Sadiquecat, CC0 1.0.
+https://freesound.org/people/Sadiquecat/sounds/850824/
+https://creativecommons.org/publicdomain/zero/1.0/
 
-Cow: “Mudchute cow 1” by Secretlondon, CC BY-SA 3.0 (selected license).
-https://commons.wikimedia.org/wiki/File:Mudchute_cow_1.ogg
-https://creativecommons.org/licenses/by-sa/3.0/
+Cow: “Cow - Moo 2 - 96kHz.wav” by JarredGibb, CC0 1.0.
+https://freesound.org/people/JarredGibb/sounds/233129/
+https://creativecommons.org/publicdomain/zero/1.0/
 
-Pig: “Pig grunt - Erdie” by Erdie, CC BY 3.0.
-https://commons.wikimedia.org/wiki/File:Pig_grunt_-_Erdie.ogg
-https://www.freesound.org/people/Erdie/sounds/44274/
-https://creativecommons.org/licenses/by/3.0/
+Pig: “Pig - Grunt 2 - 96kHz.wav” by JarredGibb, CC0 1.0.
+https://freesound.org/people/JarredGibb/sounds/233170/
+https://creativecommons.org/publicdomain/zero/1.0/
 
 Chicken: “Chicken Single Alarm Call” by Rudmer_Rotteveel, CC0 1.0.
 https://freesound.org/people/Rudmer_Rotteveel/sounds/316920/
@@ -22,11 +21,10 @@ Original recording: “R01-47-Frog Ribbits” by Craig Smith, CC0.
 https://freesound.org/people/egomassive/sounds/536759/
 https://creativecommons.org/publicdomain/zero/1.0/
 
-Changes by the Pluki project: short excerpts, mono 44.1 kHz PCM conversion,
-peak normalization, and edge fades. Playback changes pitch with staff position.
-Each adapted recording retains its stated license; CC BY-SA adaptations are
-available under CC BY-SA 3.0. Downloadable adapted recordings and credits:
-https://github.com/joseherrerias-maker/Plinka/tree/main/ios/Plinka/Sounds
-No endorsement by the original authors is implied.
+Changes by the Pluki project: mono 44.1 kHz PCM conversion, peak normalization,
+and edge fades. Puppy, cow and pig use the complete Freesound HQ preview
+one-shots; chicken and frog use short excerpts. Playback changes pitch with
+staff position. All five recorded animal sources are listed as CC0 1.0.
+Credits are retained to acknowledge the creators; no endorsement is implied.
 
 Kitten and the musical/fun effects are synthesized by Pluki offline.

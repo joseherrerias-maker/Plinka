@@ -45,10 +45,10 @@ No software license is granted by including this README. This is an unpublished 
 
 **Branding note (October 2026):** The app's public name is **Pluki**, accepted in App Store Connect. The GitHub repository URL, Xcode project/scheme, SKU `PLINKA-IOS-001`, and registered bundle identifier `com.joseherrerias.plinka` remain unchanged to preserve existing development and Apple signing configuration.
 
-## Native iOS app (Build 15 RC3)
+## Native iOS app (Build 16 RC4)
 
-The native SwiftUI source and Xcode project are under [`ios/`](ios/). Build 15 RC3 renames Settings to Help & About in both menus and the information sheet, using a blue information icon. Build 14 is the last owner-confirmed compiled build. Build 15 passed GitHub Debug/Release compilation and focused iPhone/iPad screenshot capture. Signed compilation and final device acceptance remain pending. See [Build 15 release notes](ios/VERSION-15.md) and [iOS build notes](ios/README.md).
+The native SwiftUI source and Xcode project are under [`ios/`](ios/). Build 16 RC4 replaces parent-check keyboard entry with a shared on-screen keypad and replaces puppy/cow/pig recordings with CC0 sources. Build 15 compiled successfully and its menus were owner-approved, but the owner reported an iPad crash on first parent-check digit entry. Build 16 requires signed compilation and device acceptance. See [Build 16 release notes](ios/VERSION-16.md) and [iOS build notes](ios/README.md).
 
 ## Build iOS with Codemagic
 
-The root [`codemagic.yaml`](codemagic.yaml) provides one manual workflow: **Pluki Build 15 RC3 - TestFlight and iPad ZIP** (`pluki-ios-dual-export`). Select branch **main**. One signed archive produces the TestFlight IPA and iPad Ad Hoc ZIP using the existing Apple signing setup. GitHub Actions separately checks unsigned compilation; Codemagic builds do not start automatically.
+The root [`codemagic.yaml`](codemagic.yaml) provides one manual workflow: **Pluki Build 16 RC4 - TestFlight and iPad ZIP** (`pluki-ios-dual-export`). Select branch **main**. One signed archive produces the TestFlight IPA and iPad Ad Hoc ZIP using the existing Apple signing setup. GitHub Actions separately checks unsigned compilation; Codemagic builds do not start automatically.

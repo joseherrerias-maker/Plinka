@@ -73,6 +73,11 @@ struct ComposerView: View {
         }
         .task {
             #if DEBUG
+            if ProcessInfo.processInfo.arguments.contains("--parent-keypad-check") {
+                store.openSample(SampleSong.all[0])
+                showHome = false
+                showVideoExport = true
+            }
             await runVisualTourIfRequested()
             #endif
         }

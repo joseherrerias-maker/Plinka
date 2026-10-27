@@ -2,7 +2,7 @@
 # Signing setup: ios/VERSION-3.md. Current changes: ios/VERSION-15.md.
 workflows:
   pluki-ios-dual-export:
-    name: Pluki Build 15 RC3 - TestFlight and iPad ZIP
+    name: Pluki Build 16 RC4 - TestFlight and iPad ZIP
     instance_type: mac_mini_m2
     max_build_duration: 30
     integrations:
