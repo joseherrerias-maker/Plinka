@@ -1,6 +1,6 @@
 # Pluki launch preparation
 
-Build 13 is Release Candidate 1 (marketing version 1.0), pending signed compilation and final device acceptance. It is not an App Store submission. Updated October 26, 2026.
+Build 13 is Release Candidate 1 (marketing version 1.0), successfully compiled as confirmed by the owner; final device acceptance remains open. It is not an App Store submission. Updated October 26, 2026.
 
 ## Prepared in the app
 
@@ -8,7 +8,10 @@ Offline Help and Privacy policy; sound attribution screen; initial Photos add-on
 
 ## Decisions and account work still open
 
-- Owner supplies the public support contact. Publish a support page and the policy at stable HTTPS URLs, add the approved contact to the policy, and wire any app contact/link actions behind a parent gate. Do not use an unapproved personal email or a nonfunctional placeholder.
+- Approved public contact: support@pebblesoftapps.com (Microsoft 365 alias). Receiving and outgoing Gmail delivery tested by owner. iCloud initially classified a reply as junk; authentication not fully audited.
+- Domain pebblesoftapps.com is owner-purchased. Use the existing Netlify account for the public site. Proposed routes: /pluki/support/ and /pluki/privacy/. These are planned routes, NOT verified live URLs. Publish and verify HTTPS, public access, contact details and mobile layouts before entering them in App Store Connect. Preserve Microsoft 365 DNS records when connecting the website.
+- Shared website can introduce Pluki and Milo, but each requires its own reviewed policy. Do not reuse Pluki's offline/no-collection statements for Milo.
+- Support contact is included as plain text in the bundled policy. Any future outgoing app links/contact actions need the appropriate parent gate.
 - Confirm Kids-category selection and intended age band. The parent check prepares the Photos flow for a young audience, but does not select the category in App Store Connect. Age rating comes from the current questionnaire, not from a guessed value.
 - Target price is $3.99 USD, paid download, with launch features included. Confirm availability, paid agreement, tax and banking details in App Store Connect. No in-app paywall, subscription or StoreKit purchase flow is needed for the intended paid-download model.
 - Complete App Privacy answers from the actual released app and SDK inventory. Candidate answer is Data Not Collected by the developer; local songs and local Photos export do not imply server collection. Reassess any future support form or analytics.
@@ -56,3 +59,10 @@ SAMPLES.md records the six traditional/classical/original arrangements; no Baby 
 - https://developer.apple.com/kids/
 - https://developer.apple.com/documentation/bundleresources/describing-use-of-required-reason-api
 - https://developer.apple.com/documentation/bundleresources/app-privacy-configuration/nsprivacyaccessedapitypes/nsprivacyaccessedapitypereasons
+
+## Next candidate changes and verification
+- Song menu now shows the current title with a pencil button. Rename uses a keyboard-friendly sheet; Cancel preserves the title, Done trims whitespace, caps at 80 characters and uses Untitled Song for blank input. The title field is removed from Settings.
+- Renaming updates the local draft. Existing Save behavior remains: saving with a changed name makes a new project copy, leaving the old saved project intact.
+- Owner confirmed both Build 13 Save layouts look good. New rename sheet still needs device acceptance, including both orientations and long titles.
+- Build 13 remains the last confirmed compiled baseline. These next-candidate source changes are not a newly compiled or archived build.
+- Run GitHub compile/persistence/privacy checks and capture the changed menu/rename/settings screens before preparing the signed candidate.
