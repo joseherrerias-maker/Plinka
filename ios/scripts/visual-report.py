@@ -8,7 +8,7 @@ scopes = [json.loads(p.read_text()) for p in root.glob('*/scope.json')]
 expected_devices = scopes[0] if scopes else ['iphone-small','iphone-standard','iphone-max','ipad-mini','ipad-11','ipad-13']
 if not expected_devices or any(scope != expected_devices for scope in scopes):
     raise SystemExit('Missing or inconsistent visual matrix scope')
-expected = len(expected_devices) * 16
+expected = len(expected_devices) * 20
 captured_devices = set()
 for folder in sorted(root.iterdir()):
     if not folder.is_dir(): continue
@@ -16,7 +16,7 @@ for folder in sorted(root.iterdir()):
     if not pictures: continue
     captured_devices.add(folder.name)
     device=json.loads((folder/'device.json').read_text()) if (folder/'device.json').exists() else {'device':folder.name,'runtime':'incomplete'}
-    cards=[]; sheet=Image.new('RGB',(1200,4*480),'#eff6f5'); draw=ImageDraw.Draw(sheet)
+    cards=[]; sheet=Image.new('RGB',(1200,((len(pictures)+3)//4)*480),'#eff6f5'); draw=ImageDraw.Draw(sheet)
     for i,p in enumerate(pictures):
         with Image.open(p) as source:
             im=source.convert('RGB')

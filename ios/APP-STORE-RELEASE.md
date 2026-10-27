@@ -1,6 +1,6 @@
 # Pluki launch preparation
 
-Build 13 is Release Candidate 1 (marketing version 1.0), successfully compiled as confirmed by the owner; final device acceptance remains open. It is not an App Store submission. Updated October 26, 2026.
+Build 13 is Release Candidate 1 (marketing version 1.0), successfully compiled as confirmed by the owner; final device acceptance remains open. It is not an App Store submission. Build 14 RC2 is prepared in source; compilation and device acceptance must be recorded separately. Updated October 27, 2026.
 
 ## Prepared in the app
 
@@ -9,9 +9,9 @@ Offline Help and Privacy policy; sound attribution screen; initial Photos add-on
 ## Decisions and account work still open
 
 - Approved public contact: support@pebblesoftapps.com (Microsoft 365 alias). Receiving and outgoing Gmail delivery tested by owner. iCloud initially classified a reply as junk; authentication not fully audited.
-- Domain pebblesoftapps.com is owner-purchased. Use the existing Netlify account for the public site. Proposed routes: /pluki/support/ and /pluki/privacy/. These are planned routes, NOT verified live URLs. Publish and verify HTTPS, public access, contact details and mobile layouts before entering them in App Store Connect. Preserve Microsoft 365 DNS records when connecting the website.
+- Domain pebblesoftapps.com is connected to the existing Netlify site. Owner confirmed the custom domain works. Final public routes: https://pebblesoftapps.com/pluki/support/ and https://pebblesoftapps.com/pluki/privacy/. Support contact is support@pebblesoftapps.com. Microsoft 365 DNS records are preserved.
 - Shared website can introduce Pluki and Milo, but each requires its own reviewed policy. Do not reuse Pluki's offline/no-collection statements for Milo.
-- Support contact is included as plain text in the bundled policy. Any future outgoing app links/contact actions need the appropriate parent gate.
+- Build 14 adds Contact & website under Settings, with support email, support page, online policy and studio website. Each outgoing action requires a fresh local parent check. Offline Help and Privacy remain accessible without a check. Settings includes the approved Pebblesoft Apps logo.
 - Confirm Kids-category selection and intended age band. The parent check prepares the Photos flow for a young audience, but does not select the category in App Store Connect. Age rating comes from the current questionnaire, not from a guessed value.
 - Target price is $3.99 USD, paid download, with launch features included. Confirm availability, paid agreement, tax and banking details in App Store Connect. No in-app paywall, subscription or StoreKit purchase flow is needed for the intended paid-download model.
 - Complete App Privacy answers from the actual released app and SDK inventory. Candidate answer is Data Not Collected by the developer; local songs and local Photos export do not imply server collection. Reassess any future support form or analytics.
@@ -40,7 +40,7 @@ For video export, create a song with notes, choose Export video, select a format
 ## Final device acceptance (record results before submission)
 
 - iPhone and iPad, both orientations: Home/menu, Help/Privacy, sound tray, keyboard, parent challenge and video preview fit without clipping.
-- Install RC1 over Build 12: saved projects, active draft, notes near the end and song names survive. New/Continue retain the visible grid.
+- Install RC2 over Build 13: saved projects, active draft, notes near the end and song names survive. New/Continue retain the visible grid.
 - Parent challenge: incorrect input, Cancel, swipe-to-dismiss and background/return never save or request Photos access. Correct input authorizes the initial Photos permission request. A second export with Photos already authorized saves directly without a challenge. Denied or restricted permission shows guidance without repeating a puzzle; resetting permission to not-determined requires a fresh parent check.
 - Photos: first grant, denial, later retry, low storage, background during generation, cancellation and both export formats.
 - Longer songs: add/move near the end through the 500-beat cap, undo/redo, save/reopen, playback and export. Measure time/memory on real hardware; the audio engine renders the whole song into memory.
@@ -65,4 +65,4 @@ SAMPLES.md records the six traditional/classical/original arrangements; no Baby 
 - Renaming updates the local draft. Existing Save behavior remains: saving with a changed name makes a new project copy, leaving the old saved project intact.
 - Owner confirmed both Build 13 Save layouts look good. New rename sheet still needs device acceptance, including both orientations and long titles.
 - Build 13 remains the last confirmed compiled baseline. These next-candidate source changes are not a newly compiled or archived build.
-- Run GitHub compile/persistence/privacy checks and capture the changed menu/rename/settings screens before preparing the signed candidate.
+- Run GitHub compile/persistence/privacy checks and capture the changed menu/rename/settings screens before signing the candidate. Build 14 expands the focused visual tour to 40 screenshots, including Rename and Contact in both orientations.

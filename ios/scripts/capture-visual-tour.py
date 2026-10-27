@@ -35,8 +35,8 @@ try:
         if result.exists():
             message = result.read_text()
             (out / 'result.txt').write_text(message)
-            if not message.startswith('PASS:') or len(seen) != 16:
-                raise RuntimeError(f'{message}; captured {len(seen)}/16')
+            if not message.startswith('PASS:') or len(seen) != 20:
+                raise RuntimeError(f'{message}; captured {len(seen)}/20')
             break
         ready = folder / 'visual-ready.txt'
         if ready.exists():

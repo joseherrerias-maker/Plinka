@@ -9,6 +9,7 @@ struct PlukiHelpView: View {
                 tip("Press play", icon: "play.fill", detail: "Follow your melody as it plays. Adjust the tempo or turn on Loop to hear it again.")
             }
             Section("Keep your creations") {
+                tip("Name your song", icon: "pencil", detail: "Tap the title and pencil at the top of the song menu to rename your current song. Use Save song to keep it in your saved projects.")
                 tip("Save and open", icon: "folder.fill", detail: "Use the song menu to Save song. Open song lists your saved projects and lets you delete them. Songs are kept on this device; saving under a different name makes a new copy.")
                 tip("Try a sample", icon: "music.note.list", detail: "Samples open immediately. Save your current work first if you want to keep it. A saved sample becomes your own editable copy.")
                 tip("Make a video", icon: "video.fill", detail: "Choose Export video in the song menu, pick a format and create your video. A grown-up completes a parent check when first enabling Photos saving. After permission is granted, videos save directly. Keep Pluki open while the video is being made.")
@@ -50,8 +51,82 @@ struct PlukiPrivacyView: View {
     }
 }
 
+/// Outgoing links require a fresh parent check; offline help and privacy stay available.
+struct PlukiContactView: View {
+    private enum Destination: String, Identifiable {
+        case support, privacy, website, email
+        var id: String { rawValue }
+        var url: URL {
+            switch self {
+            case .support: return URL(string: "https://pebblesoftapps.com/pluki/support/")!
+            case .privacy: return URL(string: "https://pebblesoftapps.com/pluki/privacy/")!
+            case .website: return URL(string: "https://pebblesoftapps.com/")!
+            case .email: return URL(string: "mailto:support@pebblesoftapps.com")!
+            }
+        }
+        var instruction: String {
+            self == .email
+                ? "To open your email app, type these four numbers as digits, in the order shown."
+                : "To open the website, type these four numbers as digits, in the order shown."
+        }
+    }
+
+    @Environment(\.openURL) private var openURL
+    @Environment(\.scenePhase) private var scenePhase
+    @State private var pending: Destination?
+    @State private var approved: Destination?
+    @State private var openFailed = false
+
+    var body: some View {
+        List {
+            Section {
+                Text("A grown-up can contact us for help with pluki! Please do not include children's personal information.")
+                Text(verbatim: "support@pebblesoftapps.com")
+                    .font(.callout).textSelection(.enabled)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            Section("For grown-ups") {
+                destinationButton("Email support", icon: "envelope", destination: .email)
+                destinationButton("Support website", icon: "questionmark.circle", destination: .support)
+                destinationButton("Privacy policy online", icon: "hand.raised", destination: .privacy)
+                destinationButton("Pebblesoft Apps website", icon: "globe", destination: .website)
+            }
+        }
+        .navigationTitle("Contact & website")
+        .navigationBarTitleDisplayMode(.inline)
+        .sheet(item: $pending, onDismiss: openApprovedDestination) { destination in
+            PlukiParentGate(instruction: destination.instruction) { approved = destination }
+        }
+        .onChange(of: scenePhase) { _, phase in
+            if phase == .background { approved = nil; pending = nil }
+        }
+        .alert("Could not open link", isPresented: $openFailed) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text("Check that a browser or email app is available. You can also contact support@pebblesoftapps.com.")
+        }
+    }
+
+    private func destinationButton(_ title: String, icon: String, destination: Destination) -> some View {
+        Button {
+            approved = nil
+            pending = destination
+        } label: {
+            Label(title, systemImage: icon)
+        }
+        .accessibilityHint("A parent check is required before leaving the app.")
+    }
+
+    private func openApprovedDestination() {
+        guard let destination = approved else { return }
+        approved = nil
+        openURL(destination.url) { accepted in openFailed = !accepted }
+    }
+}
+
 /// A fresh, local challenge for one parent action; never persists an unlocked state.
 struct PlukiParentGate: View {
+    var instruction = "To enable saving videos to Photos, type these four numbers as digits, in the order shown."
     let onApproved: () -> Void
     @Environment(\.dismiss) private var dismiss
     @Environment(\.scenePhase) private var scenePhase
@@ -67,7 +142,7 @@ struct PlukiParentGate: View {
                         .font(.system(size: 48)).foregroundStyle(.green)
                     Text("For a grown-up")
                         .font(.system(.title2, design: .rounded, weight: .bold))
-                    Text("To enable saving videos to Photos, type these four numbers as digits, in the order shown.")
+                    Text(instruction)
                     Text(approval.prompt).font(.system(.title3, design: .rounded, weight: .bold))
                     TextField("Four digits", text: $answer)
                         .keyboardType(.numberPad).textFieldStyle(.roundedBorder)

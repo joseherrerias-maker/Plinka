@@ -23,3 +23,6 @@ Apple handles app distribution, purchases, optional device backups and Photos se
 
 Contact
 A parent or guardian can contact support@pebblesoftapps.com for help or privacy questions. If you email us, we receive your email address and whatever information you include so we can respond. Please do not send children's personal information. Support email is handled through Microsoft 365 from GoDaddy; it is separate from the offline app.
+
+Website links
+Settings includes optional links to our support page, website, online policy and your email app. A parent check is required before opening them. Website visits are separate from the offline app and are covered by the website privacy notice at https://pebblesoftapps.com/privacy/.

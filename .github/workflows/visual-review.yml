@@ -1,10 +1,10 @@
-# Captures keyboard focus after the native Save sheet finishes presenting.
+# Build 14: include Rename keyboard and Contact screens in the visual tour.
 name: Pluki Visual Review
 on:
   workflow_dispatch:
     inputs:
       focused:
-        description: 'Check the two RC1 layout-fix devices only (SE and 11-inch iPad)'
+        description: 'Check the two focused devices only (SE and 11-inch iPad)'
         type: boolean
         default: false
   push:

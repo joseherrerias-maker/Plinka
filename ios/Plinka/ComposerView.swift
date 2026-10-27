@@ -19,6 +19,7 @@ struct ComposerView: View {
     @State private var showSongMenu = false
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var showSettings = false
+    @State private var settingsPath: [SettingsRoute] = []
     @State private var showSongs = false
     @State private var showSamples = false
     @State private var showSave = false
@@ -75,8 +76,8 @@ struct ComposerView: View {
             await runVisualTourIfRequested()
             #endif
         }
-        .sheet(isPresented: $showRename) { renameSongSheet }
-        .sheet(isPresented: $showSettings) { settings }
+        .sheet(isPresented: $showRename, onDismiss: { renameFocused = false }) { renameSongSheet }
+        .sheet(isPresented: $showSettings, onDismiss: { settingsPath = [] }) { settings }
         .sheet(isPresented: $showSongs) { savedSongsView }
         .sheet(isPresented: $showSamples) { samplesView }
         .sheet(isPresented: $showVideoExport) { SongVideoExportView(song: store.song) }
@@ -679,16 +680,29 @@ struct ComposerView: View {
         return text
     }
 
+    private enum SettingsRoute: Hashable { case contact }
+
     private var settings: some View {
-        NavigationStack {
+        NavigationStack(path: $settingsPath) {
             Form {
                 Section("Help") {
                     NavigationLink { PlukiHelpView() } label: {
                         Label("How to play & help", systemImage: "questionmark.circle.fill")
                     }
+                    NavigationLink(value: SettingsRoute.contact) {
+                        Label("Contact & website", systemImage: "envelope.fill")
+                    }
                 }
                 if let error = audio.audioError { Section { Text(error).foregroundStyle(.red) } }
                 Section("About Pluki") {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Developed by").font(.caption).foregroundStyle(.secondary)
+                        Image("PebblesoftLogo")
+                            .resizable().scaledToFit()
+                            .frame(maxWidth: 240, maxHeight: 110)
+                            .accessibilityLabel("Pebblesoft Apps")
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
                     Text(versionLabel).foregroundStyle(.secondary)
                     NavigationLink { PlukiPrivacyView() } label: {
                         Label("Privacy policy", systemImage: "hand.raised.fill")
@@ -700,6 +714,7 @@ struct ComposerView: View {
                     }
                 }
             }
+            .navigationDestination(for: SettingsRoute.self) { _ in PlukiContactView() }
             .navigationTitle(showHome ? "Settings" : "Song settings")
             .toolbar { ToolbarItem(placement: .confirmationAction) { Button("Done") { showSettings = false } } }
         }
@@ -1169,6 +1184,11 @@ extension ComposerView {
                 showSongMenu = true
                 try await capture(prefix + "-03-menu", landscape: landscape)
                 showSongMenu = false
+                renameTitle = "A very long song name for checking the Rename keyboard"
+                showRename = true
+                try await capture(prefix + "-03b-rename-keyboard", landscape: landscape)
+                showRename = false
+                try await pause()
                 showSongs = true
                 try await capture(prefix + "-04-open", landscape: landscape)
                 showSongs = false
@@ -1184,6 +1204,9 @@ extension ComposerView {
                 try await pause()
                 showSettings = true
                 try await capture(prefix + "-07-settings", landscape: landscape)
+                settingsPath = [.contact]
+                try await capture(prefix + "-07b-contact", landscape: landscape)
+                settingsPath = []
                 showSettings = false
                 try await pause()
                 showVideoExport = true
@@ -1201,7 +1224,7 @@ extension ComposerView {
                 try? FileManager.default.removeItem(at: folder.appendingPathComponent("visual-preview-ready.txt"))
             }
             visualStage = "finished"
-            try "PASS: captured 16 screens; human visual review required.".write(to: folder.appendingPathComponent("visual-result.txt"), atomically: true, encoding: .utf8)
+            try "PASS: captured 20 screens; human visual review required.".write(to: folder.appendingPathComponent("visual-result.txt"), atomically: true, encoding: .utf8)
         } catch {
             visualStage = "failed"
             try? "FAIL: \(error)".write(to: folder.appendingPathComponent("visual-result.txt"), atomically: true, encoding: .utf8)
