@@ -40,7 +40,8 @@ for name, method, profile in (("TestFlight", "app-store-connect", store),
                    provisioningProfiles={BUNDLE: profile["UUID"]},
                    manageAppVersionAndBuildNumber=False)
     if name == "TestFlight":
-        options["testFlightInternalTestingOnly"] = True
+        # Allow this same export to be selected for App Store review.
+        options["testFlightInternalTestingOnly"] = False
     (build / (name + "Export.plist")).write_bytes(plistlib.dumps(options))
 # Only non-secret identifiers; use files rather than shell evaluation.
 (build / "signing-team.txt").write_text(store["TeamIdentifier"][0])

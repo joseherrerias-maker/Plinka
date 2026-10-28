@@ -33,3 +33,7 @@ Install over Build 16; verify saved songs survive, Rename/Save work with both ke
 ## Archive
 
 Retain 14, 15, 16. Archive 17 only after owner-confirmed successful compilation, then retain 15, 16, 17.
+
+## App Store export correction
+
+Owner confirmed successful Build 17 compilation and both iPad editor fixes. App Store Connect shows upload 1.0 (20) as Valid but Internal Only. The export script had explicitly enabled testFlightInternalTestingOnly; this is now false. Rebuild main in the same Codemagic workflow to create a new signed upload with the next available upload counter. Display Build 17 and app behavior are unchanged. Verify the replacement is eligible for App Store selection before submitting; upload 20 cannot be used for customer distribution. The compiled source archive remains the original compiled revision and is not silently replaced with an uncompiled export correction.
