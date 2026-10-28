@@ -4,6 +4,7 @@ app_path="$1"
 xcodegen generate --spec ios/VisualDriver/project.yml
 mkdir -p "$RUNNER_TEMP/PlukiParentCheck"
 defaults write com.apple.iphonesimulator ConnectHardwareKeyboard -bool NO
+checks_failed=0
 for device_type in 'com.apple.CoreSimulator.SimDeviceType.iPhone-SE-3rd-generation' 'com.apple.CoreSimulator.SimDeviceType.iPad-Pro-11-inch-M4'; do
     keypad_device=$(xcrun simctl create 'Pluki Parent Check' "$device_type")
     trap 'xcrun simctl shutdown "$keypad_device" >/dev/null 2>&1 || true; xcrun simctl delete "$keypad_device" >/dev/null 2>&1 || true' EXIT
@@ -15,11 +16,12 @@ for device_type in 'com.apple.CoreSimulator.SimDeviceType.iPhone-SE-3rd-generati
       -only-testing:VisualDriver/ParentKeypadTests -only-testing:VisualDriver/EditorTests \
       -resultBundlePath "$RUNNER_TEMP/PlukiParentCheck/$device_type.xcresult" \
       CODE_SIGNING_ALLOWED=NO > "$RUNNER_TEMP/PlukiParentCheck/$device_type.log" 2>&1 || {
-        xcrun xcresulttool export attachments --path "$RUNNER_TEMP/PlukiParentCheck/$device_type.xcresult" --output-path "$RUNNER_TEMP/PlukiParentCheck/$device_type-attachments" || true
-        tail -100 "$RUNNER_TEMP/PlukiParentCheck/$device_type.log"; exit 1;
+        tail -100 "$RUNNER_TEMP/PlukiParentCheck/$device_type.log"
+        checks_failed=1
       }
-    xcrun xcresulttool export attachments --path "$RUNNER_TEMP/PlukiParentCheck/$device_type.xcresult" --output-path "$RUNNER_TEMP/PlukiParentCheck/$device_type-attachments"
+    xcrun xcresulttool export attachments --path "$RUNNER_TEMP/PlukiParentCheck/$device_type.xcresult" --output-path "$RUNNER_TEMP/PlukiParentCheck/$device_type-attachments" || checks_failed=1
     xcrun simctl shutdown "$keypad_device"
     xcrun simctl delete "$keypad_device"
     trap - EXIT
 done
+exit "$checks_failed"

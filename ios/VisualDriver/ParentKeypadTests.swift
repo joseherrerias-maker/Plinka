@@ -67,26 +67,43 @@ final class ParentKeypadTests: XCTestCase {
     }
 
     @MainActor private func reveal(_ element: XCUIElement, in app: XCUIApplication) {
-        // isHittable alone can report an offscreen video button as hittable.
-        // Use visible geometry and drag at the edge, outside VideoPlayer controls.
-        // Keep bottom controls eligible: ScrollView's final button can sit
-        // closer than 80 points to the bottom even when fully visible.
-        let viewport = app.frame.insetBy(dx: 12, dy: 12)
-        func visible() -> Bool {
-            element.exists && element.isHittable &&
-                viewport.contains(CGPoint(x: element.frame.midX, y: element.frame.midY))
-        }
-        for upward in [true, false] {
-            for _ in 0..<8 {
-                if visible() { return }
-                // Re-query after each gesture because SwiftUI can replace the
-                // sheet's accessibility subtree while its content scrolls.
-                let scroll = app.scrollViews.allElementsBoundByIndex.last ?? app.scrollViews.firstMatch
-                let start = scroll.coordinate(withNormalizedOffset: CGVector(dx: 0.98, dy: upward ? 0.85 : 0.20))
-                let end = scroll.coordinate(withNormalizedOffset: CGVector(dx: 0.98, dy: upward ? 0.20 : 0.85))
-                start.press(forDuration: 0.05, thenDragTo: end)
+        // Query the presented sheet by its contents, never by a cached index.
+        // In landscape, a drag starting at 20% of the full screen can hit the
+        // navigation area and dismiss the sheet instead of scrolling it.
+        for attempt in 0..<12 {
+            let parentNavigation = app.navigationBars["Parent check"]
+            let isParent = parentNavigation.exists
+            let navigation = isParent ? parentNavigation : app.navigationBars["Export video"]
+            let scroll = isParent
+                ? app.scrollViews.containing(.staticText, identifier: "parent-prompt").firstMatch
+                : app.scrollViews.containing(.button, identifier: "Save to Photos").firstMatch
+            guard navigation.exists && scroll.exists else {
+                XCTFail("Expected the export or parent-check sheet to remain open")
+                return
             }
+            let frame = scroll.frame.intersection(app.frame)
+            let top = max(frame.minY, navigation.frame.maxY) + 12
+            let bottom = frame.maxY - 12
+            let viewport = CGRect(x: frame.minX + 8, y: top,
+                                  width: frame.width - 16, height: bottom - top)
+            guard viewport.height > 44 else {
+                XCTFail("The sheet must have visible scrollable content")
+                return
+            }
+            if element.exists && element.isHittable &&
+                viewport.contains(CGPoint(x: element.frame.midX, y: element.frame.midY)) {
+                return
+            }
+            let upward = element.exists ? element.frame.midY > viewport.midY : attempt < 6
+            let upper = viewport.minY + viewport.height * 0.20
+            let lower = viewport.minY + viewport.height * 0.85
+            let origin = app.coordinate(withNormalizedOffset: .zero)
+            let start = origin.withOffset(CGVector(dx: viewport.maxX - 4 - app.frame.minX,
+                                                   dy: (upward ? lower : upper) - app.frame.minY))
+            let end = origin.withOffset(CGVector(dx: viewport.maxX - 4 - app.frame.minX,
+                                                 dy: (upward ? upper : lower) - app.frame.minY))
+            start.press(forDuration: 0.05, thenDragTo: end)
         }
-        XCTAssertTrue(visible(), "Control must be inside the visible screen before tapping")
+        XCTFail("Control must be visible below the navigation bar before tapping")
     }
 }
