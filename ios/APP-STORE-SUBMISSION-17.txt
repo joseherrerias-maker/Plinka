@@ -1,0 +1,103 @@
+PLUKI — VERSION 1.0 SUBMISSION DRAFT
+Prepared October 27, 2026. Build 17 RC5.
+Status: source prepared, signed build and final acceptance pending.
+No App Store Connect account changes or review submission have been made.
+
+APP INFORMATION
+Name: Pluki
+Subtitle: Make a little music
+Primary category suggestion: Music
+Secondary category suggestion: Entertainment
+Kids category: owner selection required; choose the intended age band in Connect.
+Age rating: complete Apple's current questionnaire; do not assume a rating.
+Language: English (U.S.)
+Bundle ID: com.joseherrerias.plinka
+Marketing version: 1.0
+Price target: USD 3.99, one-time paid download; no in-app purchases/subscription.
+Release option: Manually release this version.
+Copyright: confirm the legal rights-holder name before entering it.
+Seller display name: determined by the Apple developer enrollment; not the logo.
+
+PROMOTIONAL TEXT (149 characters)
+Make a little music with colorful sound stickers. Mix instruments, animals and playful sounds, try sample tunes, and turn your creations into videos.
+
+DESCRIPTION
+Make a little music with pluki!
+
+Turn playful sounds into your own songs. Pick an instrument, animal or fun sound, then tap the music sheet to place a colorful sticker. Move it up or down to change pitch, or sideways to change when it plays.
+
+A whole world of sounds
+Explore 19 sounds, from piano and guitar to animal calls and playful effects. Mix them together and hear what happens.
+
+Start with a song
+Try six sample tunes, including familiar melodies and original pluki arrangements. Play them, change the sounds, and make your own version.
+
+Keep creating
+The sheet grows as you add notes, up to 500 numbered beats. Adjust the tempo, loop your tune, and use undo and redo while you experiment.
+
+Save your favorites
+Name and save songs on your device so you can open them and keep composing later.
+
+Your song, now a video
+Create an animated video of your music sheet in portrait or landscape, then save it to Photos to share with family and friends.
+
+Simple from the start
+No account, ads, in-app purchases or subscription. Music creation works offline. Saved projects stay on the device; cloud project sync is not included.
+
+KEYWORDS
+composer,melody,instruments,piano,animals,rhythm,creative,sound,play,musicmaker
+
+URLS
+Support: https://pebblesoftapps.com/pluki/support/
+Privacy policy: https://pebblesoftapps.com/pluki/privacy/
+Marketing: https://pebblesoftapps.com/pluki/
+Public support email: support@pebblesoftapps.com
+
+APP REVIEW NOTES
+No account or demo credentials are required. Choose New song or Samples. Select a sound, then tap the music sheet to add notes. Press Play to hear the song.
+
+The Song menu contains the song title/pencil for Rename, Save song, Open song, Samples, Export video, and Help & About. Songs are saved locally. Rename updates the active title; Save stores the project. Clear notes asks for confirmation, and Undo can restore the cleared notes.
+
+To export, use a song with notes, select Export video, choose a format and Create video. Save to Photos presents a parent check before the first add-only Photos permission request. Tap the four number words as digits in the displayed order using the built-in keypad, then Continue. The challenge is generated each time; there is no fixed code. Once Photos access is granted, later saves proceed directly. Declining access leaves composition available.
+
+Help & About provides offline help/privacy, sound credits and Contact & website. Every outgoing contact/website action requires a fresh parent check. The app does not require a microphone, camera or reading existing photos.
+
+REVIEW CONTACT (OWNER TO ENTER)
+Actual contact first/last name, reachable telephone number and email address.
+These are review contact details, separate from public support information.
+
+PRIVACY AND COMPLIANCE
+Candidate App Privacy response: Data Not Collected by the developer, based on
+current native source: no network client, ads, analytics, tracking or third-party SDK.
+Confirm against the final binary and actual practices before submitting.
+The separately hosted website/email service has its own data practices.
+Complete content-rights, encryption/export-compliance and age-rating questions
+from actual app behavior and licensing evidence; do not guess account answers.
+Review audio evidence in SOUND-SOURCES-16.json and CREDITS.txt; samples in SAMPLES.md.
+Final artwork and exact sample-arrangement provenance review remains outstanding.
+
+SCREENSHOTS
+The owner approved the Design 01 direction. Existing files use earlier QA captures;
+refresh with the final candidate, including lowercase pluki! video footer.
+Keep iPhone and iPad versions. Preview and source designs are separate deliverables.
+Do not upload the contact sheet as a product screenshot.
+
+CONNECT WORKFLOW
+1. In Codemagic, main > Pluki Build 17 RC5 - TestFlight and iPad ZIP.
+2. After the signed build uploads and finishes processing, verify it in TestFlight.
+3. Test the changed Rename/Save and Clear flows on iPhone/iPad; confirm persistence.
+4. In App Store Connect > My Apps > Pluki > iOS App 1.0, enter listing copy and URLs.
+5. Upload final screenshots and select the accepted Build 17 binary by build label.
+   The CFBundleVersion upload counter may differ from the displayed release label.
+6. Complete App Privacy, age rating/Kids choice, content rights, export compliance,
+   review contact, territories and USD 3.99 pricing. Activate paid-app agreement,
+   tax and banking information. Complete trader information where applicable.
+7. Select manual release; resolve all missing-information messages.
+8. Add for Review, then Submit for Review when testing and metadata are complete.
+9. After approval, manually release when ready. No new build is needed just to
+   enter listing text unless code or bundled content changes.
+
+APPLE REFERENCES (checked October 27, 2026)
+https://developer.apple.com/help/app-store-connect/manage-submissions-to-app-review/submit-an-app
+https://developer.apple.com/help/app-store-connect/manage-your-apps-availability/select-an-app-store-version-release-option/
+https://developer.apple.com/help/app-store-connect/reference/app-information/screenshot-specifications/

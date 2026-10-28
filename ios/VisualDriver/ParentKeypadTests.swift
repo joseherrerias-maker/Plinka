@@ -67,15 +67,22 @@ final class ParentKeypadTests: XCTestCase {
     }
 
     @MainActor private func reveal(_ element: XCUIElement, in app: XCUIApplication) {
-        for _ in 0..<6 {
-            if element.isHittable { return }
-            app.swipeUp()
+        // isHittable alone can report an offscreen video button as hittable.
+        // Use visible geometry and drag at the edge, outside VideoPlayer controls.
+        let viewport = app.frame.insetBy(dx: 12, dy: 80)
+        func visible() -> Bool {
+            element.exists && element.isHittable &&
+                viewport.contains(CGPoint(x: element.frame.midX, y: element.frame.midY))
         }
-        // A previous check may have left the scroll position below this element.
-        for _ in 0..<8 {
-            if element.isHittable { return }
-            app.swipeDown()
+        let scroll = app.scrollViews.allElementsBoundByIndex.last ?? app.scrollViews.firstMatch
+        for upward in [true, false] {
+            for _ in 0..<8 {
+                if visible() { return }
+                let start = scroll.coordinate(withNormalizedOffset: CGVector(dx: 0.98, dy: upward ? 0.85 : 0.20))
+                let end = scroll.coordinate(withNormalizedOffset: CGVector(dx: 0.98, dy: upward ? 0.20 : 0.85))
+                start.press(forDuration: 0.05, thenDragTo: end)
+            }
         }
-        XCTAssertTrue(element.isHittable)
+        XCTAssertTrue(visible(), "Control must be inside the visible screen before tapping")
     }
 }

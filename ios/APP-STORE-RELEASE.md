@@ -1,6 +1,6 @@
 # Pluki launch preparation
 
-Build 16 is Release Candidate 4 (marketing version 1.0), prepared in source. Build 15 is the last owner-confirmed compiled baseline, with an iPad parent-entry crash reported. Signed Build 16 compilation, device acceptance and App Store submission are separate milestones. Updated October 27, 2026.
+Build 17 is Release Candidate 5 (marketing version 1.0), prepared in source. Build 16 is owner-confirmed compiled, and video export now works on the affected iPad. Signed Build 17 compilation, acceptance of the editor changes and App Store submission remain separate milestones. Updated October 27, 2026.
 
 ## Prepared in the app
 
@@ -16,7 +16,7 @@ Offline Help and Privacy policy; sound attribution screen; initial Photos add-on
 - Target price is $3.99 USD, paid download, with launch features included. Confirm availability, paid agreement, tax and banking details in App Store Connect. No in-app paywall, subscription or StoreKit purchase flow is needed for the intended paid-download model.
 - Complete App Privacy answers from the actual released app and SDK inventory. Candidate answer is Data Not Collected by the developer; local songs and local Photos export do not imply server collection. Reassess any future support form or analytics.
 - Supply review contact details, privacy/support URLs, copyright/developer name, current screenshots from iPhone and iPad, keywords and description. No screenshots or review submission have been uploaded by this task.
-- Version 1.0 is prepared for RC4. Select the accepted signed build for the matching version in App Store Connect after testing.
+- Version 1.0 is prepared for RC5. Select the accepted signed build for the matching version in App Store Connect after testing.
 
 ## Listing copy draft
 
@@ -40,7 +40,7 @@ For video export, create a song with notes, choose Export video, select a format
 ## Final device acceptance (record results before submission)
 
 - iPhone and iPad, both orientations: Home/menu, Help/Privacy, sound tray, keyboard, parent challenge and video preview fit without clipping.
-- Install RC4 over Build 15: saved projects, active draft, notes near the end and song names survive. New/Continue retain the visible grid.
+- Install RC5 over Build 16: saved projects, active draft, notes near the end and song names survive. New/Continue retain the visible grid.
 - Parent challenge: incorrect input, Cancel, swipe-to-dismiss and background/return never save or request Photos access. Correct input authorizes the initial Photos permission request. A second export with Photos already authorized saves directly without a challenge. Denied or restricted permission shows guidance without repeating a puzzle; resetting permission to not-determined requires a fresh parent check.
 - Photos: first grant, denial, later retry, low storage, background during generation, cancellation and both export formats.
 - Longer songs: add/move near the end through the 500-beat cap, undo/redo, save/reopen, playback and export. Measure time/memory on real hardware; the audio engine renders the whole song into memory.
@@ -68,3 +68,7 @@ SAMPLES.md records the six traditional/classical/original arrangements; no Baby 
 - Confirm the reported crash is resolved on the owner's iPad and test correct approval/Photos grant and denial on hardware. Audition replacements at low/middle/high pitches and in exported videos.
 - Listing, privacy answers, Kids age band, paid agreement, tax/banking and review contact remain account work.
 - Current Apple upload requirement checked October 27, 2026: Xcode 26 or later with iOS/iPadOS 26 SDK or later. Codemagic selects latest Xcode; confirm the actual SDK in the signed build log. Reference: https://developer.apple.com/news/upcoming-requirements/?id=04282026a
+
+## Build 17 submission preparation
+
+See APP-STORE-SUBMISSION-17.txt for copy-paste listing text and account steps. The approved marketing screenshot design is a draft using older captures and must be refreshed before submission. Choose manual release. No submission or account changes have been made.

@@ -20,3 +20,7 @@ Before release: install over 15 and verify saved projects/draft; enter the first
 ## Archives
 
 Keep compiled archives 13, 14 and 15. Archive Build 16 only after the owner confirms successful compilation, then retain 14, 15 and 16.
+
+## Owner confirmation
+
+The owner confirmed Build 16 compiled successfully and subsequently confirmed that video export works on the affected iPad. Build 16 is archived; retained archives are 14, 15 and 16. The earlier automated keypad run failed before reaching the landscape gate; it does not supersede the physical-device confirmation. Build 17 investigates the UI driver while preserving production video and parent-gate code.

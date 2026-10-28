@@ -1,10 +1,10 @@
 # Pluki — Native iOS app
 
-## Current candidate: Build 16 — RC4
+## Current candidate: Build 17 — RC5
 
-See [Build 16 release notes](VERSION-16.md) for the shared parent keypad and CC0 sound replacements. The information sheet displays **Build 16**, marketing version **1.0**. Build 15 compiled successfully, confirmed by the owner; its iPad parent-check first-digit crash blocks release until the new flow is accepted on hardware.
+See [Build 17 release notes](VERSION-17.md) for the centered clear confirmation and full-height name editors. Displays **Build 17**, marketing version **1.0**. Build 16 compiled successfully and the owner confirmed working iPad video export. Production video, parent checks and sounds are unchanged.
 
-In Codemagic, choose **main → Pluki Build 16 RC4 - TestFlight and iPad ZIP** (`pluki-ios-dual-export`). This is the single manual workflow: one signed archive produces a TestFlight IPA and an iPad Ad Hoc ZIP. Signing setup is unchanged in [`codemagic.yaml`](../codemagic.yaml). GitHub checks unsigned Debug/Release builds, persistence, approval logic, resource integrity, iPhone/iPad parent-keypad interaction and exported videos.
+In Codemagic, choose **main → Pluki Build 17 RC5 - TestFlight and iPad ZIP** (`pluki-ios-dual-export`). This is the single manual workflow: one signed archive produces a TestFlight IPA and an iPad Ad Hoc ZIP. Signing setup is unchanged in [`codemagic.yaml`](../codemagic.yaml). GitHub checks unsigned Debug/Release builds, persistence, approval logic, resource integrity, iPhone/iPad parent-keypad interaction and exported videos.
 
 The app now includes 19 sounds across Instruments, Animals and Fun; continuous sound browsing; a home screen and song menu; save/open/delete; six editable samples; smooth playback following; and video export to Photos. The original web prototype remains separate at the repository root.
 

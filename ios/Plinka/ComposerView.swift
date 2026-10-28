@@ -78,15 +78,19 @@ struct ComposerView: View {
                 showHome = false
                 showVideoExport = true
             }
+            if ProcessInfo.processInfo.arguments.contains("--editor-check") {
+                store.openSample(SampleSong.all[0])
+                showHome = false
+            }
             await runVisualTourIfRequested()
             #endif
         }
-        .sheet(isPresented: $showRename, onDismiss: { renameFocused = false }) { renameSongSheet }
+        .fullScreenCover(isPresented: $showRename, onDismiss: { renameFocused = false }) { renameSongSheet }
         .sheet(isPresented: $showSettings, onDismiss: { settingsPath = [] }) { settings }
         .sheet(isPresented: $showSongs) { savedSongsView }
         .sheet(isPresented: $showSamples) { samplesView }
         .sheet(isPresented: $showVideoExport) { SongVideoExportView(song: store.song) }
-        .sheet(isPresented: $showSave, onDismiss: { saveNameFocused = false }) { saveSongSheet }
+        .fullScreenCover(isPresented: $showSave, onDismiss: { saveNameFocused = false }) { saveSongSheet }
         .alert("Saved songs", isPresented: Binding(get: { store.libraryError != nil }, set: { if !$0 { store.libraryError = nil } })) {
             Button("OK") { store.libraryError = nil }
         } message: { Text(store.libraryError ?? "") }
@@ -97,9 +101,11 @@ struct ComposerView: View {
             Button("Start without saving", role: .destructive) { startNewSong() }
             Button("Cancel", role: .cancel) {}
         }
-        .confirmationDialog("Clear your entire melody?", isPresented: $confirmClear) {
-            Button("Clear all notes", role: .destructive) { audio.stop(); store.clear() }
+        .alert("Clear all notes?", isPresented: $confirmClear) {
+            Button("Clear notes", role: .destructive) { audio.stop(); store.clear() }
             Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("This will remove every note from the current song.")
         }
         .onChange(of: scenePhase) { _, phase in
             if phase != .active { audio.pause() }
@@ -115,6 +121,8 @@ struct ComposerView: View {
                         .submitLabel(.done)
                         .onSubmit { finishRenamingSong() }
                         .accessibilityIdentifier("rename-song-name")
+                } header: {
+                    Text("Song name")
                 } footer: {
                     Text("Updates the current song title. Use Save song to keep it in your saved projects.")
                 }
@@ -135,8 +143,7 @@ struct ComposerView: View {
                 renameFocused = true
             }
         }
-        .presentationDetents([.medium, .large])
-        .presentationDragIndicator(.visible)
+        .interactiveDismissDisabled()
     }
 
     private func finishRenamingSong() {
@@ -155,6 +162,8 @@ struct ComposerView: View {
                         .submitLabel(.done)
                         .onSubmit { finishSavingSong() }
                         .accessibilityIdentifier("save-song-name")
+                } header: {
+                    Text("Song name")
                 } footer: {
                     Text("Keep this song on this device. Use a different name to save a new copy.")
                 }
@@ -177,8 +186,7 @@ struct ComposerView: View {
                 saveNameFocused = true
             }
         }
-        .presentationDetents([.medium, .large])
-        .presentationDragIndicator(.visible)
+        .interactiveDismissDisabled()
     }
 
     private func finishSavingSong() {

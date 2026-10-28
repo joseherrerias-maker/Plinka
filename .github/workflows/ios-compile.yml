@@ -71,7 +71,18 @@ jobs:
               assert expected and all(v == info[key] for v in expected), (key, info.get(key), expected)
           print('Release build label and marketing version verified.')
           PYCODE
-      - name: Check parent keypad on iPhone and iPad
+      - name: Check video export media
+        if: contains(github.event.head_commit.message, '[video-check]')
+        timeout-minutes: 10
+        run: bash ios/scripts/check-video-export.sh "$RUNNER_TEMP/PlinkaDerivedData/Build/Products/Debug-iphonesimulator/Plinka.app"
+      - name: Keep export check videos and frames
+        if: always() && contains(github.event.head_commit.message, '[video-check]')
+        uses: actions/upload-artifact@v4
+        with:
+          name: Pluki-video-check
+          path: ${{ runner.temp }}/PlukiVideoCheck
+          retention-days: 7
+      - name: Check keypad and editors on iPhone and iPad
         if: contains(github.event.head_commit.message, '[parent-check]')
         timeout-minutes: 15
         run: |
@@ -83,17 +94,6 @@ jobs:
         with:
           name: Pluki-parent-keypad-check
           path: ${{ runner.temp }}/PlukiParentCheck
-          retention-days: 7
-      - name: Check video export media
-        if: contains(github.event.head_commit.message, '[video-check]')
-        timeout-minutes: 10
-        run: bash ios/scripts/check-video-export.sh "$RUNNER_TEMP/PlinkaDerivedData/Build/Products/Debug-iphonesimulator/Plinka.app"
-      - name: Keep export check videos and frames
-        if: always() && contains(github.event.head_commit.message, '[video-check]')
-        uses: actions/upload-artifact@v4
-        with:
-          name: Pluki-video-check
-          path: ${{ runner.temp }}/PlukiVideoCheck
           retention-days: 7
       - name: Check staff grid drawing
         if: contains(github.event.head_commit.message, '[grid-check]')
