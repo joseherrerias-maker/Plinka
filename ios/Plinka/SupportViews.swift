@@ -11,6 +11,7 @@ struct PlukiHelpView: View {
             Section("Keep your creations") {
                 tip("Name your song", icon: "pencil", detail: "Tap the title and pencil at the top of the song menu to rename your current song. Use Save song to keep it in your saved projects.")
                 tip("Save and open", icon: "folder.fill", detail: "Use the song menu to Save song. Open song lists your saved projects and lets you delete them. Songs are kept on this device; saving under a different name makes a new copy.")
+                tip("Import a song", icon: "square.and.arrow.down", detail: "Save a .pluki song file to Files, then choose Import song from the song menu. Imports create a new saved copy and preserve unsaved work. Play it, edit it, and export a video as usual.")
                 tip("Try a sample", icon: "music.note.list", detail: "Samples open immediately. Save your current work first if you want to keep it. A saved sample becomes your own editable copy.")
                 tip("Make a video", icon: "video.fill", detail: "Choose Export video in the song menu, pick a format and create your video. A grown-up completes a parent check when first enabling Photos saving. After permission is granted, videos save directly. Keep Pluki open while the video is being made.")
             }

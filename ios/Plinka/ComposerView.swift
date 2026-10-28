@@ -1,6 +1,7 @@
 import SwiftUI
 import UIKit
 import CoreText
+import UniformTypeIdentifiers
 
 private enum PlukiStyle {
     static let ink = Color(red: 0.13, green: 0.22, blue: 0.34)
@@ -22,6 +23,10 @@ struct ComposerView: View {
     @State private var settingsPath: [SettingsRoute] = []
     @State private var showSongs = false
     @State private var showSamples = false
+    @State private var showImport = false
+    @State private var importedSong: Song?
+    @State private var confirmImport = false
+    @State private var importError: String?
     @State private var showSave = false
     @State private var showRename = false
     @State private var renameTitle = ""
@@ -89,6 +94,27 @@ struct ComposerView: View {
         .sheet(isPresented: $showSettings, onDismiss: { settingsPath = [] }) { settings }
         .sheet(isPresented: $showSongs) { savedSongsView }
         .sheet(isPresented: $showSamples) { samplesView }
+        .fileImporter(isPresented: $showImport,
+                      allowedContentTypes: [UTType(importedAs: "com.pebblesoftapps.pluki.song"), .json],
+                      allowsMultipleSelection: false) { result in
+            receiveSongFile(result)
+        }
+        .alert("Import song?", isPresented: $confirmImport) {
+            Button("Import and open") {
+                if let song = importedSong, store.importSong(song) {
+                    audio.stop()
+                    showHome = false
+                }
+                importedSong = nil
+            }
+            Button("Cancel", role: .cancel) { importedSong = nil }
+        } message: {
+            Text("Open \(importedSong?.title ?? "this song") as a new saved song? Any unsaved work will be kept as a separate saved copy.")
+        }
+        .alert("Could not import song", isPresented: Binding(get: { importError != nil }, set: { if !$0 { importError = nil } })) {
+            Button("OK") { importError = nil }
+        } message: { Text(importError ?? "") }
+
         .sheet(isPresented: $showVideoExport) { SongVideoExportView(song: store.song) }
         .fullScreenCover(isPresented: $showSave, onDismiss: { saveNameFocused = false }) { saveSongSheet }
         .alert("Saved songs", isPresented: Binding(get: { store.libraryError != nil }, set: { if !$0 { store.libraryError = nil } })) {
@@ -109,6 +135,25 @@ struct ComposerView: View {
         }
         .onChange(of: scenePhase) { _, phase in
             if phase != .active { audio.pause() }
+        }
+    }
+
+    private func receiveSongFile(_ result: Result<[URL], Error>) {
+        do {
+            guard let url = try result.get().first else { return }
+            let granted = url.startAccessingSecurityScopedResource()
+            defer { if granted { url.stopAccessingSecurityScopedResource() } }
+            // Read at most the limit plus one byte; do not trust the file's declared size.
+            let handle = try FileHandle(forReadingFrom: url)
+            defer { try? handle.close() }
+            let data = try handle.read(upToCount: PlukiSongFile.maximumBytes + 1) ?? Data()
+            importedSong = try PlukiSongFile.decode(data)
+            confirmImport = true
+        } catch {
+            importedSong = nil
+            if (error as NSError).code != NSUserCancelledError {
+                importError = error.localizedDescription
+            }
         }
     }
 
@@ -337,6 +382,9 @@ struct ComposerView: View {
         }
         songMenuRow("Open song", icon: "folder.fill", color: .orange) {
             audio.stop(); showSongs = true
+        }
+        songMenuRow("Import song", icon: "square.and.arrow.down", color: PlukiStyle.blue) {
+            audio.stop(); showImport = true
         }
         if inSong {
             songMenuRow("Save song", icon: "square.and.arrow.down.fill", color: PlukiStyle.green) {

@@ -2,9 +2,31 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-    <key>NSPhotoLibraryAddUsageDescription</key>
-    <string>Save your Pluki song videos to Photos.</string>
-    <key>PlukiReleaseBuild</key>
-    <string>$(PLUKI_RELEASE_BUILD)</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Save your Pluki song videos to Photos.</string>
+	<key>PlukiReleaseBuild</key>
+	<string>$(PLUKI_RELEASE_BUILD)</string>
+	<key>UTImportedTypeDeclarations</key>
+	<array>
+		<dict>
+			<key>UTTypeIdentifier</key>
+			<string>com.pebblesoftapps.pluki.song</string>
+			<key>UTTypeDescription</key>
+			<string>Pluki Song</string>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.json</string>
+			</array>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
+					<string>pluki</string>
+				</array>
+				<key>public.mime-type</key>
+				<string>application/vnd.pebblesoftapps.pluki-song+json</string>
+			</dict>
+		</dict>
+	</array>
 </dict>
 </plist>

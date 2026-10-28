@@ -98,6 +98,61 @@ struct Song: Codable, Equatable {
 
 // Pluki arrangements of traditional/classical themes and original compositions.
 // Times are half-beat steps; all pitches fit the existing nine-row staff.
+// Versioned interchange format. It contains notes only, never executable or remote content.
+struct PlukiSongFile: Codable {
+    let format: String
+    let version: Int
+    let song: Song
+    static let maximumBytes = 1_048_576
+
+    enum ImportError: LocalizedError {
+        case invalid(String)
+        var errorDescription: String? {
+            if case .invalid(let message) = self { return message }
+            return nil
+        }
+    }
+
+    static func decode(_ data: Data) throws -> Song {
+        guard data.count <= maximumBytes else {
+            throw ImportError.invalid("This song file is too large. The limit is 1 MB.")
+        }
+        let file: PlukiSongFile
+        do { file = try JSONDecoder().decode(Self.self, from: data) }
+        catch { throw ImportError.invalid("This is not a valid Pluki song file.") }
+        guard file.format == "pluki-song", file.version == 1 else {
+            throw ImportError.invalid("This song file uses an unsupported format or version.")
+        }
+        return try validated(file.song)
+    }
+
+    static func validated(_ source: Song) throws -> Song {
+        var song = source
+        song.title = song.title.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !song.title.isEmpty, song.title.count <= 80,
+              !song.title.unicodeScalars.contains(where: { CharacterSet.controlCharacters.contains($0) }) else {
+            throw ImportError.invalid("The song needs a title of 1–80 characters without line breaks.")
+        }
+        guard song.tempo.isFinite, (65...160).contains(song.tempo) else {
+            throw ImportError.invalid("The song tempo must be between 65 and 160 BPM.")
+        }
+        guard let length = song.sheetSteps, (32...Song.maximumSteps).contains(length),
+              !song.notes.isEmpty, song.notes.count <= length * 9 else {
+            throw ImportError.invalid("The song has an invalid sheet length or note count.")
+        }
+        var cells = Set<String>()
+        var ids = Set<UUID>()
+        for note in song.notes {
+            guard (0..<length).contains(note.step), (0..<9).contains(note.row),
+                  cells.insert("\(note.step):\(note.row)").inserted,
+                  ids.insert(note.id).inserted else {
+                throw ImportError.invalid("The song contains out-of-range or overlapping notes.")
+            }
+        }
+        return song
+    }
+}
+
 struct SampleSong: Identifiable {
     let id: String
     let detail: String
@@ -275,6 +330,36 @@ final class SongStore: ObservableObject {
             return true
         } catch {
             libraryError = "Your song could not be saved. Please try again."
+            return false
+        }
+    }
+
+    /// Commit the new library only after validation and encoding both succeed.
+    /// Existing saved entries are never replaced by an import, even with the same title.
+    @discardableResult
+    func importSong(_ incoming: Song) -> Bool {
+        guard libraryReadable else {
+            libraryError = "Saved songs could not be read. Import is paused to protect them."
+            return false
+        }
+        do {
+            var imported = try PlukiSongFile.validated(incoming)
+            imported.notes = imported.notes.map {
+                MusicNote(step: $0.step, row: $0.row, instrument: $0.instrument)
+            }
+            var entries = savedSongs
+            if hasUnsavedChanges {
+                entries.append(SavedSong(song: song))
+            }
+            let entry = SavedSong(song: imported)
+            entries.append(entry)
+            let data = try JSONEncoder().encode(entries)
+            defaults.set(data, forKey: Self.libraryKey)
+            savedSongs = entries.sorted { $0.savedAt > $1.savedAt }
+            openSong(entry)
+            return true
+        } catch {
+            libraryError = error.localizedDescription
             return false
         }
     }

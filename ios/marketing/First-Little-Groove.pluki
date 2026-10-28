@@ -1,0 +1,108 @@
+{
+  "format": "pluki-song",
+  "version": 1,
+  "song": {
+    "title": "First Little Groove",
+    "tempo": 110,
+    "loop": false,
+    "sheetSteps": 32,
+    "notes": [
+      {
+        "id": "3451355d-b94f-48eb-a0e6-4d69b1fa3479",
+        "step": 0,
+        "row": 6,
+        "instrument": "piano"
+      },
+      {
+        "id": "997ae7a7-febf-4b00-915d-61556aecbfc9",
+        "step": 2,
+        "row": 4,
+        "instrument": "piano"
+      },
+      {
+        "id": "b5269052-f6b7-46cd-83d7-f7c2e520c76c",
+        "step": 4,
+        "row": 3,
+        "instrument": "piano"
+      },
+      {
+        "id": "8ec32c87-6216-415b-b320-bbd889f65b97",
+        "step": 6,
+        "row": 2,
+        "instrument": "piano"
+      },
+      {
+        "id": "f9b90b12-51c3-4016-be1d-6401022222ce",
+        "step": 8,
+        "row": 3,
+        "instrument": "piano"
+      },
+      {
+        "id": "5801d8fe-0ab2-4105-9257-2e8417050212",
+        "step": 10,
+        "row": 4,
+        "instrument": "piano"
+      },
+      {
+        "id": "cbb1abfb-9596-4785-8051-f3307a9e9855",
+        "step": 12,
+        "row": 6,
+        "instrument": "piano"
+      },
+      {
+        "id": "4982afe9-e74b-49ab-9047-de6570ccfbb0",
+        "step": 14,
+        "row": 4,
+        "instrument": "piano"
+      },
+      {
+        "id": "4d5b30fc-f3bc-4e9c-90ec-7aba258ae87f",
+        "step": 16,
+        "row": 5,
+        "instrument": "piano"
+      },
+      {
+        "id": "b25986e4-f8e6-4eaf-8f1c-89215c88bfce",
+        "step": 18,
+        "row": 3,
+        "instrument": "piano"
+      },
+      {
+        "id": "bf064a19-a046-4964-9148-9b48c32d6c62",
+        "step": 20,
+        "row": 2,
+        "instrument": "piano"
+      },
+      {
+        "id": "96238094-d11c-4ad0-aa59-6bd35ecf17a1",
+        "step": 22,
+        "row": 1,
+        "instrument": "piano"
+      },
+      {
+        "id": "41577214-7684-4431-b94b-ddeae16d47a4",
+        "step": 24,
+        "row": 2,
+        "instrument": "piano"
+      },
+      {
+        "id": "0fe07678-9f69-4e25-ae4f-0f97bcd0c64c",
+        "step": 26,
+        "row": 3,
+        "instrument": "piano"
+      },
+      {
+        "id": "db4c0f69-ed06-496b-ac78-fd1bcaaac0ad",
+        "step": 28,
+        "row": 4,
+        "instrument": "piano"
+      },
+      {
+        "id": "a088e0eb-bc29-4206-93d9-65eba4575f9e",
+        "step": 30,
+        "row": 6,
+        "instrument": "piano"
+      }
+    ]
+  }
+}
