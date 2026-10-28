@@ -76,10 +76,12 @@ final class ParentKeypadTests: XCTestCase {
             element.exists && element.isHittable &&
                 viewport.contains(CGPoint(x: element.frame.midX, y: element.frame.midY))
         }
-        let scroll = app.scrollViews.allElementsBoundByIndex.last ?? app.scrollViews.firstMatch
         for upward in [true, false] {
             for _ in 0..<8 {
                 if visible() { return }
+                // Re-query after each gesture because SwiftUI can replace the
+                // sheet's accessibility subtree while its content scrolls.
+                let scroll = app.scrollViews.allElementsBoundByIndex.last ?? app.scrollViews.firstMatch
                 let start = scroll.coordinate(withNormalizedOffset: CGVector(dx: 0.98, dy: upward ? 0.85 : 0.20))
                 let end = scroll.coordinate(withNormalizedOffset: CGVector(dx: 0.98, dy: upward ? 0.20 : 0.85))
                 start.press(forDuration: 0.05, thenDragTo: end)

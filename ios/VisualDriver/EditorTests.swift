@@ -17,6 +17,7 @@ final class EditorTests: XCTestCase {
             rename.tap()
             let field = app.textFields["rename-song-name"]
             XCTAssertTrue(field.waitForExistence(timeout: 5))
+            field.tap()
             XCTAssertTrue(app.keyboards.firstMatch.waitForExistence(timeout: 10))
             XCTAssertTrue(field.isHittable)
             XCTAssertLessThan(field.frame.maxY, app.keyboards.firstMatch.frame.minY)
@@ -26,6 +27,7 @@ final class EditorTests: XCTestCase {
             XCTAssertEqual(rename.label, original, "Cancel must preserve the title")
             rename.tap()
             XCTAssertTrue(field.waitForExistence(timeout: 5))
+            field.tap()
             XCTAssertTrue(app.keyboards.firstMatch.waitForExistence(timeout: 10))
             field.typeText(" Test")
             app.navigationBars["Rename song"].buttons["Done"].tap()
@@ -36,6 +38,7 @@ final class EditorTests: XCTestCase {
             save.tap()
             let saveField = app.textFields["save-song-name"]
             XCTAssertTrue(saveField.waitForExistence(timeout: 5))
+            saveField.tap()
             XCTAssertTrue(app.keyboards.firstMatch.waitForExistence(timeout: 10))
             XCTAssertTrue(saveField.isHittable)
             XCTAssertLessThan(saveField.frame.maxY, app.keyboards.firstMatch.frame.minY)
