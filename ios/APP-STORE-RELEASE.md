@@ -1,6 +1,6 @@
 # Pluki launch preparation
 
-Build 17 is Release Candidate 5 (marketing version 1.0), prepared in source. Build 16 is owner-confirmed compiled, and video export now works on the affected iPad. Signed Build 17 compilation, acceptance of the editor changes and App Store submission remain separate milestones. Updated October 27, 2026.
+Build 17 is Release Candidate 5 (marketing version 1.0), prepared in source. Build 16 is owner-confirmed compiled, and video export now works on the affected iPad. Signed Build 17 compilation, acceptance of the editor changes and App Store submission remain separate milestones. Updated October 28, 2026.
 
 ## Prepared in the app
 
@@ -72,3 +72,5 @@ SAMPLES.md records the six traditional/classical/original arrangements; no Baby 
 ## Build 17 submission preparation
 
 See APP-STORE-SUBMISSION-17.txt for copy-paste listing text and account steps. The approved marketing screenshot design is a draft using older captures and must be refreshed before submission. Choose manual release. No submission or account changes have been made.
+
+The changed editor flows passed automated iPhone/iPad checks in both orientations. Base build, persistence, approval logic and video media checks passed. One iPad landscape video-preview UI check failed with a main-thread-busy snapshot error before reaching the parent keypad; cause unresolved. Production export code is unchanged. See VERSION-17.md for exact run links and recheck this path on the signed candidate before submission; do not report all automation as passing.

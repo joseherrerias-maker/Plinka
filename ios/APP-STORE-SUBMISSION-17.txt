@@ -3,6 +3,15 @@ Prepared October 28, 2026. Build 17 RC5.
 Status: source prepared, signed build and final acceptance pending.
 No App Store Connect account changes or review submission have been made.
 
+BUILD ACCEPTANCE STATUS
+Debug/Release, persistence, approval logic, resource/privacy and portrait/landscape
+video media checks passed. The changed Rename/Save/Clear flows passed on iPhone SE
+and iPad in both orientations. Keypad UI passed on iPhone in both orientations and
+completed iPad portrait checks. iPad landscape automation failed during video
+preview setup with a main-thread-busy snapshot error; cause unresolved. Production
+video export is unchanged and the owner confirmed it works on physical iPad.
+Recheck this path on the signed candidate before review submission.
+
 APP INFORMATION
 Name: Pluki
 Subtitle: Make a little music
@@ -86,6 +95,7 @@ CONNECT WORKFLOW
 1. In Codemagic, main > Pluki Build 17 RC5 - TestFlight and iPad ZIP.
 2. After the signed build uploads and finishes processing, verify it in TestFlight.
 3. Test the changed Rename/Save and Clear flows on iPhone/iPad; confirm persistence.
+   Recheck iPad landscape video preview/parent check against the automation issue.
 4. In App Store Connect > My Apps > Pluki > iOS App 1.0, enter listing copy and URLs.
 5. Upload final screenshots and select the accepted Build 17 binary by build label.
    The CFBundleVersion upload counter may differ from the displayed release label.
