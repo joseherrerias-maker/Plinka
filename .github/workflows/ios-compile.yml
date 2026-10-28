@@ -3,7 +3,7 @@ name: Plinka iOS compile
 on:
   workflow_dispatch:
   push:
-    branches: [main]
+    branches: [main, feature/song-import]
     paths:
       - "ios/**"
       - ".github/workflows/ios-compile.yml"
@@ -25,6 +25,10 @@ jobs:
         run: |
           xcrun swiftc -parse-as-library ios/Plinka/Song.swift ios/scripts/SongStoreChecks.swift -o "$RUNNER_TEMP/song-checks"
           "$RUNNER_TEMP/song-checks"
+      - name: Check song file imports
+        run: |
+          xcrun swiftc -parse-as-library ios/Plinka/Song.swift ios/scripts/SongImportChecks.swift -o "$RUNNER_TEMP/import-checks"
+          "$RUNNER_TEMP/import-checks"
       - name: Check parent approval behavior
         run: |
           xcrun swiftc -parse-as-library ios/Plinka/ParentApproval.swift ios/scripts/ParentApprovalChecks.swift -o "$RUNNER_TEMP/parent-checks"

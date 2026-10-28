@@ -208,7 +208,7 @@
 				INFOPLIST_KEY_CFBundleDisplayName = Pluki;
 				INFOPLIST_KEY_CFBundleName = Pluki;
 				INFOPLIST_FILE = Plinka/Info.plist;
-				PLUKI_RELEASE_BUILD = 17;
+				PLUKI_RELEASE_BUILD = 18;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -236,7 +236,7 @@
 				INFOPLIST_KEY_CFBundleDisplayName = Pluki;
 				INFOPLIST_KEY_CFBundleName = Pluki;
 				INFOPLIST_FILE = Plinka/Info.plist;
-				PLUKI_RELEASE_BUILD = 17;
+				PLUKI_RELEASE_BUILD = 18;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
