@@ -1,6 +1,6 @@
 # Pluki Build 17 — Release Candidate 5
 
-Prepared October 27, 2026. Version 1.0; display Build 17; fallback upload counter 18 (Codemagic uses PROJECT_BUILD_NUMBER).
+Prepared October 28, 2026. Version 1.0; display Build 17; fallback upload counter 18 (Codemagic uses PROJECT_BUILD_NUMBER).
 
 ## Changes
 
@@ -15,6 +15,15 @@ Prepared October 27, 2026. Version 1.0; display Build 17; fallback upload counte
 Select **main → Pluki Build 17 RC5 - TestFlight and iPad ZIP** in Codemagic (`pluki-ios-dual-export`). One archive, existing signing and two exports. Signed compilation is pending. No App Review submission is triggered.
 
 GitHub runs Debug/Release, persistence, approval, resources/privacy, media validation and targeted UI tests. Record actual outcomes rather than inferring success from compilation.
+
+## Verification
+
+- [Initial Build 17 run](https://github.com/joseherrerias-maker/Plinka/actions/runs/40609489512): Debug and Release builds, saved-song persistence, parent approval logic, orientation/resource checks and privacy checks passed.
+- Portrait and landscape export checks passed: audio/video tracks, duration, late note and cancellation. Exported frames were visually reviewed; both retain the enlarged canvas, lowercase pluki! branding and two-line footer. Production export code is unchanged from Build 16.
+- The early interaction runs exposed test-driver issues: waiting for an automatic keyboard before tapping the field, excluding visible bottom buttons with an 80-point inset, and dragging across the navigation area in landscape. The driver now taps the field, locates each sheet by its contents, and keeps gestures below its navigation bar. The timeout allows both fresh simulators to finish, and both devices are collected even if one reports a test failure.
+- [Editor regression](https://github.com/joseherrerias-maker/Plinka/actions/runs/40611831923): Rename Cancel/Done, Save, keyboard visibility, centered Clear confirmation, Cancel, Clear and Undo passed on iPhone SE in both orientations. The separate keypad driver failed while scrolling; that run does not establish an iPad pass.
+- [Updated two-device interaction run](https://github.com/joseherrerias-maker/Plinka/actions/runs/40613506224): pending. Do not infer a pass until the run completes and its results are reviewed. Physical floating-keyboard placement still requires owner acceptance.
+- Signed compilation, physical-device acceptance and App Review submission remain pending.
 
 ## Release acceptance
 

@@ -1,5 +1,5 @@
 PLUKI — VERSION 1.0 SUBMISSION DRAFT
-Prepared October 27, 2026. Build 17 RC5.
+Prepared October 28, 2026. Build 17 RC5.
 Status: source prepared, signed build and final acceptance pending.
 No App Store Connect account changes or review submission have been made.
 
