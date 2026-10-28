@@ -69,7 +69,9 @@ final class ParentKeypadTests: XCTestCase {
     @MainActor private func reveal(_ element: XCUIElement, in app: XCUIApplication) {
         // isHittable alone can report an offscreen video button as hittable.
         // Use visible geometry and drag at the edge, outside VideoPlayer controls.
-        let viewport = app.frame.insetBy(dx: 12, dy: 80)
+        // Keep bottom controls eligible: ScrollView's final button can sit
+        // closer than 80 points to the bottom even when fully visible.
+        let viewport = app.frame.insetBy(dx: 12, dy: 12)
         func visible() -> Bool {
             element.exists && element.isHittable &&
                 viewport.contains(CGPoint(x: element.frame.midX, y: element.frame.midY))
