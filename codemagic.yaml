@@ -1,8 +1,8 @@
 # One manually selected workflow: TestFlight upload and iPad Ad Hoc ZIP.
-# Signing setup: ios/VERSION-3.md. Current changes: ios/VERSION-18.md.
+# Signing setup: ios/VERSION-3.md. Current changes: ios/VERSION-19.md.
 workflows:
   pluki-ios-dual-export:
-    name: Pluki Build 18 Song Import - TestFlight and iPad ZIP
+    name: Pluki Build 19 Duo, Parent Reviews and Drums - TestFlight and iPad ZIP
     instance_type: mac_mini_m2
     max_build_duration: 30
     integrations:
@@ -19,6 +19,8 @@ workflows:
       - name: Prepare icon and signing exports
         script: |
           set -euo pipefail
+          sdk=$(xcrun --sdk iphoneos --show-sdk-version)
+          python3 -c 'import sys; assert tuple(map(int, sys.argv[1].split(".")[:2])) >= (27, 1), "Select an Xcode image with iOS SDK 27.1 or newer for Duo"' "$sdk"
           bash "$CM_BUILD_DIR/ios/scripts/prepare-app-icon.sh"
           python3 "$CM_BUILD_DIR/ios/scripts/prepare-dual-export.py"
       - name: Create one signed archive

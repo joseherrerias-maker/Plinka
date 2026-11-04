@@ -2,6 +2,21 @@ import Foundation
 
 @main struct ParentApprovalChecks {
     static func main() {
+        let suite = UUID().uuidString
+        let prefs = UserDefaults(suiteName: suite)!
+        defer { prefs.removePersistentDomain(forName: suite) }
+        let today = Date()
+        for offset in [0, 0, 1] {
+            ReviewMilestone.recordDay(today.addingTimeInterval(Double(offset) * 86400), defaults: prefs)
+        }
+        prefs.set(true, forKey: "review.savedMusic")
+        precondition(!ReviewMilestone.takeRequest(defaults: prefs, version: "1.1"))
+        ReviewMilestone.recordDay(today.addingTimeInterval(172800), defaults: prefs)
+        prefs.set(false, forKey: "review.savedMusic")
+        precondition(!ReviewMilestone.takeRequest(defaults: prefs, version: "1.1"))
+        prefs.set(true, forKey: "review.savedMusic")
+        precondition(ReviewMilestone.takeRequest(defaults: prefs, version: "1.1"))
+        precondition(!ReviewMilestone.takeRequest(defaults: prefs, version: "1.1"))
         var gate = ParentApproval(digits: [1, 3, 5, 7])
         precondition(!gate.consume())
         precondition(gate.prompt == "one · three · five · seven")

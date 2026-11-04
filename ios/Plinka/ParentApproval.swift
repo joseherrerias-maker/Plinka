@@ -25,3 +25,25 @@ struct ParentApproval {
     }
     mutating func invalidate() { active = false; approved = false }
 }
+
+// Device-only eligibility. Stop recording dates once three distinct days are reached.
+enum ReviewMilestone {
+    static func recordDay(_ now: Date = Date(), defaults: UserDefaults = .standard) {
+        var days = defaults.stringArray(forKey: "review.days") ?? []
+        guard days.count < 3 else { return }
+        let parts = Calendar(identifier: .gregorian).dateComponents([.year, .month, .day], from: now)
+        let key = "\(parts.year ?? 0)-\(parts.month ?? 0)-\(parts.day ?? 0)"
+        guard !days.contains(key) else { return }
+        days.append(key)
+        defaults.set(days, forKey: "review.days")
+    }
+
+    static func takeRequest(defaults: UserDefaults = .standard,
+                            version: String = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "") -> Bool {
+        guard !version.isEmpty, defaults.bool(forKey: "review.savedMusic"),
+              (defaults.stringArray(forKey: "review.days") ?? []).count >= 3,
+              defaults.string(forKey: "review.version") != version else { return false }
+        defaults.set(version, forKey: "review.version")
+        return true
+    }
+}

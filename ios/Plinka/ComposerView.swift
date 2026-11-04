@@ -1,5 +1,6 @@
 import SwiftUI
 import UIKit
+import StoreKit
 import CoreText
 import UniformTypeIdentifiers
 
@@ -19,6 +20,9 @@ struct ComposerView: View {
     @State private var confirmClear = false
     @State private var showSongMenu = false
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.requestReview) private var requestReview
+    @State private var parentCheck = false
+    @State private var parentApproved = false
     @State private var showSettings = false
     @State private var settingsPath: [SettingsRoute] = []
     @State private var showSongs = false
@@ -77,6 +81,7 @@ struct ComposerView: View {
             #endif
         }
         .task {
+            if scenePhase == .active { ReviewMilestone.recordDay() }
             #if DEBUG
             if ProcessInfo.processInfo.arguments.contains("--parent-keypad-check") {
                 store.openSample(SampleSong.all[0])
@@ -134,7 +139,12 @@ struct ComposerView: View {
             Text("This will remove every note from the current song.")
         }
         .onChange(of: scenePhase) { _, phase in
-            if phase != .active { audio.pause() }
+            if phase == .active { ReviewMilestone.recordDay() }
+            if phase == .background {
+                audio.pause()
+                parentApproved = false
+                settingsPath.removeAll()
+            }
         }
     }
 
@@ -242,7 +252,12 @@ struct ComposerView: View {
 
     private var composerContent: some View {
         GeometryReader { geometry in
-            let short = geometry.size.height < 500
+            // Medium-width, near-square windows can use the compact controls and
+            // beat spacing while giving their extra height to the score.
+            let size = geometry.size
+            let square = (580..<900).contains(size.width) && size.height >= 500
+                && size.height <= size.width * 1.25
+            let short = size.height < 500 || square
             let narrow = geometry.size.width < (short ? 780 : 900)
             let padding: CGFloat = short ? 8 : 16
             let gap: CGFloat = short ? 8 : 12
@@ -741,7 +756,7 @@ struct ComposerView: View {
         return text
     }
 
-    private enum SettingsRoute: Hashable { case contact }
+    private enum SettingsRoute: Hashable { case contact, parents }
 
     private var settings: some View {
         NavigationStack(path: $settingsPath) {
@@ -755,6 +770,11 @@ struct ComposerView: View {
                     }
                 }
                 if let error = audio.audioError { Section { Text(error).foregroundStyle(.red) } }
+                Section {
+                    Button { parentApproved = false; parentCheck = true } label: {
+                        Label("For parents", systemImage: "person.2.fill")
+                    }
+                }
                 Section("About Pluki") {
                     VStack(alignment: .leading, spacing: 2) {
                         Text("Developed by").font(.caption).foregroundStyle(.secondary)
@@ -775,7 +795,32 @@ struct ComposerView: View {
                     }
                 }
             }
-            .navigationDestination(for: SettingsRoute.self) { _ in PlukiContactView() }
+            .navigationDestination(for: SettingsRoute.self) { route in
+                switch route {
+                case .contact: PlukiContactView()
+                case .parents:
+                    List {
+                        Text("Songs stay on this device. You can export a song as a video from the song menu.")
+                        NavigationLink("Privacy policy") { PlukiPrivacyView() }
+                    }
+                    .navigationTitle("For parents")
+                    .task {
+                        try? await Task.sleep(for: .seconds(1))
+                        guard !Task.isCancelled, scenePhase == .active,
+                              settingsPath.last == .parents,
+                              ReviewMilestone.takeRequest() else { return }
+                        requestReview()
+                    }
+                }
+            }
+            .sheet(isPresented: $parentCheck, onDismiss: {
+                if parentApproved && scenePhase == .active { settingsPath.append(.parents) }
+                parentApproved = false
+            }) {
+                PlukiParentGate(instruction: "To open the parent area, enter the four numbers in order.") {
+                    parentApproved = true
+                }
+            }
             .navigationTitle("Help & About")
             .toolbar { ToolbarItem(placement: .confirmationAction) { Button("Done") { showSettings = false } } }
         }
@@ -1014,7 +1059,7 @@ private struct FollowScrollView<Content: View>: UIViewControllerRepresentable {
         FollowController(audio: audio, metrics: metrics, content: content())
     }
     func updateUIViewController(_ controller: FollowController<Content>, context: Context) {
-        controller.metrics = metrics
+        controller.replaceMetrics(metrics)
         controller.host.rootView = content()
         controller.view.setNeedsLayout()
     }
@@ -1100,6 +1145,18 @@ private final class FollowController<Content: View>: UIViewController, UIScrollV
         scroll.contentSize = host.view.frame.size
         grid.update(metrics: metrics, offset: scroll.contentOffset)
         advanceFrame()
+    }
+
+    func replaceMetrics(_ new: StaffMetrics) {
+        let old = metrics
+        guard new != old else { return }
+        let offset = scroll.contentOffset.x
+        metrics = new
+        guard offset > old.gutter, old.cell != new.cell, !audio.isPlaying else { return }
+        let beat = (offset - old.gutter) / old.cell
+        scroll.contentSize = CGSize(width: new.width, height: new.height)
+        let x = min(new.gutter + beat * new.cell, max(0, new.width - scroll.bounds.width))
+        scroll.setContentOffset(CGPoint(x: x, y: 0), animated: false)
     }
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
