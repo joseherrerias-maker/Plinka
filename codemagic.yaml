@@ -8,7 +8,7 @@ workflows:
     integrations:
       app_store_connect: "Milo Codemagic 2"
     environment:
-      xcode: latest
+      xcode: "27.1"
       ios_signing:
         provisioning_profiles:
           - "Pluki App Store Profile"
@@ -20,6 +20,8 @@ workflows:
         script: |
           set -euo pipefail
           sdk=$(xcrun --sdk iphoneos --show-sdk-version)
+          xcodebuild -version
+          echo "iPhoneOS SDK: $sdk"
           python3 -c 'import sys; assert tuple(map(int, sys.argv[1].split(".")[:2])) >= (27, 1), "Select an Xcode image with iOS SDK 27.1 or newer for Duo"' "$sdk"
           bash "$CM_BUILD_DIR/ios/scripts/prepare-app-icon.sh"
           python3 "$CM_BUILD_DIR/ios/scripts/prepare-dual-export.py"
