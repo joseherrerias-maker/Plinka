@@ -327,6 +327,7 @@ final class SongStore: ObservableObject {
             activeSavedID = id
             defaults.set(id.uuidString, forKey: "pluki-active-saved-song")
             song = snapshot
+            if !snapshot.notes.isEmpty { defaults.set(true, forKey: "review.savedMusic") }
             return true
         } catch {
             libraryError = "Your song could not be saved. Please try again."

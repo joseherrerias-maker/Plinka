@@ -351,7 +351,11 @@ final class PlinkaAudio: ObservableObject {
                 value = (sin(phase) * 0.8 + sin(phase * 2) * 0.12) * exp(-8 * t)
             case .drums:
                 if f < 420 {
-                    value = sin(tau * (90 - 58 * min(t, 0.20)) * t) * exp(-18 * t)
+                    let phase = tau * (90 - 58 * min(t, 0.20)) * t
+                    let body = sin(phase) * exp(-18 * t)
+                    let knock = (0.35 * sin(3 * phase) + 0.20 * sin(5 * phase)) * exp(-29 * t)
+                    let beater = 0.22 * sin(tau * 970 * t) * exp(-95 * t)
+                    value = body + knock + beater
                 } else {
                     value = random() * exp(-23 * t)
                 }

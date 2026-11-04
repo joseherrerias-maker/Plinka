@@ -26,3 +26,5 @@ A parent or guardian can contact support@pebblesoftapps.com for help or privacy 
 
 Website links
 Settings includes optional links to our support page, website, online policy and your email app. A parent check is required before opening them. Website visits are separate from the offline app and are covered by the website privacy notice at https://pebblesoftapps.com/privacy/.
+
+Pluki remembers up to three days of use, whether music has been saved, and the last app version that requested a rating. These settings stay on the device.
