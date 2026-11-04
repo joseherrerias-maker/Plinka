@@ -1,3 +1,3 @@
-Pluki 1.1 / internal Build 19, based on Build 18 song import. Codemagic assigns the uploaded build number. Select feature/duo-review-drums for TestFlight and iPad ZIP.
+Pluki 1.1 / internal Build 19, based on Build 18 song import. Codemagic assigns the uploaded build number. Select main for TestFlight and iPad ZIP.
 Test on Duo opened, closed, rotated and while looping: confirm the same song, scroll position when editing, grid/tap alignment and reachable controls. Check ordinary iPhone and iPad. Editing while playing remains intentionally disabled.
 Compare bass drum on phone speakers in editor and saved video. After three distinct days and saving a nonempty song, Help & About > For parents requires a fresh challenge before a once-per-version StoreKit request. TestFlight does not display the system prompt. Debug StoreKit testing and eligibility checks are separate.

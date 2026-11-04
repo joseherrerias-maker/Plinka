@@ -3,7 +3,7 @@ name: Plinka iOS compile
 on:
   workflow_dispatch:
   push:
-    branches: [main, feature/song-import, feature/duo-review-drums]
+    branches: [main]
     paths:
       - "ios/**"
       - ".github/workflows/ios-compile.yml"
