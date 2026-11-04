@@ -1,0 +1,1 @@
+Use one Codemagic workflow on main. Match its display name, the app label and the Apple upload number. Increment deliberately for a new upload; keep the number on retries before upload. Never derive it from the CI run counter.
