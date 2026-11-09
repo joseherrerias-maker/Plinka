@@ -14,6 +14,9 @@ final class PlinkaAudio: ObservableObject {
 
     private let engine = AVAudioEngine()
     private let player = AVAudioPlayerNode()
+    private let homePlayer = AVAudioPlayerNode()
+    private var homeBuffer: AVAudioPCMBuffer?
+    private var homeFadeTask: Task<Void, Never>?
     private let format = AVAudioFormat(commonFormat: .pcmFormatFloat32,
                                        sampleRate: 44_100, channels: 1, interleaved: false)!
     private var activeBuffer: AVAudioPCMBuffer?
@@ -29,6 +32,8 @@ final class PlinkaAudio: ObservableObject {
     init() {
         engine.attach(player)
         engine.connect(player, to: engine.mainMixerNode, format: format)
+        engine.attach(homePlayer)
+        engine.connect(homePlayer, to: engine.mainMixerNode, format: format)
         engine.mainMixerNode.outputVolume = 0.72
         for instrument in Self.recordedInstruments {
             guard let url = Bundle.main.url(forResource: instrument.rawValue,
@@ -68,6 +73,57 @@ final class PlinkaAudio: ObservableObject {
         try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default)
         try AVAudioSession.sharedInstance().setActive(true)
         if !engine.isRunning { try engine.start() }
+    }
+
+    // The home music uses the same notes and instruments as the editable sample.
+    // Ambient audio respects the device's silent switch; editor sounds stay unchanged.
+    func startHomeTheme() {
+        guard !isPlaying else { return }
+        homeFadeTask?.cancel()
+        homeFadeTask = nil
+        if homePlayer.isPlaying {
+            homePlayer.volume = 0.23
+            return
+        }
+        do {
+            try AVAudioSession.sharedInstance().setCategory(.ambient, mode: .default, options: [.mixWithOthers])
+            try AVAudioSession.sharedInstance().setActive(true)
+            if !engine.isRunning { try engine.start() }
+            var theme = SampleSong.plukiTheme.song
+            theme.loop = true
+            let rendered = render(song: theme)
+            homeBuffer = rendered.buffer
+            homePlayer.volume = 0.23
+            homePlayer.scheduleBuffer(rendered.buffer, at: nil, options: [.loops])
+            homePlayer.play()
+        } catch {
+            homePlayer.stop()
+            homeBuffer = nil
+            // Home audio is optional; never block opening the music editor.
+        }
+    }
+
+    func stopHomeTheme(fade: Bool = true) {
+        homeFadeTask?.cancel()
+        homeFadeTask = nil
+        guard homePlayer.isPlaying else { homeBuffer = nil; return }
+        guard fade else {
+            homePlayer.stop()
+            homeBuffer = nil
+            return
+        }
+        homeFadeTask = Task { @MainActor [weak self] in
+            guard let self else { return }
+            let startingVolume = self.homePlayer.volume
+            for step in 1...8 {
+                try? await Task.sleep(for: .milliseconds(32))
+                guard !Task.isCancelled else { return }
+                self.homePlayer.volume = startingVolume * Float(8 - step) / 8.0
+            }
+            self.homePlayer.stop()
+            self.homeBuffer = nil
+            self.homeFadeTask = nil
+        }
     }
 
     func preview(_ instrument: Instrument, row: Int) {

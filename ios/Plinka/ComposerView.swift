@@ -16,6 +16,7 @@ struct ComposerView: View {
     @StateObject private var audio = PlinkaAudio()
     @Environment(\.scenePhase) private var scenePhase
     @State private var showHome = true
+    @AppStorage("pluki-start-music-enabled") private var homeMusicEnabled = true
     @State private var confirmNew = false
     @State private var confirmClear = false
     @State private var showSongMenu = false
@@ -81,7 +82,10 @@ struct ComposerView: View {
             #endif
         }
         .task {
-            if scenePhase == .active { ReviewMilestone.recordDay() }
+            if scenePhase == .active {
+                ReviewMilestone.recordDay()
+                if showHome && homeMusicEnabled { audio.startHomeTheme() }
+            }
             #if DEBUG
             if ProcessInfo.processInfo.arguments.contains("--parent-keypad-check") {
                 store.openSample(SampleSong.all[0])
@@ -94,6 +98,20 @@ struct ComposerView: View {
             }
             await runVisualTourIfRequested()
             #endif
+        }
+        .onChange(of: showHome) { _, isHome in
+            if isHome && homeMusicEnabled && scenePhase == .active {
+                audio.startHomeTheme()
+            } else {
+                audio.stopHomeTheme()
+            }
+        }
+        .onChange(of: homeMusicEnabled) { _, enabled in
+            if enabled && showHome && scenePhase == .active {
+                audio.startHomeTheme()
+            } else {
+                audio.stopHomeTheme()
+            }
         }
         .fullScreenCover(isPresented: $showRename, onDismiss: { renameFocused = false }) { renameSongSheet }
         .sheet(isPresented: $showSettings, onDismiss: { settingsPath = [] }) { settings }
@@ -139,7 +157,12 @@ struct ComposerView: View {
             Text("This will remove every note from the current song.")
         }
         .onChange(of: scenePhase) { _, phase in
-            if phase == .active { ReviewMilestone.recordDay() }
+            if phase == .active {
+                ReviewMilestone.recordDay()
+                if showHome && homeMusicEnabled { audio.startHomeTheme() }
+            } else {
+                audio.stopHomeTheme(fade: false)
+            }
             if phase == .background {
                 audio.pause()
                 parentApproved = false
@@ -289,6 +312,15 @@ struct ComposerView: View {
             Text("Make a little music")
                 .font(.system(.title3, design: .rounded, weight: .bold))
                 .multilineTextAlignment(.center)
+            Button { homeMusicEnabled.toggle() } label: {
+                Image(systemName: homeMusicEnabled ? "speaker.wave.2.fill" : "speaker.slash.fill")
+                    .font(.system(size: 18, weight: .semibold))
+                    .foregroundStyle(PlukiStyle.ink)
+                    .frame(width: 44, height: 44)
+                    .background(.white.opacity(0.7), in: Circle())
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel(homeMusicEnabled ? "Mute start screen melody" : "Play start screen melody")
         }
         .padding(20)
         .background(PlukiStyle.paper.opacity(0.85), in: RoundedRectangle(cornerRadius: 28))
@@ -857,6 +889,25 @@ private struct SoundPositionKey: PreferenceKey {
     }
 }
 
+private struct PlayingSticker: View {
+    let instrument: Instrument
+    let active: Bool
+    let reduceMotion: Bool
+    @State private var bouncing = false
+
+    var body: some View {
+        InstrumentSticker(instrument: instrument)
+            .scaleEffect(bouncing ? 1.10 : 1.0)
+            .task(id: active && !reduceMotion) {
+                guard active, !reduceMotion else { bouncing = false; return }
+                withAnimation(.easeOut(duration: 0.08)) { bouncing = true }
+                try? await Task.sleep(for: .milliseconds(95))
+                guard !Task.isCancelled else { return }
+                withAnimation(.easeInOut(duration: 0.11)) { bouncing = false }
+            }
+    }
+}
+
 private struct InstrumentSticker: View {
     let instrument: Instrument
     var body: some View {
@@ -923,13 +974,14 @@ private struct StaffMetrics: Equatable {
     var cell: CGFloat { short ? 60 : 84 }
     var gutter: CGFloat { short ? 60 : 90 }
     var width: CGFloat { gutter + CGFloat(steps) * cell + 16 }
-    var sticker: CGFloat { min(short ? 48 : 78, row * (short ? 3.4 : 2.6)) }
+    var sticker: CGFloat { min(short ? 57.6 : 93.6, row * (short ? 4.08 : 3.12)) }
     func x(_ step: Double) -> CGFloat { gutter + (CGFloat(step) + 0.5) * cell }
 }
 
 private struct StaffContent: View {
     @ObservedObject var store: SongStore
     @ObservedObject var audio: PlinkaAudio
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     let metrics: StaffMetrics
 
     var body: some View {
@@ -954,18 +1006,16 @@ private struct StaffContent: View {
                     .allowsHitTesting(false)
             }
             ForEach(store.song.notes) { note in
-                let active = audio.isPlaying && Int(audio.playheadStep ?? -1) == note.step
-                InstrumentSticker(instrument: note.instrument)
+                let active = audio.isPlaying && !audio.isPaused && Int(audio.playheadStep ?? -1) == note.step
+                PlayingSticker(instrument: note.instrument, active: active, reduceMotion: reduceMotion)
                     .frame(width: metrics.sticker, height: metrics.sticker)
-                    .background {
-                        if active { Circle().fill(PlukiStyle.blue.opacity(0.18)).padding(-3) }
-                    }
                     .overlay {
                         if store.selectedID == note.id && !audio.isPlaying {
                             RoundedRectangle(cornerRadius: 12).strokeBorder(PlukiStyle.blue, lineWidth: 2).padding(-2)
                         }
                     }
-                    .frame(minWidth: 44, minHeight: 44)
+                    // Limit hit targets to their beat cell even when artwork is larger.
+                    .frame(width: max(44, metrics.cell - 4), height: max(44, metrics.sticker))
                     .contentShape(Rectangle())
                     .position(x: metrics.x(Double(note.step)), y: metrics.top + CGFloat(note.row) * metrics.row)
                     .onTapGesture {

@@ -176,6 +176,21 @@ struct SampleSong: Identifiable {
         return melody + accents.filter { occupied.insert("\($0.step):\($0.row)").inserted }
     }
 
+    // Pluki's original, gentle start-screen melody, also editable in Samples.
+    static var plukiTheme: SampleSong {
+        let pitches = [67, 69, 71, 72, 74, 72, 71, 69,
+                       67, 69, 72, 74, 72, 71, 69, 67]
+        let rhythm = [2, 2, 2, 4, 2, 2, 2, 4,
+                      2, 2, 2, 4, 2, 2, 2, 6]
+        let melody = phrase(pitches, durations: rhythm, instrument: .piano)
+        let softBells = [MusicNote(step: 10, row: 8, instrument: .bells),
+                         MusicNote(step: 26, row: 8, instrument: .bells)]
+        let song = Song(title: "Pluki Theme", tempo: 112,
+                        notes: decorate(melody, with: softBells), sheetSteps: 48)
+        return SampleSong(id: "pluki-theme",
+                          detail: "Original · gentle piano melody with soft bells", song: song)
+    }
+
     private static var twinkle: Song {
         let a = [67,67,74,74,76,76,74,72,72,71,71,69,69,67]
         let b = [74,74,72,72,71,71,69,74,74,72,72,71,71,69]
@@ -264,6 +279,7 @@ struct SampleSong: Identifiable {
     }
 
     static let all: [SampleSong] = [
+        plukiTheme,
         SampleSong(id: "frere-jacques", detail: "Traditional · flute and xylophone verses", song: frereJacques),
         SampleSong(id: "ode-to-joy", detail: "Beethoven theme · piano and flute variation", song: odeToJoy),
         SampleSong(id: "animal-parade", detail: "Original · six animal friends and a bell finale", song: animalParade),
