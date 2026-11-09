@@ -91,7 +91,7 @@ final class PlinkaAudio: ObservableObject {
             if !engine.isRunning { try engine.start() }
             var theme = SampleSong.plukiTheme.song
             theme.loop = true
-            let rendered = render(song: theme)
+            let rendered = render(song: theme, exactLoopSteps: theme.sheetSteps)
             homeBuffer = rendered.buffer
             homePlayer.volume = 0.23
             homePlayer.scheduleBuffer(rendered.buffer, at: nil, options: [.loops])
@@ -252,7 +252,8 @@ final class PlinkaAudio: ObservableObject {
         let lastStep: Int
     }
 
-    private func render(song: Song, minimumDuration: TimeInterval = 0) -> RenderResult {
+    private func render(song: Song, minimumDuration: TimeInterval = 0,
+                        exactLoopSteps: Int? = nil) -> RenderResult {
         let bpm = max(65, min(160, song.tempo))
         let stepSeconds = 30.0 / bpm
         let last = song.notes.map(\.step).max() ?? 0
@@ -264,9 +265,12 @@ final class PlinkaAudio: ObservableObject {
             let tail = recordings[note.instrument].map { Double($0.count) / format.sampleRate / ratio } ?? 0.60
             return Double(note.step) * stepSeconds + tail + 0.03
         }.max() ?? 0.63
-        let duration = max(minimumDuration, song.loop
-            ? max(8 * stepSeconds, normalEnd)
-            : max(1.4 * stepSeconds, normalEnd))
+        // Only the home theme needs a rhythmically exact loop; the editor and
+        // exported songs retain their natural note tails and previous timing.
+        let duration = exactLoopSteps.map { max(minimumDuration, Double($0) * stepSeconds) }
+            ?? max(minimumDuration, song.loop
+                ? max(8 * stepSeconds, normalEnd)
+                : max(1.4 * stepSeconds, normalEnd))
         let frameCount = AVAudioFrameCount(ceil(duration * format.sampleRate))
         let buffer = AVAudioPCMBuffer(pcmFormat: format, frameCapacity: frameCount)!
         buffer.frameLength = frameCount
@@ -290,6 +294,16 @@ final class PlinkaAudio: ObservableObject {
         for i in 0..<Int(frameCount) {
             // Soft limit stacked notes without harsh clipping.
             samples[i] = Float(tanh(Double(samples[i]) * 0.8))
+        }
+        if exactLoopSteps != nil {
+            // Fade only the final 15 ms to prevent a click at the home loop seam.
+            let fadeFrames = min(Int(frameCount), Int(format.sampleRate * 0.015))
+            if fadeFrames > 0 {
+                for fadeIndex in 0..<fadeFrames {
+                    let outputIndex = Int(frameCount) - fadeFrames + fadeIndex
+                    samples[outputIndex] *= Float(fadeFrames - fadeIndex - 1) / Float(fadeFrames)
+                }
+            }
         }
         return RenderResult(buffer: buffer, duration: Double(frameCount) / format.sampleRate,
                             stepSeconds: stepSeconds, lastStep: last)

@@ -176,19 +176,33 @@ struct SampleSong: Identifiable {
         return melody + accents.filter { occupied.insert("\($0.step):\($0.row)").inserted }
     }
 
-    // Pluki's original, gentle start-screen melody, also editable in Samples.
+    // Playful original three-phrase signature melody: C-major, close-spaced notes,
+    // a little rhythmic syncopation, and a clear, happy C5 resolution.
+    // Each phrase occupies exactly 16 half-beat steps; the home loop spans 48.
     static var plukiTheme: SampleSong {
-        let pitches = [67, 69, 71, 72, 74, 72, 71, 69,
-                       67, 69, 72, 74, 72, 71, 69, 67]
-        let rhythm = [2, 2, 2, 4, 2, 2, 2, 4,
-                      2, 2, 2, 4, 2, 2, 2, 6]
-        let melody = phrase(pitches, durations: rhythm, instrument: .piano)
-        let softBells = [MusicNote(step: 10, row: 8, instrument: .bells),
-                         MusicNote(step: 26, row: 8, instrument: .bells)]
-        let song = Song(title: "Pluki Theme", tempo: 112,
-                        notes: decorate(melody, with: softBells), sheetSteps: 48)
+        let phrases: [[Int]] = [
+            [72, 76, 77, 76, 72, 74, 76, 72, 69, 72],
+            [74, 76, 77, 76, 74, 72, 74, 76, 72, 74],
+            [76, 77, 76, 74, 72, 76, 74, 71, 69, 72]
+        ]
+        let rhythms: [[Int]] = [
+            [2, 1, 1, 2, 2, 1, 1, 2, 2, 2],
+            [1, 1, 2, 2, 1, 1, 2, 2, 2, 2],
+            [2, 1, 1, 2, 1, 1, 2, 2, 2, 2]
+        ]
+        let melody = zip(phrases, rhythms).enumerated().flatMap { index, phraseData in
+            phrase(phraseData.0, durations: phraseData.1, instrument: .piano,
+                   start: index * 16)
+        }
+        // Soft musical pulses give the melody bounce without drums or animals.
+        let accents = [0, 8, 16, 24, 32, 40].enumerated().map { index, step in
+            MusicNote(step: step, row: index.isMultiple(of: 2) ? 8 : 6,
+                      instrument: .xylophone)
+        }
+        let song = Song(title: "Pluki Theme", tempo: 132,
+                        notes: decorate(melody, with: accents), sheetSteps: 48)
         return SampleSong(id: "pluki-theme",
-                          detail: "Original · gentle piano melody with soft bells", song: song)
+                          detail: "Original · joyful piano melody with gentle xylophone rhythm", song: song)
     }
 
     private static var twinkle: Song {
