@@ -16,7 +16,6 @@ struct ComposerView: View {
     @StateObject private var audio = PlinkaAudio()
     @Environment(\.scenePhase) private var scenePhase
     @State private var showHome = true
-    @AppStorage("pluki-start-music-enabled") private var homeMusicEnabled = true
     @State private var confirmNew = false
     @State private var confirmClear = false
     @State private var showSongMenu = false
@@ -84,7 +83,7 @@ struct ComposerView: View {
         .task {
             if scenePhase == .active {
                 ReviewMilestone.recordDay()
-                if showHome && homeMusicEnabled { audio.startHomeTheme() }
+                if showHome { audio.startHomeTheme() }
             }
             #if DEBUG
             if ProcessInfo.processInfo.arguments.contains("--parent-keypad-check") {
@@ -100,14 +99,7 @@ struct ComposerView: View {
             #endif
         }
         .onChange(of: showHome) { _, isHome in
-            if isHome && homeMusicEnabled && scenePhase == .active {
-                audio.startHomeTheme()
-            } else {
-                audio.stopHomeTheme()
-            }
-        }
-        .onChange(of: homeMusicEnabled) { _, enabled in
-            if enabled && showHome && scenePhase == .active {
+            if isHome && scenePhase == .active {
                 audio.startHomeTheme()
             } else {
                 audio.stopHomeTheme()
@@ -159,7 +151,7 @@ struct ComposerView: View {
         .onChange(of: scenePhase) { _, phase in
             if phase == .active {
                 ReviewMilestone.recordDay()
-                if showHome && homeMusicEnabled { audio.startHomeTheme() }
+                if showHome { audio.startHomeTheme() }
             } else {
                 audio.stopHomeTheme(fade: false)
             }
@@ -312,15 +304,6 @@ struct ComposerView: View {
             Text("Make a little music")
                 .font(.system(.title3, design: .rounded, weight: .bold))
                 .multilineTextAlignment(.center)
-            Button { homeMusicEnabled.toggle() } label: {
-                Image(systemName: homeMusicEnabled ? "speaker.wave.2.fill" : "speaker.slash.fill")
-                    .font(.system(size: 18, weight: .semibold))
-                    .foregroundStyle(PlukiStyle.ink)
-                    .frame(width: 44, height: 44)
-                    .background(.white.opacity(0.7), in: Circle())
-            }
-            .buttonStyle(.plain)
-            .accessibilityLabel(homeMusicEnabled ? "Mute start screen melody" : "Play start screen melody")
         }
         .padding(20)
         .background(PlukiStyle.paper.opacity(0.85), in: RoundedRectangle(cornerRadius: 28))
