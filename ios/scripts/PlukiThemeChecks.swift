@@ -15,7 +15,9 @@ struct PlukiThemeChecks {
         precondition(melody.sorted { $0.step < $1.step }.last?.row == 3) // C5 resolution
         let onsets = melody.map(\.step).sorted()
         precondition(onsets.first == 0 && onsets.last == 46)
-        precondition(zip(onsets, onsets.dropFirst()).allSatisfy { $1 - $0 <= 2 })
+        precondition(zip(onsets, onsets.dropFirst()).allSatisfy { previous, next in
+            next - previous <= 2
+        })
         precondition(song.notes.allSatisfy { [.piano, .xylophone].contains($0.instrument) })
         precondition(song.notes.allSatisfy { (0..<song.stepCount).contains($0.step) && (0..<9).contains($0.row) })
         precondition(Set(song.notes.map { "\($0.step):\($0.row)" }).count == song.notes.count)
