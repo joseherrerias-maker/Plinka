@@ -28,6 +28,7 @@ struct ComposerView: View {
     @State private var showSongs = false
     @State private var showSamples = false
     @State private var showImport = false
+    @State private var openImportAfterSettingsDismiss = false
     @State private var importedSong: Song?
     @State private var confirmImport = false
     @State private var importError: String?
@@ -106,7 +107,14 @@ struct ComposerView: View {
             }
         }
         .fullScreenCover(isPresented: $showRename, onDismiss: { renameFocused = false }) { renameSongSheet }
-        .sheet(isPresented: $showSettings, onDismiss: { settingsPath = [] }) { settings }
+        .sheet(isPresented: $showSettings, onDismiss: {
+            settingsPath = []
+            // Present Files after dismissing the parent sheet, never over it.
+            if openImportAfterSettingsDismiss {
+                openImportAfterSettingsDismiss = false
+                if scenePhase == .active { showImport = true }
+            }
+        }) { settings }
         .sheet(isPresented: $showSongs) { savedSongsView }
         .sheet(isPresented: $showSamples) { samplesView }
         .fileImporter(isPresented: $showImport,
@@ -158,6 +166,7 @@ struct ComposerView: View {
             if phase == .background {
                 audio.pause()
                 parentApproved = false
+                openImportAfterSettingsDismiss = false
                 settingsPath.removeAll()
             }
         }
@@ -412,9 +421,6 @@ struct ComposerView: View {
         }
         songMenuRow("Open song", icon: "folder.fill", color: .orange) {
             audio.stop(); showSongs = true
-        }
-        songMenuRow("Import song", icon: "square.and.arrow.down", color: PlukiStyle.blue) {
-            audio.stop(); showImport = true
         }
         if inSong {
             songMenuRow("Save song", icon: "square.and.arrow.down.fill", color: PlukiStyle.green) {
@@ -816,6 +822,15 @@ struct ComposerView: View {
                 case .parents:
                     List {
                         Text("Songs stay on this device. You can export a song as a video from the song menu.")
+                        Section("Project tools") {
+                            Button {
+                                audio.stop()
+                                openImportAfterSettingsDismiss = true
+                                showSettings = false
+                            } label: {
+                                Label("Import Pluki Project", systemImage: "square.and.arrow.down")
+                            }
+                        }
                         NavigationLink("Privacy policy") { PlukiPrivacyView() }
                     }
                     .navigationTitle("For parents")

@@ -6,7 +6,8 @@ The original 1.1 (26) theme was too slow, interrupted and melancholy. Build 27 c
 - Increase tempo from 112 to 132 BPM, use 30 close-spaced piano melody notes across exactly 48 half-beat steps (approximately 10.9 seconds) with 6 soft xylophone accompaniment notes. No animals, voices, drums or distracting effects.
 - Rhythms are 1- or 2-step intervals throughout, with variation across three phrases and no dead air or long rests.
 - Home playback uses a precisely measured 48-step looping buffer and a 15 ms seam taper. The editable Samples entry uses the identical 36-note arrangement; ordinary editor and export audio timing is unchanged.
-- Preserve soft ambient playback, automatic silent-mode behavior, 20%-larger staff stickers, playback bounce, save and import, parent review gate, and iPhone Duo UI.
+- Preserve soft ambient playback, automatic silent-mode behavior, 20%-larger staff stickers, playback bounce, save/import validation, parent review gate, and iPhone Duo UI.
+- Remove Import song from the start/editor song menus, retaining the same validated .pluki import flow exclusively under Help & About → For parents → Import Pluki Project (behind the existing parent gate). Keep Export video in the editor and do not add editable-project export. Dismiss the settings sheet before showing the Files picker.
 
 - Remove the unnecessary start-screen speaker button entirely. The Pluki Theme starts automatically when the home screen is active and remains quiet in device silent mode; no old per-app mute preference can suppress playback.
 
