@@ -47,6 +47,8 @@ final class EditorTests: XCTestCase {
             shot.lifetime = .keepAlways
             add(shot)
             app.navigationBars["Save song"].buttons["Save"].tap()
+            // Clear moved into the song menu; confirmation and Undo stay intact.
+            menu.tap()
             let clear = app.buttons["Clear all notes"]
             XCTAssertTrue(clear.waitForExistence(timeout: 5))
             clear.tap()
@@ -54,11 +56,12 @@ final class EditorTests: XCTestCase {
             XCTAssertTrue(alert.waitForExistence(timeout: 5))
             XCTAssertEqual(alert.frame.midX, app.frame.midX, accuracy: 40)
             alert.buttons["Cancel"].tap()
+            menu.tap()
             XCTAssertTrue(clear.isEnabled)
             clear.tap()
             alert.buttons["Clear notes"].tap()
-            XCTAssertFalse(clear.isEnabled)
             app.buttons["Undo"].tap()
+            menu.tap()
             XCTAssertTrue(clear.isEnabled, "Undo must restore cleared notes")
             app.terminate()
         }

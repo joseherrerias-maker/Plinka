@@ -321,6 +321,8 @@ struct SavedSong: Codable, Identifiable {
     var id: UUID = UUID()
     var song: Song
     var savedAt: Date = Date()
+    // Optional so pre-Build-29 libraries decode without a migration.
+    var isRecovery: Bool? = nil
 }
 
 @MainActor
@@ -339,12 +341,59 @@ final class SongStore: ObservableObject {
     private var activeSavedID: UUID?
     private var libraryReadable = true
     private static let libraryKey = "pluki-saved-songs-v1"
+    private static let sampleBaselineKey = "pluki-sample-baseline-v1"
+    private var sampleBaseline: Song?
+
+    // Having touched New before does not mean there is music to continue.
+    var hasMeaningfulDraft: Bool { hasDraft && !song.notes.isEmpty }
 
     var hasUnsavedChanges: Bool {
         if let saved = savedSongs.first(where: { $0.id == activeSavedID }) {
             return saved.song != song
         }
+        if let sampleBaseline { return song != sampleBaseline }
         return song != Song()
+    }
+
+    private var needsRecovery: Bool { hasUnsavedChanges && !song.notes.isEmpty }
+
+    private func updateSampleBaseline(_ sample: Song?) {
+        sampleBaseline = sample
+        if let sample, let data = try? JSONEncoder().encode(sample) {
+            defaults.set(data, forKey: Self.sampleBaselineKey)
+        } else {
+            defaults.removeObject(forKey: Self.sampleBaselineKey)
+        }
+    }
+
+    // All navigation that replaces the editor goes through this guard.
+    // Preserve the exact composition (including UUIDs, tempo, loop and title)
+    // without changing the working song or overwriting an existing saved item.
+    @discardableResult
+    private func preserveBeforeReplacing() -> Bool {
+        guard needsRecovery else { return true }
+        guard libraryReadable else {
+            libraryError = "Could not protect your unfinished song because saved songs could not be read. Your song is still open."
+            return false
+        }
+        if savedSongs.contains(where: { $0.isRecovery == true && $0.song == song }) {
+            return true // This unchanged state already has a recoverable copy.
+        }
+        var entries = savedSongs
+        entries.append(SavedSong(song: song, isRecovery: true))
+        do {
+            let bytes = try JSONEncoder().encode(entries)
+            defaults.set(bytes, forKey: Self.libraryKey)
+            guard defaults.data(forKey: Self.libraryKey) == bytes else {
+                libraryError = "Could not save a recovery copy. Your unfinished song is still open."
+                return false
+            }
+            savedSongs = entries.sorted { $0.savedAt > $1.savedAt }
+            return true
+        } catch {
+            libraryError = "Could not save a recovery copy. Your unfinished song is still open."
+            return false
+        }
     }
 
     @discardableResult
@@ -367,8 +416,13 @@ final class SongStore: ObservableObject {
         do {
             let data = try JSONEncoder().encode(entries)
             defaults.set(data, forKey: Self.libraryKey)
+            guard defaults.data(forKey: Self.libraryKey) == data else {
+                libraryError = "Your song could not be saved. Please try again."
+                return false
+            }
             savedSongs = entries.sorted { $0.savedAt > $1.savedAt }
             activeSavedID = id
+            updateSampleBaseline(nil)
             defaults.set(id.uuidString, forKey: "pluki-active-saved-song")
             song = snapshot
             if !snapshot.notes.isEmpty { defaults.set(true, forKey: "review.savedMusic") }
@@ -393,15 +447,20 @@ final class SongStore: ObservableObject {
                 MusicNote(step: $0.step, row: $0.row, instrument: $0.instrument)
             }
             var entries = savedSongs
-            if hasUnsavedChanges {
-                entries.append(SavedSong(song: song))
+            if needsRecovery && !entries.contains(where: { $0.isRecovery == true && $0.song == song }) {
+                entries.append(SavedSong(song: song, isRecovery: true))
             }
             let entry = SavedSong(song: imported)
             entries.append(entry)
             let data = try JSONEncoder().encode(entries)
             defaults.set(data, forKey: Self.libraryKey)
+            guard defaults.data(forKey: Self.libraryKey) == data else {
+                libraryError = "Import could not be saved. Your song is still open."
+                return false
+            }
             savedSongs = entries.sorted { $0.savedAt > $1.savedAt }
-            openSong(entry)
+            // The old draft was saved in the same verified transaction.
+            replaceWithSavedSong(entry)
             return true
         } catch {
             libraryError = error.localizedDescription
@@ -433,20 +492,31 @@ final class SongStore: ObservableObject {
         }
     }
 
-    func openSong(_ saved: SavedSong) {
+    private func replaceWithSavedSong(_ saved: SavedSong) {
         sessionID = UUID()
-        song = saved.song
         activeSavedID = saved.id
+        updateSampleBaseline(nil)
         defaults.set(saved.id.uuidString, forKey: "pluki-active-saved-song")
+        song = saved.song
         selectedID = nil
         erasing = false
         undoHistory.removeAll()
         redoHistory.removeAll()
     }
 
-    func newSong() {
+    @discardableResult
+    func openSong(_ saved: SavedSong) -> Bool {
+        guard preserveBeforeReplacing() else { return false }
+        replaceWithSavedSong(saved)
+        return true
+    }
+
+    @discardableResult
+    func newSong() -> Bool {
+        guard preserveBeforeReplacing() else { return false }
         sessionID = UUID()
         activeSavedID = nil
+        updateSampleBaseline(nil)
         defaults.removeObject(forKey: "pluki-active-saved-song")
         song = Song()
         chosen = .piano
@@ -454,17 +524,22 @@ final class SongStore: ObservableObject {
         erasing = false
         undoHistory.removeAll()
         redoHistory.removeAll()
+        return true
     }
 
-    func openSample(_ sample: SampleSong) {
+    @discardableResult
+    func openSample(_ sample: SampleSong) -> Bool {
+        guard preserveBeforeReplacing() else { return false }
         sessionID = UUID()
         activeSavedID = nil
         defaults.removeObject(forKey: "pluki-active-saved-song")
+        updateSampleBaseline(sample.song)
         song = sample.song
         selectedID = nil
         erasing = false
         undoHistory.removeAll()
         redoHistory.removeAll()
+        return true
     }
 
     @Published var chosen: Instrument = .piano
@@ -498,6 +573,11 @@ final class SongStore: ObservableObject {
             }
         }
         activeSavedID = defaults.string(forKey: "pluki-active-saved-song").flatMap(UUID.init(uuidString:))
+        if activeSavedID == nil,
+           let bytes = defaults.data(forKey: Self.sampleBaselineKey),
+           let baseline = try? JSONDecoder().decode(Song.self, from: bytes) {
+            sampleBaseline = baseline
+        }
     }
 
     private func persist() {

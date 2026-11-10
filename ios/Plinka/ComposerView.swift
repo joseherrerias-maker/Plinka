@@ -16,7 +16,6 @@ struct ComposerView: View {
     @StateObject private var audio = PlinkaAudio()
     @Environment(\.scenePhase) private var scenePhase
     @State private var showHome = true
-    @State private var confirmNew = false
     @State private var confirmClear = false
     @State private var showSongMenu = false
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -44,8 +43,6 @@ struct ComposerView: View {
     @State private var showVideoExport = false
     @State private var saveTitle = ""
     @FocusState private var saveNameFocused: Bool
-    @State private var pendingSong: SavedSong?
-    @State private var confirmOpen = false
     @State private var pendingDelete: SavedSong?
     @State private var confirmDelete = false
     @State private var soundGroup: SoundGroup = .instruments
@@ -165,13 +162,6 @@ struct ComposerView: View {
         .alert("Saved songs", isPresented: Binding(get: { store.libraryError != nil }, set: { if !$0 { store.libraryError = nil } })) {
             Button("OK") { store.libraryError = nil }
         } message: { Text(store.libraryError ?? "") }
-        .confirmationDialog("Save your current song before starting a new one?", isPresented: $confirmNew, titleVisibility: .visible) {
-            Button("Save and start new") {
-                if store.saveSong(named: store.song.title) { startNewSong() }
-            }
-            Button("Start without saving", role: .destructive) { startNewSong() }
-            Button("Cancel", role: .cancel) {}
-        }
         .alert("Clear all notes?", isPresented: $confirmClear) {
             Button("Clear notes", role: .destructive) { audio.stop(); store.clear() }
             Button("Cancel", role: .cancel) {}
@@ -306,15 +296,21 @@ struct ComposerView: View {
                 && size.height <= size.width * 1.25
             let short = size.height < 500 || square
             let narrow = geometry.size.width < (short ? 780 : 900)
+            // Small iPhone landscape has enough width for one toolbar row but
+            // not enough height for the old stacked toolbar and nine pitches.
+            let compactLandscape = size.height < 500 && size.width >= 540
             let padding: CGFloat = short ? 8 : 16
             let gap: CGFloat = short ? 8 : 12
-            let toolbar: CGFloat = narrow ? 108 : (short ? 52 : 72)
+            let toolbar: CGFloat = compactLandscape ? 52 : (narrow ? 108 : (short ? 52 : 72))
             let tray: CGFloat = short ? 94 : 140
             let staffHeight = max(100, geometry.size.height - 2 * padding - 2 * gap - toolbar - tray)
             VStack(spacing: gap) {
-                toolbarView(narrow: narrow, short: short, iconOnlyBrand: geometry.size.width < 400)
+                toolbarView(narrow: narrow, short: short,
+                            iconOnlyBrand: geometry.size.width < 400,
+                            compactLandscape: compactLandscape)
                     .frame(height: toolbar)
-                StaffView(store: store, audio: audio, height: staffHeight, short: short)
+                StaffView(store: store, audio: audio, height: staffHeight, short: short,
+                          compactPhone: size.width < 440 && !short)
                     .id(store.sessionID)
                     .frame(height: staffHeight)
                 instrumentTray(short: short)
@@ -344,10 +340,10 @@ struct ComposerView: View {
     private func homeScreen(size: CGSize) -> some View {
         ScrollView {
             Group {
-                if size.height < 500 && size.width > 600 {
-                    HStack(spacing: 28) {
-                        homeBrand
-                        homeMenu
+                if size.height < 500 && size.width >= 540 {
+                    HStack(alignment: .top, spacing: 14) {
+                        homeBrand.frame(maxWidth: 200)
+                        homeMenu.frame(maxWidth: 340)
                     }
                 } else {
                     VStack(spacing: 24) {
@@ -356,7 +352,7 @@ struct ComposerView: View {
                     }
                 }
             }
-            .padding(24)
+            .padding(size.height < 500 ? 12 : 24)
             .frame(maxWidth: .infinity)
             .frame(minHeight: size.height)
         }
@@ -369,19 +365,69 @@ struct ComposerView: View {
 
     private var homeMenu: some View {
         VStack(spacing: 6) {
-            navigationActions(inSong: false)
-            if store.hasDraft {
-                Divider().padding(.horizontal, 12)
-                songMenuRow("Continue song", icon: "play.circle.fill", color: PlukiStyle.green) {
-                    showHome = false
+            Button {
+                if store.hasMeaningfulDraft { showHome = false }
+                else { startNewSong() }
+            } label: {
+                HStack(spacing: 12) {
+                    Image(systemName: store.hasMeaningfulDraft ? "play.fill" : "music.note")
+                        .font(.system(size: 26, weight: .bold))
+                        .frame(width: 48, height: 48)
+                        .background(.white.opacity(0.20), in: RoundedRectangle(cornerRadius: 14))
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(store.hasMeaningfulDraft ? "Continue song" : "Make music")
+                            .font(.system(.title3, design: .rounded, weight: .bold))
+                        Text(store.hasMeaningfulDraft ? "Pick up your melody" : "Create your own melody")
+                            .font(.system(.caption, design: .rounded, weight: .medium))
+                            .opacity(0.9)
+                    }
+                    Spacer(minLength: 0)
                 }
+                .foregroundStyle(.white)
+                .padding(12)
+                .frame(maxWidth: .infinity, minHeight: 72)
+                .background(PlukiStyle.green.gradient, in: RoundedRectangle(cornerRadius: 20))
+                .contentShape(RoundedRectangle(cornerRadius: 20))
             }
+            .buttonStyle(.plain)
+            .accessibilityIdentifier("home-primary-action")
+            if store.hasMeaningfulDraft {
+                homeSecondaryRow("New song", icon: "plus.circle") { startNewSong() }
+            }
+            Divider().padding(.horizontal, 8)
+            homeSecondaryRow("Open song", icon: "folder") {
+                audio.stop(); showSongs = true
+            }
+            homeSecondaryRow("Samples", icon: "music.note.list") {
+                audio.stop(); showSamples = true
+            }
+            homeSecondaryRow("Help & About", icon: "info.circle") { showSettings = true }
         }
-        .padding(14)
+        .padding(12)
         .frame(maxWidth: 340)
         .background(PlukiStyle.paper, in: RoundedRectangle(cornerRadius: 28))
         .overlay(RoundedRectangle(cornerRadius: 28).stroke(.white.opacity(0.9), lineWidth: 2))
         .shadow(color: PlukiStyle.ink.opacity(0.15), radius: 14, y: 6)
+    }
+
+    private func homeSecondaryRow(_ title: String, icon: String,
+                                  action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            HStack(spacing: 12) {
+                Image(systemName: icon)
+                    .font(.system(size: 21, weight: .semibold))
+                    .foregroundStyle(PlukiStyle.blue)
+                    .frame(width: 44, height: 44)
+                Text(title)
+                    .font(.system(.callout, design: .rounded, weight: .semibold))
+                    .foregroundStyle(PlukiStyle.ink)
+                Spacer(minLength: 0)
+            }
+            .padding(.horizontal, 8)
+            .frame(maxWidth: .infinity, minHeight: 50)
+            .contentShape(RoundedRectangle(cornerRadius: 14))
+        }
+        .buttonStyle(.plain)
     }
 
     private func songMenuOverlay(size: CGSize) -> some View {
@@ -439,8 +485,7 @@ struct ComposerView: View {
     @ViewBuilder
     private func navigationActions(inSong: Bool) -> some View {
         songMenuRow("New song", icon: "plus.circle.fill", color: PlukiStyle.green) {
-            if inSong && store.hasUnsavedChanges { confirmNew = true }
-            else { startNewSong() }
+            startNewSong()
         }
         songMenuRow("Open song", icon: "folder.fill", color: .orange) {
             audio.stop(); showSongs = true
@@ -451,6 +496,14 @@ struct ComposerView: View {
             }
         }
         if inSong {
+            songMenuRow("Restart playback", icon: "backward.end.fill", color: PlukiStyle.blue) {
+                audio.stop(); audio.start(store.song)
+            }
+            .disabled(store.song.notes.isEmpty)
+            songMenuRow("Clear all notes", icon: "trash", color: .red) {
+                confirmClear = true
+            }
+            .disabled(audio.isPlaying || store.song.notes.isEmpty)
             songMenuRow("Export video", icon: "video.fill", color: .pink) {
                 audio.stop(); showVideoExport = true
             }
@@ -466,15 +519,29 @@ struct ComposerView: View {
     }
 
     private func startNewSong() {
+        guard store.newSong() else { return }
         audio.stop()
-        store.newSong()
         soundGroup = .instruments
         showHome = false
     }
 
-    private func toolbarView(narrow: Bool, short: Bool, iconOnlyBrand: Bool) -> some View {
+    private func toolbarView(narrow: Bool, short: Bool,
+                             iconOnlyBrand: Bool, compactLandscape: Bool) -> some View {
         Group {
-            if narrow {
+            if compactLandscape {
+                HStack(spacing: 6) {
+                    Image(systemName: "music.note")
+                        .font(.system(size: 25, weight: .black))
+                        .foregroundStyle(PlukiStyle.green)
+                        .frame(width: 44, height: 44)
+                        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 15))
+                        .accessibilityLabel("Pluki")
+                    Spacer(minLength: 0)
+                    transport(showRestart: false)
+                    editButtons
+                    tempo(compact: true).frame(width: 98)
+                }
+            } else if narrow {
                 VStack(spacing: 6) {
                     HStack {
                         if iconOnlyBrand {
@@ -491,7 +558,7 @@ struct ComposerView: View {
                         editButtons
                     }
                     HStack(spacing: 8) {
-                        transport
+                        transport()
                         tempo(compact: true)
                     }
                 }
@@ -499,7 +566,7 @@ struct ComposerView: View {
                 HStack(spacing: short ? 8 : 18) {
                     wordmark(small: short)
                     Spacer(minLength: 0)
-                    transport
+                    transport()
                     tempo(compact: short)
                     editButtons
                 }
@@ -519,10 +586,12 @@ struct ComposerView: View {
         .accessibilityLabel("Pluki")
     }
 
-    private var transport: some View {
+    private func transport(showRestart: Bool = true) -> some View {
         HStack(spacing: 6) {
-            tool("backward.end.fill", title: "Restart", disabled: store.song.notes.isEmpty) {
-                audio.stop(); audio.start(store.song)
+            if showRestart {
+                tool("backward.end.fill", title: "Restart", disabled: store.song.notes.isEmpty) {
+                    audio.stop(); audio.start(store.song)
+                }
             }
             Button { audio.playOrPause(store.song) } label: {
                 Image(systemName: audio.isPlaying && !audio.isPaused ? "pause.fill" : "play.fill")
@@ -556,9 +625,6 @@ struct ComposerView: View {
                 store.selectedID = nil
             }
             .accessibilityValue(store.erasing ? "On" : "Off")
-            tool("trash", title: "Clear all notes", disabled: audio.isPlaying || store.song.notes.isEmpty) {
-                confirmClear = true
-            }
             tool("line.3.horizontal", title: "Song menu", selected: showSongMenu) {
                 audio.pause()
                 withAnimation(reduceMotion ? nil : .easeOut(duration: 0.18)) { showSongMenu.toggle() }
@@ -592,8 +658,11 @@ struct ComposerView: View {
     }
 
     private func openSample(_ sample: SampleSong) {
+        guard store.openSample(sample) else {
+            showSamples = false // Reveal the recovery failure alert without replacing music.
+            return
+        }
         audio.stop()
-        store.openSample(sample)
         showHome = false
         showSamples = false
     }
@@ -624,11 +693,13 @@ struct ComposerView: View {
     }
 
     private func openSavedSong(_ saved: SavedSong) {
+        guard store.openSong(saved) else {
+            showSongs = false // Leave the original song open and surface the error.
+            return
+        }
         audio.stop()
-        store.openSong(saved)
         showHome = false
         showSongs = false
-        pendingSong = nil
     }
 
     private var savedSongsView: some View {
@@ -640,16 +711,15 @@ struct ComposerView: View {
                 }
                 ForEach(store.savedSongs) { saved in
                     HStack {
-                    Button {
-                        if store.hasUnsavedChanges {
-                            pendingSong = saved
-                            confirmOpen = true
-                        } else { openSavedSong(saved) }
-                    } label: {
+                    Button { openSavedSong(saved) } label: {
                         VStack(alignment: .leading, spacing: 4) {
                             Text(saved.song.title).font(.headline)
                             Text("\(saved.song.notes.count) notes · \(Int(saved.song.tempo)) BPM")
                                 .font(.subheadline).foregroundStyle(.secondary)
+                            if saved.isRecovery == true {
+                                Label("Recovered draft", systemImage: "arrow.uturn.backward.circle")
+                                    .font(.caption.bold()).foregroundStyle(PlukiStyle.blue)
+                            }
                             Text(saved.savedAt, style: .date).font(.caption).foregroundStyle(.secondary)
                         }.frame(maxWidth: .infinity, alignment: .leading).contentShape(Rectangle())
                     }.buttonStyle(.borderless)
@@ -675,16 +745,6 @@ struct ComposerView: View {
             }
             .navigationTitle("Open song")
             .toolbar { ToolbarItem(placement: .confirmationAction) { Button("Done") { showSongs = false } } }
-            .confirmationDialog("Save your current changes before opening another song?", isPresented: $confirmOpen, titleVisibility: .visible) {
-                Button("Save and open") {
-                    if store.saveSong(named: store.song.title), let id = pendingSong?.id,
-                       let saved = store.savedSongs.first(where: { $0.id == id }) { openSavedSong(saved) }
-                }
-                Button("Open without saving", role: .destructive) {
-                    if let saved = pendingSong { openSavedSong(saved) }
-                }
-                Button("Cancel", role: .cancel) { pendingSong = nil }
-            }
         }
     }
 
@@ -1014,9 +1074,11 @@ private struct StaffView: View {
     @ObservedObject var audio: PlinkaAudio
     let height: CGFloat
     let short: Bool
+    let compactPhone: Bool
 
     var body: some View {
-        let metrics = StaffMetrics(height: height, short: short, steps: store.song.stepCount)
+        let metrics = StaffMetrics(height: height, short: short,
+                                   steps: store.song.stepCount, compactPhone: compactPhone)
         FollowScrollView(audio: audio, metrics: metrics) {
             StaffContent(store: store, audio: audio, metrics: metrics)
         }
@@ -1038,11 +1100,12 @@ private struct StaffMetrics: Equatable {
     let height: CGFloat
     let short: Bool
     let steps: Int
+    let compactPhone: Bool
     var top: CGFloat { short ? 32 : 60 }
     var bottom: CGFloat { short ? 28 : 48 }
     var row: CGFloat { max(5, (height - top - bottom) / 8) }
     var cell: CGFloat { short ? 60 : 84 }
-    var gutter: CGFloat { short ? 60 : 90 }
+    var gutter: CGFloat { short ? 60 : (compactPhone ? 64 : 90) }
     var width: CGFloat { gutter + CGFloat(steps) * cell + 16 }
     var sticker: CGFloat { min(short ? 57.6 : 93.6, row * (short ? 4.08 : 3.12)) }
     func x(_ step: Double) -> CGFloat { gutter + (CGFloat(step) + 0.5) * cell }
@@ -1315,15 +1378,29 @@ enum StaffGridSmokeCheck {
         guard ProcessInfo.processInfo.arguments.contains("--check-staff-grid") else { return }
         let directory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
         var passed = true
+        // Layout math guard for nine complete playable rows on compact phones.
+        // Rendering and actual hit testing still require the device matrix.
+        for metrics in [
+            StaffMetrics(height: 142, short: true, steps: 32, compactPhone: false),
+            StaffMetrics(height: 264, short: false, steps: 32, compactPhone: true),
+            StaffMetrics(height: 600, short: false, steps: 32, compactPhone: false)
+        ] {
+            passed = passed && metrics.cell >= 44
+            for pitch in 0...8 {
+                let center = metrics.top + CGFloat(pitch) * metrics.row
+                passed = passed && center - metrics.sticker / 2 >= 0
+                passed = passed && center + metrics.sticker / 2 <= metrics.height
+            }
+        }
         for short in [false, true] {
             let size = short ? CGSize(width: 820, height: 240) : CGSize(width: 390, height: 600)
-            let grid = StaffGridView(metrics: StaffMetrics(height: size.height, short: short, steps: 32))
+            let grid = StaffGridView(metrics: StaffMetrics(height: size.height, short: short, steps: 32, compactPhone: !short))
             grid.frame = CGRect(origin: .zero, size: CGSize(width: 200, height: 200))
             grid.isHidden = true
             grid.frame = CGRect(origin: .zero, size: size)
             grid.isHidden = false
             for steps in [32, 256, Song.maximumSteps] {
-                let metrics = StaffMetrics(height: size.height, short: short, steps: steps)
+                let metrics = StaffMetrics(height: size.height, short: short, steps: steps, compactPhone: !short)
                 for fraction: CGFloat in [0, 0.5, 1] {
                     let offset = max(0, metrics.width - size.width) * fraction
                     grid.update(metrics: metrics, offset: CGPoint(x: offset, y: 0))

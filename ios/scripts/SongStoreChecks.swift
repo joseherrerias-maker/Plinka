@@ -55,10 +55,10 @@ struct SongStoreChecks {
                 (0..<sample.song.stepCount).contains($0.step) && SongStore.pitches.indices.contains($0.row)
             })
             afterDelete.openSample(sample)
-            precondition(afterDelete.song == sample.song && afterDelete.hasUnsavedChanges)
+            precondition(afterDelete.song == sample.song && !afterDelete.hasUnsavedChanges)
             precondition(!afterDelete.canUndo && !afterDelete.canRedo)
             let draft = SongStore(defaults: defaults)
-            precondition(draft.song == sample.song && draft.hasUnsavedChanges)
+            precondition(draft.song == sample.song && !draft.hasUnsavedChanges)
             precondition(draft.saveSong(named: sample.song.title))
             let copyID = draft.savedSongs.first { $0.song.title == sample.song.title }!.id
             draft.song.notes.removeAll()
