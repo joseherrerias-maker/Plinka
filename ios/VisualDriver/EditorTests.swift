@@ -66,4 +66,33 @@ final class EditorTests: XCTestCase {
             app.terminate()
         }
     }
+
+    @MainActor func testResponsiveClearToolbarAndMenu() {
+        continueAfterFailure = false
+        let app = XCUIApplication(bundleIdentifier: "com.joseherrerias.plinka")
+        for orientation in [UIDeviceOrientation.portrait, .landscapeRight] {
+            XCUIDevice.shared.orientation = orientation
+            app.launchArguments = ["--editor-check"]
+            app.launch()
+            let menu = app.buttons["Song menu"]
+            XCTAssertTrue(menu.waitForExistence(timeout: 15))
+
+            // The one-row compact landscape toolbar has no trash button;
+            // all other supported layouts restore this convenient shortcut.
+            let compactLandscape = app.frame.height < 500 && app.frame.width >= 540
+            if compactLandscape {
+                XCTAssertFalse(app.buttons["Clear all notes"].exists,
+                               "Compact landscape keeps Clear in the menu")
+                menu.tap()
+            }
+            let clear = app.buttons["Clear all notes"]
+            XCTAssertTrue(clear.waitForExistence(timeout: 5))
+            XCTAssertTrue(clear.isEnabled)
+            clear.tap()
+            let alert = app.alerts["Clear all notes?"]
+            XCTAssertTrue(alert.waitForExistence(timeout: 10))
+            alert.buttons["Cancel"].tap()
+            app.terminate()
+        }
+    }
 }

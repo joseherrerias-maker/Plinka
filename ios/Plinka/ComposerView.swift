@@ -74,6 +74,14 @@ struct ComposerView: View {
                 }
             }
         }
+        // Artwork fills the scene, while interactive controls stay inside the
+        // system-provided safe region (asymmetric on iPhone Duo when closed).
+        .background {
+            Image("studio-room")
+                .resizable().scaledToFill()
+                .overlay(.white.opacity(showHome ? 0.18 : 0.12))
+                .ignoresSafeArea()
+        }
         .foregroundStyle(PlukiStyle.ink)
         .overlay(alignment: .topLeading) {
             #if DEBUG
@@ -310,7 +318,9 @@ struct ComposerView: View {
             let staffHeight = max(100, geometry.size.height - 2 * padding - 2 * gap - toolbar - tray)
             VStack(spacing: gap) {
                 toolbarView(narrow: narrow, short: short,
-                            iconOnlyBrand: geometry.size.width < 400,
+                            // The closed Duo may be slightly wider than 400pt but still
+                            // cannot fit a full wordmark beside editing controls.
+                            iconOnlyBrand: size.width < 540,
                             compactLandscape: compactLandscape)
                     .frame(height: toolbar)
                 StaffView(store: store, audio: audio, height: staffHeight, short: short,
@@ -330,45 +340,43 @@ struct ComposerView: View {
         }
     }
 
-    private var homeBrand: some View {
-        VStack(spacing: 12) {
-            wordmark(small: false)
-            Text("Make a little music")
-                .font(.system(.title3, design: .rounded, weight: .bold))
+    private func homeBrand(compact: Bool) -> some View {
+        VStack(spacing: compact ? 6 : 12) {
+            wordmark(small: compact)
+            Text("Your little music studio")
+                .font(.system(compact ? .callout : .title3, design: .rounded, weight: .bold))
                 .multilineTextAlignment(.center)
         }
-        .padding(20)
-        .background(PlukiStyle.paper.opacity(0.85), in: RoundedRectangle(cornerRadius: 28))
+        .padding(compact ? 12 : 20)
+        .background(PlukiStyle.paper.opacity(0.86), in: RoundedRectangle(cornerRadius: compact ? 22 : 28))
     }
 
     private func homeScreen(size: CGSize) -> some View {
-        ScrollView {
+        // Use the available SwiftUI safe-area viewport, not a hardcoded
+        // Duo model, orientation, or UIScreen size. Folding resizes this view.
+        let compact = size.height < 790 && size.width < 540
+        return ScrollView {
             Group {
                 if size.height < 500 && size.width >= 540 {
                     HStack(alignment: .top, spacing: 14) {
-                        homeBrand.frame(maxWidth: 200)
-                        homeMenu.frame(maxWidth: 340)
+                        homeBrand(compact: true).frame(maxWidth: 200)
+                        homeMenu(compact: true).frame(maxWidth: 340)
                     }
                 } else {
-                    VStack(spacing: 24) {
-                        homeBrand
-                        homeMenu
+                    VStack(spacing: compact ? 12 : 24) {
+                        homeBrand(compact: compact)
+                        homeMenu(compact: compact)
                     }
                 }
             }
-            .padding(size.height < 500 ? 12 : 24)
+            .padding(compact || size.height < 500 ? 12 : 24)
             .frame(maxWidth: .infinity)
             .frame(minHeight: size.height)
         }
-        .background {
-            Image("studio-room").resizable().scaledToFill()
-                .overlay(.white.opacity(0.18)).ignoresSafeArea()
-        }
-        .clipped()
     }
 
-    private var homeMenu: some View {
-        VStack(spacing: 6) {
+    private func homeMenu(compact: Bool) -> some View {
+        VStack(spacing: compact ? 3 : 6) {
             Button {
                 if store.hasMeaningfulDraft { showHome = false }
                 else { startNewSong() }
@@ -388,50 +396,59 @@ struct ComposerView: View {
                     Spacer(minLength: 0)
                 }
                 .foregroundStyle(.white)
-                .padding(12)
-                .frame(maxWidth: .infinity, minHeight: 72)
+                .padding(compact ? 10 : 12)
+                .frame(maxWidth: .infinity, minHeight: compact ? 68 : 72)
                 .background(PlukiStyle.green.gradient, in: RoundedRectangle(cornerRadius: 20))
                 .contentShape(RoundedRectangle(cornerRadius: 20))
             }
             .buttonStyle(.plain)
             .accessibilityIdentifier("home-primary-action")
             if store.hasMeaningfulDraft {
-                homeSecondaryRow("New song", icon: "plus.circle") { startNewSong() }
+                homeSecondaryRow("New song", icon: "plus.circle.fill", color: PlukiStyle.green, compact: compact) { startNewSong() }
             }
             Divider().padding(.horizontal, 8)
-            homeSecondaryRow("Open song", icon: "folder") {
+            homeSecondaryRow("Open song", icon: "folder.fill", color: .orange, compact: compact) {
                 audio.stop(); showSongs = true
             }
-            homeSecondaryRow("Samples", icon: "music.note.list") {
+            homeSecondaryRow("Samples", icon: "music.note.list", color: .purple, compact: compact) {
                 audio.stop(); showSamples = true
             }
-            homeSecondaryRow("Help & About", icon: "info.circle") { showSettings = true }
+            homeSecondaryRow("Help & About", icon: "info.circle.fill", color: PlukiStyle.blue, compact: compact) {
+                showSettings = true
+            }
         }
-        .padding(12)
+        .padding(compact ? 10 : 12)
         .frame(maxWidth: 340)
         .background(PlukiStyle.paper, in: RoundedRectangle(cornerRadius: 28))
         .overlay(RoundedRectangle(cornerRadius: 28).stroke(.white.opacity(0.9), lineWidth: 2))
         .shadow(color: PlukiStyle.ink.opacity(0.15), radius: 14, y: 6)
     }
 
-    private func homeSecondaryRow(_ title: String, icon: String,
-                                  action: @escaping () -> Void) -> some View {
+    private func homeSecondaryRow(_ title: String, icon: String, color: Color,
+                                  compact: Bool, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             HStack(spacing: 12) {
                 Image(systemName: icon)
-                    .font(.system(size: 21, weight: .semibold))
-                    .foregroundStyle(PlukiStyle.blue)
-                    .frame(width: 44, height: 44)
+                    .font(.system(size: compact ? 21 : 23, weight: .semibold))
+                    .foregroundStyle(color)
+                    .frame(width: compact ? 46 : 52, height: compact ? 46 : 52)
+                    .background(color.opacity(0.16), in: RoundedRectangle(cornerRadius: 15))
+                    .overlay {
+                        RoundedRectangle(cornerRadius: 15)
+                            .strokeBorder(.white.opacity(0.55), lineWidth: 1)
+                    }
                 Text(title)
-                    .font(.system(.callout, design: .rounded, weight: .semibold))
+                    .font(.system(.headline, design: .rounded, weight: .bold))
                     .foregroundStyle(PlukiStyle.ink)
                 Spacer(minLength: 0)
             }
-            .padding(.horizontal, 8)
-            .frame(maxWidth: .infinity, minHeight: 50)
-            .contentShape(RoundedRectangle(cornerRadius: 14))
+            .padding(.horizontal, 7)
+            .frame(maxWidth: .infinity, minHeight: compact ? 54 : 62)
+            .background(.white.opacity(0.18), in: RoundedRectangle(cornerRadius: 16))
+            .contentShape(RoundedRectangle(cornerRadius: 16))
         }
         .buttonStyle(.plain)
+        .accessibilityIdentifier("home-\(title.lowercased().replacingOccurrences(of: " ", with: "-"))")
     }
 
     private func songMenuOverlay(size: CGSize) -> some View {
@@ -544,7 +561,7 @@ struct ComposerView: View {
                         .accessibilityLabel("Pluki")
                     Spacer(minLength: 0)
                     transport(showRestart: false)
-                    editButtons
+                    editButtons(showClear: false)
                     tempo(compact: true).frame(width: 98)
                 }
             } else if narrow {
@@ -561,7 +578,7 @@ struct ComposerView: View {
                             wordmark(small: true)
                         }
                         Spacer(minLength: 4)
-                        editButtons
+                        editButtons()
                     }
                     HStack(spacing: 8) {
                         transport()
@@ -574,7 +591,7 @@ struct ComposerView: View {
                     Spacer(minLength: 0)
                     transport()
                     tempo(compact: short)
-                    editButtons
+                    editButtons()
                 }
             }
         }
@@ -621,7 +638,7 @@ struct ComposerView: View {
         }
     }
 
-    private var editButtons: some View {
+    private func editButtons(showClear: Bool = true) -> some View {
         HStack(spacing: 4) {
             tool("arrow.uturn.backward", title: "Undo", disabled: !store.canUndo || audio.isPlaying) { store.undo() }
             tool("arrow.uturn.forward", title: "Redo", disabled: !store.canRedo || audio.isPlaying) { store.redo() }
@@ -631,6 +648,12 @@ struct ComposerView: View {
                 store.selectedID = nil
             }
             .accessibilityValue(store.erasing ? "On" : "Off")
+            if showClear {
+                tool("trash", title: "Clear all notes",
+                     disabled: audio.isPlaying || store.song.notes.isEmpty) {
+                    confirmClear = true
+                }
+            }
             tool("line.3.horizontal", title: "Song menu", selected: showSongMenu) {
                 audio.pause()
                 withAnimation(reduceMotion ? nil : .easeOut(duration: 0.18)) { showSongMenu.toggle() }
