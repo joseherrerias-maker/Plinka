@@ -1,4 +1,4 @@
-# Build 15: review Help & About in the home menu, song menu and information sheet.
+# Build 29: visual regression after approved Home and compact-toolbar changes (settings unchanged).
 name: Pluki Visual Review
 on:
   workflow_dispatch:
