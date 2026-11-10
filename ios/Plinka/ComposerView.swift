@@ -501,7 +501,15 @@ struct ComposerView: View {
             }
             .disabled(store.song.notes.isEmpty)
             songMenuRow("Clear all notes", icon: "trash", color: .red) {
-                confirmClear = true
+                // The menu fades out before presenting the system confirmation.
+                // Presenting the alert during the same update can silently lose it
+                // on compact iPhones, leaving the child with no confirmation.
+                Task { @MainActor in
+                    try? await Task.sleep(for: .milliseconds(reduceMotion ? 20 : 240))
+                    guard !Task.isCancelled, !audio.isPlaying,
+                          !store.song.notes.isEmpty else { return }
+                    confirmClear = true
+                }
             }
             .disabled(audio.isPlaying || store.song.notes.isEmpty)
             songMenuRow("Export video", icon: "video.fill", color: .pink) {

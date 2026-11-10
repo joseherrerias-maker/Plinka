@@ -22,6 +22,11 @@ Base: native Build 28, commit a8099b5215fb2b1f2775adc4165bc2ee9466e092. Preserve
 - Staff-grid Debug geometry checks verify that all nine sticker centers and images fit within a representative compact landscape, compact portrait and spacious layout, in addition to the existing pixel-grid checks.
 - Layout behavior outside compact phones, including spacious iPad, is retained except for the moved Clear control.
 
+## Compact interaction regression follow-up
+- First focused UI run exposed two iPhone SE landscape issues (its iPad 11-inch tests passed): tapping Clear in the menu closed the overlay without presenting confirmation, and the parent keypad required excessive scrolling to reach its answer area.
+- Clear now waits for the menu dismiss animation to finish before presenting the existing confirmation alert. Parent check uses a compact two-column challenge/keypad layout only on short wide screens, retaining the same number challenge, cancel, approval state and no-keyboard safety model.
+- First iPhone SE visual capture produced portrait and most landscape screenshots but its XCTest driver failed confirming the orientation change; preserve partial evidence and rerun the small device on the corrected source.
+
 ## Focused verification
 - `DraftProtectionChecks.swift`: unsaved sample replacement and Home→New, relaunch/recovery exactness, sample baseline persistence, edited saved song, empty drafts, duplication, corrupt-library and serialization failures, legacy saved library decoding.
 - `SongStoreChecks.swift`: original persistence, undo/redo and sample checks updated for unchanged-sample semantics.

@@ -1,4 +1,4 @@
-# Build 29: visual regression after approved Home and compact-toolbar changes (settings unchanged).
+# Build 29 focused visual regression: SE parent sheet and Clear confirmation follow-up.
 name: Pluki Visual Review
 on:
   workflow_dispatch:

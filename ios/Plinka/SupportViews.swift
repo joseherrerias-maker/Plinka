@@ -176,44 +176,81 @@ struct PlukiParentGate: View {
         .disabled(answer.count >= 4)
     }
 
+    private var challenge: some View {
+        VStack(spacing: 10) {
+            Text(approval.prompt)
+                .font(.system(.title3, design: .rounded, weight: .bold))
+                .accessibilityIdentifier("parent-prompt")
+            Text(answer.isEmpty ? "— — — —" : answer.map(String.init).joined(separator: "  "))
+                .font(.system(.title2, design: .monospaced, weight: .semibold))
+                .frame(maxWidth: .infinity, minHeight: 48)
+                .background(.white, in: RoundedRectangle(cornerRadius: 12))
+                .accessibilityIdentifier("parent-answer")
+                .accessibilityLabel("Entered digits")
+                .accessibilityValue(answer.isEmpty ? "None" : answer.map(String.init).joined(separator: ", "))
+        }
+    }
+
+    private var padAndContinue: some View {
+        VStack(spacing: 10) {
+            numberPad
+            if incorrect {
+                Text("Please try the new numbers above.").foregroundStyle(.secondary)
+            }
+            Button("Continue") {
+                guard approval.submit(answer) else {
+                    answer = ""; incorrect = true
+                    return
+                }
+                if approval.consume() {
+                    onApproved()
+                    dismiss()
+                }
+            }
+            .buttonStyle(.borderedProminent).tint(.green)
+            .disabled(answer.count != 4)
+            .accessibilityIdentifier("parent-continue")
+        }
+    }
+
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(spacing: 22) {
-                    Image(systemName: "person.crop.circle.badge.checkmark")
-                        .font(.system(size: 48)).foregroundStyle(.green)
-                    Text("For a grown-up")
-                        .font(.system(.title2, design: .rounded, weight: .bold))
-                    Text(instruction)
-                    Text(approval.prompt).font(.system(.title3, design: .rounded, weight: .bold))
-                        .accessibilityIdentifier("parent-prompt")
-                    Text(answer.isEmpty ? "— — — —" : answer.map(String.init).joined(separator: "  "))
-                        .font(.system(.title2, design: .monospaced, weight: .semibold))
-                        .frame(maxWidth: .infinity, minHeight: 48)
-                        .background(.white, in: RoundedRectangle(cornerRadius: 12))
-                        .accessibilityIdentifier("parent-answer")
-                        .accessibilityLabel("Entered digits")
-                        .accessibilityValue(answer.isEmpty ? "None" : answer.map(String.init).joined(separator: ", "))
-                    numberPad
-                    if incorrect {
-                        Text("Please try the new numbers above.").foregroundStyle(.secondary)
-                    }
-                    Button("Continue") {
-                        guard approval.submit(answer) else {
-                            answer = ""; incorrect = true
-                            return
+            GeometryReader { geometry in
+                let compactLandscape = geometry.size.width >= 500 && geometry.size.height < 390
+                ScrollView {
+                    if compactLandscape {
+                        // On short iPhone landscape there is not enough height for
+                        // a vertically stacked parent challenge and four-row keypad.
+                        // Display challenge and keypad side by side to keep answers
+                        // and buttons reachable without scrolling across each other.
+                        HStack(alignment: .top, spacing: 12) {
+                            VStack(spacing: 10) {
+                                Text("For a grown-up")
+                                    .font(.system(.title3, design: .rounded, weight: .bold))
+                                Text(instruction)
+                                    .font(.system(.subheadline, design: .rounded))
+                                challenge
+                            }
+                            .frame(maxWidth: .infinity)
+                            padAndContinue.frame(width: min(310, geometry.size.width * 0.50))
                         }
-                        if approval.consume() {
-                            onApproved()
-                            dismiss()
+                        .padding(12)
+                        .frame(maxWidth: .infinity)
+                    } else {
+                        VStack(spacing: 22) {
+                            Image(systemName: "person.crop.circle.badge.checkmark")
+                                .font(.system(size: 48)).foregroundStyle(.green)
+                            Text("For a grown-up")
+                                .font(.system(.title2, design: .rounded, weight: .bold))
+                            Text(instruction)
+                            challenge
+                            padAndContinue
                         }
+                        .padding(24)
+                        .frame(maxWidth: 420).frame(maxWidth: .infinity)
                     }
-                    .buttonStyle(.borderedProminent).tint(.green)
-                    .disabled(answer.count != 4)
-                    .accessibilityIdentifier("parent-continue")
                 }
                 .multilineTextAlignment(.center)
-                .padding(24).frame(maxWidth: 420).frame(maxWidth: .infinity)
             }
             .background(Color(red: 1, green: 0.98, blue: 0.93))
             .navigationTitle("Parent check")
