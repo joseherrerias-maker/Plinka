@@ -1,4 +1,4 @@
-# Build 29 focused visual regression: SE parent sheet and Clear confirmation follow-up.
+# Build 31 focused Home and toolbar visual regression on iPhone SE and iPad 11-inch.
 name: Pluki Visual Review
 on:
   workflow_dispatch:
