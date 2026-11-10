@@ -163,8 +163,12 @@ struct ComposerView: View {
             Button("OK") { store.libraryError = nil }
         } message: { Text(store.libraryError ?? "") }
         .alert("Clear all notes?", isPresented: $confirmClear) {
-            Button("Clear notes", role: .destructive) { audio.stop(); store.clear() }
-            Button("Cancel", role: .cancel) {}
+            Button("Clear notes", role: .destructive) {
+                audio.stop()
+                store.clear()
+                dismissSongMenu()
+            }
+            Button("Cancel", role: .cancel) { dismissSongMenu() }
         } message: {
             Text("This will remove every note from the current song.")
         }
@@ -500,16 +504,10 @@ struct ComposerView: View {
                 audio.stop(); audio.start(store.song)
             }
             .disabled(store.song.notes.isEmpty)
-            songMenuRow("Clear all notes", icon: "trash", color: .red) {
-                // The menu fades out before presenting the system confirmation.
-                // Presenting the alert during the same update can silently lose it
-                // on compact iPhones, leaving the child with no confirmation.
-                Task { @MainActor in
-                    try? await Task.sleep(for: .milliseconds(reduceMotion ? 20 : 240))
-                    guard !Task.isCancelled, !audio.isPlaying,
-                          !store.song.notes.isEmpty else { return }
-                    confirmClear = true
-                }
+            // Keep the menu mounted while presenting the system confirmation:
+            // dismissing the presenting surface first dropped alerts on iPhone SE.
+            songMenuRow("Clear all notes", icon: "trash", color: .red, dismissFirst: false) {
+                confirmClear = true
             }
             .disabled(audio.isPlaying || store.song.notes.isEmpty)
             songMenuRow("Export video", icon: "video.fill", color: .pink) {
@@ -645,9 +643,10 @@ struct ComposerView: View {
     }
 
     private func songMenuRow(_ title: String, icon: String, color: Color,
+                             dismissFirst: Bool = true,
                              action: @escaping () -> Void) -> some View {
         Button {
-            dismissSongMenu()
+            if dismissFirst { dismissSongMenu() }
             action()
         } label: {
             HStack(spacing: 14) {
