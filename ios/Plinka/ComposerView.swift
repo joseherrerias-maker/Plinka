@@ -29,6 +29,11 @@ struct ComposerView: View {
     @State private var showSamples = false
     @State private var showImport = false
     @State private var openImportAfterSettingsDismiss = false
+    @State private var openExportAfterSettingsDismiss = false
+    @State private var showProjectExport = false
+    @State private var projectExportDocument: PlukiProjectDocument?
+    @State private var projectExportFilename = "Pluki Project"
+    @State private var projectExportError: String?
     @State private var importedSong: Song?
     @State private var confirmImport = false
     @State private var importError: String?
@@ -113,10 +118,23 @@ struct ComposerView: View {
             if openImportAfterSettingsDismiss {
                 openImportAfterSettingsDismiss = false
                 if scenePhase == .active { showImport = true }
+            } else if openExportAfterSettingsDismiss {
+                openExportAfterSettingsDismiss = false
+                if scenePhase == .active { showProjectExport = true }
             }
         }) { settings }
         .sheet(isPresented: $showSongs) { savedSongsView }
         .sheet(isPresented: $showSamples) { samplesView }
+        .fileExporter(isPresented: $showProjectExport,
+                      document: projectExportDocument,
+                      contentType: PlukiProjectDocument.contentType,
+                      defaultFilename: projectExportFilename) { result in
+            if case .failure(let error) = result,
+               (error as NSError).code != NSUserCancelledError {
+                projectExportError = error.localizedDescription
+            }
+            projectExportDocument = nil
+        }
         .fileImporter(isPresented: $showImport,
                       allowedContentTypes: [UTType(importedAs: "com.pebblesoftapps.pluki.song"), .json],
                       allowsMultipleSelection: false) { result in
@@ -137,6 +155,10 @@ struct ComposerView: View {
         .alert("Could not import song", isPresented: Binding(get: { importError != nil }, set: { if !$0 { importError = nil } })) {
             Button("OK") { importError = nil }
         } message: { Text(importError ?? "") }
+        .alert("Could not export project", isPresented: Binding(get: { projectExportError != nil },
+                                                                 set: { if !$0 { projectExportError = nil } })) {
+            Button("OK") { projectExportError = nil }
+        } message: { Text(projectExportError ?? "") }
 
         .sheet(isPresented: $showVideoExport) { SongVideoExportView(song: store.song) }
         .fullScreenCover(isPresented: $showSave, onDismiss: { saveNameFocused = false }) { saveSongSheet }
@@ -167,6 +189,7 @@ struct ComposerView: View {
                 audio.pause()
                 parentApproved = false
                 openImportAfterSettingsDismiss = false
+                openExportAfterSettingsDismiss = false
                 settingsPath.removeAll()
             }
         }
@@ -822,7 +845,21 @@ struct ComposerView: View {
                 case .parents:
                     List {
                         Text("Songs stay on this device. You can export a song as a video from the song menu.")
-                        Section("Project tools") {
+                        Section {
+                            Button {
+                                audio.stop()
+                                do {
+                                    projectExportDocument = try PlukiProjectDocument(song: store.song)
+                                    projectExportFilename = PlukiProjectDocument.filename(for: store.song.title)
+                                    openExportAfterSettingsDismiss = true
+                                    showSettings = false
+                                } catch {
+                                    projectExportError = error.localizedDescription
+                                }
+                            } label: {
+                                Label("Export Pluki Project", systemImage: "square.and.arrow.up")
+                            }
+                            .disabled(store.song.notes.isEmpty)
                             Button {
                                 audio.stop()
                                 openImportAfterSettingsDismiss = true
@@ -830,6 +867,10 @@ struct ComposerView: View {
                             } label: {
                                 Label("Import Pluki Project", systemImage: "square.and.arrow.down")
                             }
+                        } header: {
+                            Text("Save & Transfer Projects")
+                        } footer: {
+                            Text("Save an editable .pluki project to Files or share it with another device. To export a saved song, open it first. An import creates a separate saved copy.")
                         }
                         NavigationLink("Privacy policy") { PlukiPrivacyView() }
                     }
@@ -855,6 +896,37 @@ struct ComposerView: View {
             .toolbar { ToolbarItem(placement: .confirmationAction) { Button("Done") { showSettings = false } } }
         }
         .presentationDetents([.medium, .large])
+    }
+}
+
+// One self-contained editable project file, without cloud accounts or backend.
+private struct PlukiProjectDocument: FileDocument {
+    static let contentType = UTType(exportedAs: "com.pebblesoftapps.pluki.song", conformingTo: .json)
+    static var readableContentTypes: [UTType] { [contentType] }
+    static var writableContentTypes: [UTType] { [contentType] }
+    let data: Data
+
+    init(song: Song) throws {
+        data = try PlukiSongFile.encode(song)
+    }
+
+    init(configuration: ReadConfiguration) throws {
+        guard let contents = configuration.file.regularFileContents else {
+            throw CocoaError(.fileReadCorruptFile)
+        }
+        data = try PlukiSongFile.encode(PlukiSongFile.decode(contents))
+    }
+
+    func fileWrapper(configuration: WriteConfiguration) throws -> FileWrapper {
+        FileWrapper(regularFileWithContents: data)
+    }
+
+    static func filename(for title: String) -> String {
+        let sanitized = title.replacingOccurrences(of: "/", with: "-")
+            .replacingOccurrences(of: ":", with: "-")
+            .replacingOccurrences(of: "\\", with: "-")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        return String((sanitized.isEmpty ? "Pluki Project" : sanitized).prefix(70))
     }
 }
 

@@ -15,7 +15,7 @@ struct PlukiHelpView: View {
                 tip("Make a video", icon: "video.fill", detail: "Choose Export video in the song menu, pick a format and create your video. A grown-up completes a parent check when first enabling Photos saving. After permission is granted, videos save directly. Keep Pluki open while the video is being made.")
             }
             Section("For grown-ups") {
-                tip("Import a Pluki project", icon: "square.and.arrow.down", detail: "Save a .pluki song file to Files, then open Help & About → For parents, pass the parent check, and choose Import Pluki Project. Imports create a new saved copy and preserve unsaved work; you can edit the imported song and export a video.")
+                tip("Back up or transfer a project", icon: "square.and.arrow.up", detail: "Open the song you want to transfer, then choose Help & About → For parents → Export Pluki Project. Save the editable .pluki file in Files, AirDrop it, or share it with another device. Import Pluki Project opens the file as a new saved copy; your other songs are preserved.")
             }
             Section("Troubleshooting") {
                 tip("No sound?", icon: "speaker.wave.2.fill", detail: "Turn up media volume and check whether audio is playing through Bluetooth headphones or a speaker. Stop the song and try Play again.")

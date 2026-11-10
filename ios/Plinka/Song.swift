@@ -126,6 +126,20 @@ struct PlukiSongFile: Codable {
         return try validated(file.song)
     }
 
+    // Export the exact version-1 file that Import already understands.
+    // Older songs can use an automatic sheet length; normalize a copy only.
+    static func encode(_ source: Song) throws -> Data {
+        var song = source
+        if song.sheetSteps == nil { song.sheetSteps = song.stepCount }
+        let validatedSong = try validated(song)
+        let wrapper = Self(format: "pluki-song", version: 1, song: validatedSong)
+        let bytes = try JSONEncoder().encode(wrapper)
+        guard bytes.count <= maximumBytes else {
+            throw ImportError.invalid("This project is too large to export. The limit is 1 MB.")
+        }
+        return bytes
+    }
+
     static func validated(_ source: Song) throws -> Song {
         var song = source
         song.title = song.title.trimmingCharacters(in: .whitespacesAndNewlines)

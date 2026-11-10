@@ -9,6 +9,25 @@ struct SongImportChecks {
         let fixture = try Data(contentsOf: URL(fileURLWithPath: "ios/marketing/First-Little-Groove.pluki"))
         let valid = try PlukiSongFile.decode(fixture)
         precondition(valid.notes.count == 16)
+        // Export files must round-trip with the original version-1 importer.
+        let exported = try PlukiSongFile.encode(valid)
+        let roundTrip = try PlukiSongFile.decode(exported)
+        precondition(roundTrip == valid)
+        let json = try JSONSerialization.jsonObject(with: exported) as! [String: Any]
+        precondition(json["format"] as? String == "pluki-song")
+        precondition(json["version"] as? Int == 1)
+        // Existing songs may rely on an automatic, unstored sheet size.
+        var automatic = valid
+        automatic.sheetSteps = nil
+        let automaticBackup = try PlukiSongFile.decode(PlukiSongFile.encode(automatic))
+        precondition(automatic.sheetSteps == nil) // Must not mutate the open song.
+        precondition(automaticBackup.sheetSteps == automatic.stepCount)
+        precondition(automaticBackup.notes == automatic.notes)
+        precondition(automaticBackup.tempo == automatic.tempo)
+        do {
+            _ = try PlukiSongFile.encode(Song())
+            preconditionFailure("Empty songs must not be exported.")
+        } catch PlukiSongFile.ImportError.invalid(_) { /* expected */ }
         func rejected(_ song: Song) {
             do { _ = try PlukiSongFile.validated(song); preconditionFailure("Invalid song accepted") }
             catch {}
