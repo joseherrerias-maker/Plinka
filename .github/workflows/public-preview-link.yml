@@ -1,0 +1,49 @@
+name: Export public playable Pluki App Preview
+on:
+  push:
+    branches: ["marketing/app-preview-31"]
+    paths:
+      - ".github/workflows/public-preview-link.yml"
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: read
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch genuine native iPhone footage from prior capture
+        uses: actions/download-artifact@v4
+        with:
+          name: Pluki-iPhone-Real-App-Preview-Footage
+          run-id: 42966844355
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path: native
+      - name: Prepare renderer
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y ffmpeg fonts-dejavu-core
+          python3 -m pip install --break-system-packages pillow numpy
+      - name: Render App Store preview MP4
+        run: |
+          python3 marketing/render_public_app_preview.py native/Pluki_iPhone16_NativeScreenRecording.mp4 marketing/share
+      - name: Save independently downloadable MP4 and poster on GitHub marketing branch
+        continue-on-error: true
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f marketing/share/Pluki_App_Store_Preview_iPhone_31.mp4 marketing/share/Pluki_Preview_Poster.jpg marketing/share/README.txt
+          git commit -m "Publish direct-download Pluki App Preview MP4 for review" || exit 0
+          git push origin HEAD:marketing/app-preview-31
+      - name: Always provide GitHub-downloadable backup artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Pluki-App-Preview-iPhone-31-Playable-MP4
+          path: |
+            marketing/share/Pluki_App_Store_Preview_iPhone_31.mp4
+            marketing/share/Pluki_Preview_Poster.jpg
+            marketing/share/README.txt
+          retention-days: 30
