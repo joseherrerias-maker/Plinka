@@ -1,0 +1,27 @@
+name: Recover preserved studio capture evidence
+on:
+  push:
+    branches: ['marketing/little-music-studio']
+    paths: ['.github/workflows/recover-studio.yml']
+permissions:
+  contents: write
+  actions: read
+jobs:
+  recover:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: Little-Music-Studio-original-captures
+          run-id: 42988498241
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path: marketing/little-music-studio/captures
+      - name: Preserve raw outputs and failure report for inspection
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add marketing/little-music-studio/captures
+          git commit -m 'Preserve original capture evidence; iPad video capture remains incomplete'
+          git push origin HEAD:marketing/little-music-studio
