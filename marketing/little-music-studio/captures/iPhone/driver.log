@@ -1,0 +1,767 @@
+Command line invocation:
+    /Applications/Xcode_26.6.app/Contents/Developer/usr/bin/xcodebuild test -project ios/VisualDriver/VisualDriver.xcodeproj -scheme VisualDriver -destination id=A1E5228D-A415-4FDD-9141-8E8F1D60B947 -parallel-testing-enabled NO "-only-testing:VisualDriver/VisualDriver" CODE_SIGNING_ALLOWED=NO
+
+Build settings from command line:
+    CODE_SIGNING_ALLOWED = NO
+
+--- xcodebuild: WARNING: Using the first of multiple matching destinations:
+{ platform:iOS Simulator, arch:arm64, id:A1E5228D-A415-4FDD-9141-8E8F1D60B947, OS:26.5, name:Pluki Little Music Studio }
+{ platform:iOS Simulator, arch:x86_64, id:A1E5228D-A415-4FDD-9141-8E8F1D60B947, OS:26.5, name:Pluki Little Music Studio }
+ComputePackagePrebuildTargetDependencyGraph
+
+Prepare packages
+
+CreateBuildRequest
+
+SendProjectDescription
+
+CreateBuildOperation
+
+ComputeTargetDependencyGraph
+note: Building targets in dependency order
+note: Target dependency graph (1 target)
+    Target 'VisualDriver' in project 'VisualDriver' (no dependencies)
+
+GatherProvisioningInputs
+
+CreateBuildDescription
+
+ExecuteExternalTool /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc --version
+
+ExecuteExternalTool /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -v -E -dM -isysroot /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.5.sdk -x c -c /dev/null
+
+ExecuteExternalTool /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ld -version_details
+
+Build description signature: f828bcccb98dfa5a01bd61cfcddd8b0b
+Build description path: /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/XCBuildData/f828bcccb98dfa5a01bd61cfcddd8b0b.xcbuilddata
+ClangStatCache /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.5.sdk /Users/runner/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator26.5-23F81a-688ef53f1462e2c8f657fdc38a81448ff45c64a1807a658693f2a61704f17a36.sdkstatcache
+    cd /Users/runner/work/Plinka/Plinka/ios/VisualDriver/VisualDriver.xcodeproj
+    /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.5.sdk -o /Users/runner/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator26.5-23F81a-688ef53f1462e2c8f657fdc38a81448ff45c64a1807a658693f2a61704f17a36.sdkstatcache
+
+CreateBuildDirectory /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Products
+    cd /Users/runner/work/Plinka/Plinka/ios/VisualDriver/VisualDriver.xcodeproj
+    builtin-create-build-directory /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Products
+
+CreateBuildDirectory /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex
+    cd /Users/runner/work/Plinka/Plinka/ios/VisualDriver/VisualDriver.xcodeproj
+    builtin-create-build-directory /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex
+
+CreateBuildDirectory /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Products/Debug-iphonesimulator
+    cd /Users/runner/work/Plinka/Plinka/ios/VisualDriver/VisualDriver.xcodeproj
+    builtin-create-build-directory /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Products/Debug-iphonesimulator
+
+WriteAuxiliaryFile /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver-127ad1e2a461f326dac9166391dade02-VFS-iphonesimulator/all-product-headers.yaml
+    cd /Users/runner/work/Plinka/Plinka/ios/VisualDriver/VisualDriver.xcodeproj
+    write-file /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver-127ad1e2a461f326dac9166391dade02-VFS-iphonesimulator/all-product-headers.yaml
+
+CreateBuildDirectory /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules
+    cd /Users/runner/work/Plinka/Plinka/ios/VisualDriver/VisualDriver.xcodeproj
+    builtin-create-build-directory /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules
+
+CreateBuildDirectory /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/ExplicitPrecompiledModules
+    cd /Users/runner/work/Plinka/Plinka/ios/VisualDriver/VisualDriver.xcodeproj
+    builtin-create-build-directory /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/ExplicitPrecompiledModules
+
+CreateBuildDirectory /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/EagerLinkingTBDs/Debug-iphonesimulator
+    cd /Users/runner/work/Plinka/Plinka/ios/VisualDriver/VisualDriver.xcodeproj
+    builtin-create-build-directory /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/EagerLinkingTBDs/Debug-iphonesimulator
+
+WriteAuxiliaryFile /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver.build/VisualDriver.hmap (in target 'VisualDriver' from project 'VisualDriver')
+    cd /Users/runner/work/Plinka/Plinka/ios/VisualDriver
+    write-file /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver.build/VisualDriver.hmap
+
+WriteAuxiliaryFile /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver.build/empty-VisualDriver.plist (in target 'VisualDriver' from project 'VisualDriver')
+    cd /Users/runner/work/Plinka/Plinka/ios/VisualDriver
+    write-file /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver.build/empty-VisualDriver.plist
+
+WriteAuxiliaryFile /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver.build/VisualDriver.DependencyStaticMetadataFileList (in target 'VisualDriver' from project 'VisualDriver')
+    cd /Users/runner/work/Plinka/Plinka/ios/VisualDriver
+    write-file /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver.build/VisualDriver.DependencyStaticMetadataFileList
+
+WriteAuxiliaryFile /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver.build/VisualDriver.DependencyMetadataFileList (in target 'VisualDriver' from project 'VisualDriver')
+    cd /Users/runner/work/Plinka/Plinka/ios/VisualDriver
+    write-file /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver.build/VisualDriver.DependencyMetadataFileList
+
+WriteAuxiliaryFile /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver.build/VisualDriver-project-headers.hmap (in target 'VisualDriver' from project 'VisualDriver')
+    cd /Users/runner/work/Plinka/Plinka/ios/VisualDriver
+    write-file /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver.build/VisualDriver-project-headers.hmap
+
+WriteAuxiliaryFile /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver.build/VisualDriver-own-target-headers.hmap (in target 'VisualDriver' from project 'VisualDriver')
+    cd /Users/runner/work/Plinka/Plinka/ios/VisualDriver
+    write-file /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver.build/VisualDriver-own-target-headers.hmap
+
+WriteAuxiliaryFile /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver.build/VisualDriver-generated-files.hmap (in target 'VisualDriver' from project 'VisualDriver')
+    cd /Users/runner/work/Plinka/Plinka/ios/VisualDriver
+    write-file /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver.build/VisualDriver-generated-files.hmap
+
+WriteAuxiliaryFile /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver.build/VisualDriver-all-target-headers.hmap (in target 'VisualDriver' from project 'VisualDriver')
+    cd /Users/runner/work/Plinka/Plinka/ios/VisualDriver
+    write-file /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver.build/VisualDriver-all-target-headers.hmap
+
+WriteAuxiliaryFile /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver.build/VisualDriver-all-non-framework-target-headers.hmap (in target 'VisualDriver' from project 'VisualDriver')
+    cd /Users/runner/work/Plinka/Plinka/ios/VisualDriver
+    write-file /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver.build/VisualDriver-all-non-framework-target-headers.hmap
+
+WriteAuxiliaryFile /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver.build/ProductTypeInfoPlistAdditions.plist (in target 'VisualDriver' from project 'VisualDriver')
+    cd /Users/runner/work/Plinka/Plinka/ios/VisualDriver
+    write-file /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver.build/ProductTypeInfoPlistAdditions.plist
+
+WriteAuxiliaryFile /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver.build/Objects-normal/arm64/VisualDriver_const_extract_protocols.json (in target 'VisualDriver' from project 'VisualDriver')
+    cd /Users/runner/work/Plinka/Plinka/ios/VisualDriver
+    write-file /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver.build/Objects-normal/arm64/VisualDriver_const_extract_protocols.json
+
+WriteAuxiliaryFile /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver.build/Objects-normal/arm64/VisualDriver.SwiftFileList (in target 'VisualDriver' from project 'VisualDriver')
+    cd /Users/runner/work/Plinka/Plinka/ios/VisualDriver
+    write-file /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver.build/Objects-normal/arm64/VisualDriver.SwiftFileList
+
+WriteAuxiliaryFile /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver.build/Objects-normal/arm64/VisualDriver.SwiftConstValuesFileList (in target 'VisualDriver' from project 'VisualDriver')
+    cd /Users/runner/work/Plinka/Plinka/ios/VisualDriver
+    write-file /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver.build/Objects-normal/arm64/VisualDriver.SwiftConstValuesFileList
+
+WriteAuxiliaryFile /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver.build/Objects-normal/arm64/VisualDriver.LinkFileList (in target 'VisualDriver' from project 'VisualDriver')
+    cd /Users/runner/work/Plinka/Plinka/ios/VisualDriver
+    write-file /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver.build/Objects-normal/arm64/VisualDriver.LinkFileList
+
+WriteAuxiliaryFile /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver.build/Objects-normal/arm64/VisualDriver-OutputFileMap.json (in target 'VisualDriver' from project 'VisualDriver')
+    cd /Users/runner/work/Plinka/Plinka/ios/VisualDriver
+    write-file /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver.build/Objects-normal/arm64/VisualDriver-OutputFileMap.json
+
+MkDir /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Products/Debug-iphonesimulator/VisualDriver-Runner.app/PlugIns/VisualDriver.xctest (in target 'VisualDriver' from project 'VisualDriver')
+    cd /Users/runner/work/Plinka/Plinka/ios/VisualDriver
+    /bin/mkdir -p /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Products/Debug-iphonesimulator/VisualDriver-Runner.app/PlugIns/VisualDriver.xctest
+
+ProcessInfoPlistFile /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Products/Debug-iphonesimulator/VisualDriver-Runner.app/PlugIns/VisualDriver.xctest/Info.plist /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver.build/empty-VisualDriver.plist (in target 'VisualDriver' from project 'VisualDriver')
+    cd /Users/runner/work/Plinka/Plinka/ios/VisualDriver
+    builtin-infoPlistUtility /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver.build/empty-VisualDriver.plist -producttype com.apple.product-type.bundle.ui-testing -expandbuildsettings -format binary -platform iphonesimulator -additionalcontentfile /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver.build/ProductTypeInfoPlistAdditions.plist -o /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Products/Debug-iphonesimulator/VisualDriver-Runner.app/PlugIns/VisualDriver.xctest/Info.plist
+
+SwiftDriver VisualDriver normal arm64 com.apple.xcode.tools.swift.compiler (in target 'VisualDriver' from project 'VisualDriver')
+    cd /Users/runner/work/Plinka/Plinka/ios/VisualDriver
+    builtin-SwiftDriver -- /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name VisualDriver -Onone @/Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver.build/Objects-normal/arm64/VisualDriver.SwiftFileList -DDEBUG -module-alias Testing\=_Testing_Unavailable -plugin-path /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.5.sdk -target arm64-apple-ios17.0-simulator -g -module-cache-path /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 5 -I /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Products/Debug-iphonesimulator -Isystem /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib -F /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Products/Debug-iphonesimulator -F /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks -F /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.5.sdk/Developer/Library/Frameworks -c -j3 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/runner/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator26.5-23F81a-688ef53f1462e2c8f657fdc38a81448ff45c64a1807a658693f2a61704f17a36.sdkstatcache -output-file-map /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver.build/Objects-normal/arm64/VisualDriver-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -sdk-module-cache-path /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver.build/Objects-normal/arm64/VisualDriver.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -I/Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver.build/Objects-normal/arm64/VisualDriver_const_extract_protocols.json -Xcc -iquote -Xcc /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver.build/VisualDriver-generated-files.hmap -Xcc -I/Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver.build/VisualDriver-own-target-headers.hmap -Xcc -I/Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver.build/VisualDriver-all-target-headers.hmap -Xcc -iquote -Xcc /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver.build/VisualDriver-project-headers.hmap -Xcc -I/Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Products/Debug-iphonesimulator/include -Xcc -I/Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver.build/DerivedSources-normal/arm64 -Xcc -I/Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver.build/DerivedSources/arm64 -Xcc -I/Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver.build/Objects-normal/arm64/VisualDriver-Swift.h -working-directory /Users/runner/work/Plinka/Plinka/ios/VisualDriver -experimental-emit-module-separately -disable-cmo
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/_AvailabilityInternal-6DZPBQ1GDR5VQVTX2KC3CFZKH.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/ptrcheck-WAV18TPZUVHKV3LXIRAFLYN7.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/SwiftShims-25GF3K3ZWSIY4T115Z2UEBZRL.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/ptrauth-99KW7CKVZXSQOHY38O3KXSSTT.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/_Builtin_stddef-DWO58UINTQGF5NN6EL74ARD99.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/_DarwinFoundation1-ANGWZ3QPJMCIIRYDIFF6F0A2Q.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/DeveloperToolsSupport-61KBSG06XH7JULTKC4JJAZYGU.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/_Builtin_stdbool-BXY040X58V8IZOC6WDNJXHXCV.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/_SwiftConcurrencyShims-4KKVRAVQYQHYK78482W4R7Y0E.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/_Builtin_float-DRI87QHPGHDIV0UGRIVM1OVSM.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/_Builtin_stdarg-20TTVJBLLUY68CTJF1YJ48AZH.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/_Builtin_limits-AV62CHGU5T6PIMK4ZV6R4N1WH.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/_DarwinFoundation2-30EAKIEMLPFIAZ2LNB2G4ILWF.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/sys_types-3WFJB1QNQT9HFLHJI0FG7PKCY.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/_Builtin_stdint-A50XLKTB75Q7HJSX20NLCDUCC.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/_Builtin_tgmath-BJVZJINKJNFRZCMY9V2E2E98U.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/_Builtin_stdatomic-8PHN86WU604AYPILVOIQTNR65.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/_Builtin_intrinsics-4KGL842L7V5UUL5DB22ZU9HDA.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/_DarwinFoundation3-6DD217POB8BARVOV9UQ89H754.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/_Builtin_inttypes-73EZH83H58MM24JFLUTCF3XBR.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Darwin-APF3C2ZN9FXR10PA1SRA3PO98.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/simd-8GVFQ6R6BWGAURRZG38Y8OE1A.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Spatial-C7MHDB01YPJTHLBLLIQ7CMENC.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/ObjectiveC-B802B6QK4BJJ63CGILBWI02OB.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/MachO-EJV0RP6V75PXZFNOFMV7VU8RV.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/os_object-AF02TD8G4ZEZ3GXQY1PH0FSNT.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/os_workgroup-73NYE0NKG4RHX1UTM23RBIAWC.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Dispatch-3KN2919J4WK06BTC8UFCB42FN.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/XPC-55NK3COZI48F3N2K2V8KFWCC1.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/CoreFoundation-8O1NNKID9BZPZI1HHDYA9QSN8.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/os-7HEU2P5Q9W31LMJ19ZXYYVXSS.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Security-95EHSFZOAPJ358UFK25YA3AQD.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/CFNetwork-2GF6GF914KIFQ38MZKXVA3J7I.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/CoreGraphics-BLKTZREZS9TJL5Y3Y0V3MUFRO.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Foundation-1PTEE9RGH68MBUWZNWKWC193Z.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/CoreText-4EBQHS853T98K6ZTQTFX16U9I.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/ImageIO-1E2X9DD074CC95S3HN9D1IL5U.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/OSLog-JELT6ZLAXSAQA917ROMIQAQD.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/UserNotifications-7P7MEL69A4HM1XOO31HBWLEPC.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Accessibility-6RYZQOEO1N4UXHKDPKMT1D45A.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/OpenGLES-4NKEV3L6CLUARBBYKZS70K8V.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/UniformTypeIdentifiers-47LTBOG29G6NM2EM2NGT5R1T6.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/UIUtilities-DXFEK0IECSX8PAMNU2S9G0GGX.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Symbols-9GQ0YDSHLIVN04OWAYR6HDOHL.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/IOSurface-97KA04QGQHV850AXUA05LMB58.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/FileProvider-EV22JPVA1HLL2AQ1VKDPT5ACG.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/DataDetection-6SYUEZOG1HRAXQ176ZCACSYXQ.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/CoreTransferable-ATYR50YZ8UXEMVZ0C414V2ATZ.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Metal-CLJRFHE5G9CUUKBMXC13CSYDO.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/CoreVideo-4QFECY7SPZQ1AQJAIUXCZ4GFZ.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/CoreImage-2XOWYSEH6N8WXT2PHC5R1THSB.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/QuartzCore-66AHQ13MM6PSTBWUZAIY7XCW9.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/SwiftUICore-4XCD93VCTZTA0381JBAMF03NF.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/UIKit-CVDQ4ZFZ3C09E3QHZA1IQWWUB.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules/XCUIAutomation-2Q0KJO8O76O5DE5HMPKXRQBJK.pcm
+
+SwiftExplicitDependencyCompileModuleFromInterface arm64 /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules/XCUIAutomation-2TUM0WBQTTAIR.swiftmodule
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules/XCTest-CE2I003BUP4ZJLSHPD3EFE8ZW.pcm
+
+SwiftExplicitDependencyCompileModuleFromInterface arm64 /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules/XCTest-F33PB5YQNUU3.swiftmodule
+
+SwiftCompile normal arm64 Compiling\ VisualDriver.swift /Users/runner/work/Plinka/Plinka/ios/VisualDriver/VisualDriver.swift (in target 'VisualDriver' from project 'VisualDriver')
+
+SwiftCompile normal arm64 /Users/runner/work/Plinka/Plinka/ios/VisualDriver/VisualDriver.swift (in target 'VisualDriver' from project 'VisualDriver')
+    cd /Users/runner/work/Plinka/Plinka/ios/VisualDriver
+    
+
+SwiftEmitModule normal arm64 Emitting\ module\ for\ VisualDriver (in target 'VisualDriver' from project 'VisualDriver')
+
+EmitSwiftModule normal arm64 (in target 'VisualDriver' from project 'VisualDriver')
+    cd /Users/runner/work/Plinka/Plinka/ios/VisualDriver
+    
+
+SwiftCompile normal arm64 Compiling\ EditorTests.swift /Users/runner/work/Plinka/Plinka/ios/VisualDriver/EditorTests.swift (in target 'VisualDriver' from project 'VisualDriver')
+
+SwiftCompile normal arm64 /Users/runner/work/Plinka/Plinka/ios/VisualDriver/EditorTests.swift (in target 'VisualDriver' from project 'VisualDriver')
+    cd /Users/runner/work/Plinka/Plinka/ios/VisualDriver
+    
+
+SwiftCompile normal arm64 Compiling\ ParentKeypadTests.swift /Users/runner/work/Plinka/Plinka/ios/VisualDriver/ParentKeypadTests.swift (in target 'VisualDriver' from project 'VisualDriver')
+
+SwiftCompile normal arm64 /Users/runner/work/Plinka/Plinka/ios/VisualDriver/ParentKeypadTests.swift (in target 'VisualDriver' from project 'VisualDriver')
+    cd /Users/runner/work/Plinka/Plinka/ios/VisualDriver
+    
+
+SwiftDriverJobDiscovery normal arm64 Emitting module for VisualDriver (in target 'VisualDriver' from project 'VisualDriver')
+
+SwiftDriver\ Compilation\ Requirements VisualDriver normal arm64 com.apple.xcode.tools.swift.compiler (in target 'VisualDriver' from project 'VisualDriver')
+    cd /Users/runner/work/Plinka/Plinka/ios/VisualDriver
+    builtin-Swift-Compilation-Requirements -- /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name VisualDriver -Onone @/Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver.build/Objects-normal/arm64/VisualDriver.SwiftFileList -DDEBUG -module-alias Testing\=_Testing_Unavailable -plugin-path /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.5.sdk -target arm64-apple-ios17.0-simulator -g -module-cache-path /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 5 -I /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Products/Debug-iphonesimulator -Isystem /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib -F /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Products/Debug-iphonesimulator -F /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks -F /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.5.sdk/Developer/Library/Frameworks -c -j3 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/runner/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator26.5-23F81a-688ef53f1462e2c8f657fdc38a81448ff45c64a1807a658693f2a61704f17a36.sdkstatcache -output-file-map /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver.build/Objects-normal/arm64/VisualDriver-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -sdk-module-cache-path /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver.build/Objects-normal/arm64/VisualDriver.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -I/Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver.build/Objects-normal/arm64/VisualDriver_const_extract_protocols.json -Xcc -iquote -Xcc /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver.build/VisualDriver-generated-files.hmap -Xcc -I/Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver.build/VisualDriver-own-target-headers.hmap -Xcc -I/Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver.build/VisualDriver-all-target-headers.hmap -Xcc -iquote -Xcc /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver.build/VisualDriver-project-headers.hmap -Xcc -I/Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Products/Debug-iphonesimulator/include -Xcc -I/Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver.build/DerivedSources-normal/arm64 -Xcc -I/Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver.build/DerivedSources/arm64 -Xcc -I/Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver.build/Objects-normal/arm64/VisualDriver-Swift.h -working-directory /Users/runner/work/Plinka/Plinka/ios/VisualDriver -experimental-emit-module-separately -disable-cmo
+
+SwiftDriverJobDiscovery normal arm64 Compiling ParentKeypadTests.swift (in target 'VisualDriver' from project 'VisualDriver')
+
+SwiftDriverJobDiscovery normal arm64 Compiling EditorTests.swift (in target 'VisualDriver' from project 'VisualDriver')
+
+SwiftDriverJobDiscovery normal arm64 Compiling VisualDriver.swift (in target 'VisualDriver' from project 'VisualDriver')
+
+SwiftDriver\ Compilation VisualDriver normal arm64 com.apple.xcode.tools.swift.compiler (in target 'VisualDriver' from project 'VisualDriver')
+    cd /Users/runner/work/Plinka/Plinka/ios/VisualDriver
+    builtin-Swift-Compilation -- /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name VisualDriver -Onone @/Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver.build/Objects-normal/arm64/VisualDriver.SwiftFileList -DDEBUG -module-alias Testing\=_Testing_Unavailable -plugin-path /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.5.sdk -target arm64-apple-ios17.0-simulator -g -module-cache-path /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 5 -I /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Products/Debug-iphonesimulator -Isystem /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib -F /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Products/Debug-iphonesimulator -F /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks -F /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.5.sdk/Developer/Library/Frameworks -c -j3 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/runner/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator26.5-23F81a-688ef53f1462e2c8f657fdc38a81448ff45c64a1807a658693f2a61704f17a36.sdkstatcache -output-file-map /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver.build/Objects-normal/arm64/VisualDriver-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -sdk-module-cache-path /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver.build/Objects-normal/arm64/VisualDriver.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -I/Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver.build/Objects-normal/arm64/VisualDriver_const_extract_protocols.json -Xcc -iquote -Xcc /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver.build/VisualDriver-generated-files.hmap -Xcc -I/Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver.build/VisualDriver-own-target-headers.hmap -Xcc -I/Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver.build/VisualDriver-all-target-headers.hmap -Xcc -iquote -Xcc /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver.build/VisualDriver-project-headers.hmap -Xcc -I/Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Products/Debug-iphonesimulator/include -Xcc -I/Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver.build/DerivedSources-normal/arm64 -Xcc -I/Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver.build/DerivedSources/arm64 -Xcc -I/Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver.build/Objects-normal/arm64/VisualDriver-Swift.h -working-directory /Users/runner/work/Plinka/Plinka/ios/VisualDriver -experimental-emit-module-separately -disable-cmo
+
+SwiftMergeGeneratedHeaders /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver.build/DerivedSources/VisualDriver-Swift.h /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver.build/Objects-normal/arm64/VisualDriver-Swift.h (in target 'VisualDriver' from project 'VisualDriver')
+    cd /Users/runner/work/Plinka/Plinka/ios/VisualDriver
+    builtin-swiftHeaderTool -arch arm64 /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver.build/Objects-normal/arm64/VisualDriver-Swift.h -o /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver.build/DerivedSources/VisualDriver-Swift.h
+
+Copy /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Products/Debug-iphonesimulator/VisualDriver.swiftmodule/arm64-apple-ios-simulator.swiftmodule /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver.build/Objects-normal/arm64/VisualDriver.swiftmodule (in target 'VisualDriver' from project 'VisualDriver')
+    cd /Users/runner/work/Plinka/Plinka/ios/VisualDriver
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver.build/Objects-normal/arm64/VisualDriver.swiftmodule /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Products/Debug-iphonesimulator/VisualDriver.swiftmodule/arm64-apple-ios-simulator.swiftmodule
+
+Copy /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Products/Debug-iphonesimulator/VisualDriver.swiftmodule/arm64-apple-ios-simulator.swiftdoc /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver.build/Objects-normal/arm64/VisualDriver.swiftdoc (in target 'VisualDriver' from project 'VisualDriver')
+    cd /Users/runner/work/Plinka/Plinka/ios/VisualDriver
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver.build/Objects-normal/arm64/VisualDriver.swiftdoc /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Products/Debug-iphonesimulator/VisualDriver.swiftmodule/arm64-apple-ios-simulator.swiftdoc
+
+Copy /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Products/Debug-iphonesimulator/VisualDriver.swiftmodule/arm64-apple-ios-simulator.abi.json /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver.build/Objects-normal/arm64/VisualDriver.abi.json (in target 'VisualDriver' from project 'VisualDriver')
+    cd /Users/runner/work/Plinka/Plinka/ios/VisualDriver
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver.build/Objects-normal/arm64/VisualDriver.abi.json /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Products/Debug-iphonesimulator/VisualDriver.swiftmodule/arm64-apple-ios-simulator.abi.json
+
+Copy /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Products/Debug-iphonesimulator/VisualDriver.swiftmodule/Project/arm64-apple-ios-simulator.swiftsourceinfo /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver.build/Objects-normal/arm64/VisualDriver.swiftsourceinfo (in target 'VisualDriver' from project 'VisualDriver')
+    cd /Users/runner/work/Plinka/Plinka/ios/VisualDriver
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver.build/Objects-normal/arm64/VisualDriver.swiftsourceinfo /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Products/Debug-iphonesimulator/VisualDriver.swiftmodule/Project/arm64-apple-ios-simulator.swiftsourceinfo
+
+Ld /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Products/Debug-iphonesimulator/VisualDriver-Runner.app/PlugIns/VisualDriver.xctest/VisualDriver normal (in target 'VisualDriver' from project 'VisualDriver')
+    cd /Users/runner/work/Plinka/Plinka/ios/VisualDriver
+    /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -Xlinker -reproducible -target arm64-apple-ios17.0-simulator -bundle -isysroot /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.5.sdk -O0 -L/Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/EagerLinkingTBDs/Debug-iphonesimulator -L/Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Products/Debug-iphonesimulator -L/Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib -F/Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/EagerLinkingTBDs/Debug-iphonesimulator -F/Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Products/Debug-iphonesimulator -iframework /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks -iframework /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.5.sdk/Developer/Library/Frameworks -filelist /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver.build/Objects-normal/arm64/VisualDriver.LinkFileList -Xlinker -rpath -Xlinker /usr/lib/swift -Xlinker -rpath -Xlinker @loader_path/Frameworks -Xlinker -rpath -Xlinker @executable_path/Frameworks -Xlinker -dead_strip -Xlinker -object_path_lto -Xlinker /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver.build/Objects-normal/arm64/VisualDriver_lto.o -rdynamic -Xlinker -no_deduplicate -Xlinker -objc_abi_version -Xlinker 2 -Xlinker -dependency_info -Xlinker /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver.build/Objects-normal/arm64/VisualDriver_dependency_info.dat -fobjc-link-runtime -L/Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphonesimulator -L/usr/lib/swift -Xlinker -add_ast_path -Xlinker /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver.build/Objects-normal/arm64/VisualDriver.swiftmodule @/Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver.build/Objects-normal/arm64/VisualDriver-linker-args.resp -Xlinker -needed_framework -Xlinker XCTest -framework XCTest -Xlinker -needed-lXCTestSwiftSupport -lXCTestSwiftSupport -o /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Products/Debug-iphonesimulator/VisualDriver-Runner.app/PlugIns/VisualDriver.xctest/VisualDriver
+
+ExtractAppIntentsMetadata (in target 'VisualDriver' from project 'VisualDriver')
+    cd /Users/runner/work/Plinka/Plinka/ios/VisualDriver
+    /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/appintentsmetadataprocessor --toolchain-dir /var/run/com.apple.security.cryptexd/mnt/com.apple.MobileAsset.MetalToolchain-v17.6.109.0.N76xlC/Metal.xctoolchain --module-name VisualDriver --sdk-root /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.5.sdk --xcode-version 17F113 --platform-family iOS --deployment-target 17.0 --bundle-identifier com.joseherreriastests.pluki.visual --output /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Products/Debug-iphonesimulator/VisualDriver-Runner.app/PlugIns/VisualDriver.xctest --target-triple arm64-apple-ios17.0-simulator --binary-file /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Products/Debug-iphonesimulator/VisualDriver-Runner.app/PlugIns/VisualDriver.xctest/VisualDriver --dependency-file /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver.build/Objects-normal/arm64/VisualDriver_dependency_info.dat --stringsdata-file /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver.build/Objects-normal/arm64/ExtractedAppShortcutsMetadata.stringsdata --source-file-list /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver.build/Objects-normal/arm64/VisualDriver.SwiftFileList --metadata-file-list /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver.build/VisualDriver.DependencyMetadataFileList --static-metadata-file-list /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver.build/VisualDriver.DependencyStaticMetadataFileList --swift-const-vals-list /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver.build/Objects-normal/arm64/VisualDriver.SwiftConstValuesFileList --compile-time-extraction --deployment-aware-processing --validate-assistant-intents --no-app-shortcuts-localization
+2026-11-11 09:07:27.924 appintentsmetadataprocessor[16927:52164] Starting appintentsmetadataprocessor export
+2026-11-11 09:07:27.954 appintentsmetadataprocessor[16927:52164] warning: Metadata extraction skipped. No AppIntents.framework dependency found.
+
+CopySwiftLibs /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Products/Debug-iphonesimulator/VisualDriver-Runner.app/PlugIns/VisualDriver.xctest (in target 'VisualDriver' from project 'VisualDriver')
+    cd /Users/runner/work/Plinka/Plinka/ios/VisualDriver
+    builtin-swiftStdLibTool --copy --verbose --scan-executable /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Products/Debug-iphonesimulator/VisualDriver-Runner.app/PlugIns/VisualDriver.xctest/VisualDriver --scan-folder /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Products/Debug-iphonesimulator/VisualDriver-Runner.app/PlugIns/VisualDriver.xctest/Frameworks --scan-folder /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Products/Debug-iphonesimulator/VisualDriver-Runner.app/PlugIns/VisualDriver.xctest/PlugIns --scan-folder /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Products/Debug-iphonesimulator/VisualDriver-Runner.app/PlugIns/VisualDriver.xctest/SystemExtensions --scan-folder /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Products/Debug-iphonesimulator/VisualDriver-Runner.app/PlugIns/VisualDriver.xctest/Extensions --platform iphonesimulator --toolchain /var/run/com.apple.security.cryptexd/mnt/com.apple.MobileAsset.MetalToolchain-v17.6.109.0.N76xlC/Metal.xctoolchain --toolchain /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --destination /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Products/Debug-iphonesimulator/VisualDriver-Runner.app/PlugIns/VisualDriver.xctest/Frameworks --strip-bitcode --scan-executable /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib/libXCTestSwiftSupport.dylib --strip-bitcode-tool /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/bitcode_strip --emit-dependency-info /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver.build/SwiftStdLibToolInputDependencies.dep --filter-for-swift-os
+Ignoring --strip-bitcode because --sign was not passed
+
+AppIntentsSSUTraining (in target 'VisualDriver' from project 'VisualDriver')
+    cd /Users/runner/work/Plinka/Plinka/ios/VisualDriver
+    /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/appintentsnltrainingprocessor --infoplist-path /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Products/Debug-iphonesimulator/VisualDriver-Runner.app/PlugIns/VisualDriver.xctest/Info.plist --temp-dir-path /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver.build/ssu --bundle-id com.joseherreriastests.pluki.visual --product-path /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Products/Debug-iphonesimulator/VisualDriver-Runner.app/PlugIns/VisualDriver.xctest --extracted-metadata-path /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Products/Debug-iphonesimulator/VisualDriver-Runner.app/PlugIns/VisualDriver.xctest/Metadata.appintents --metadata-file-list /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Intermediates.noindex/VisualDriver.build/Debug-iphonesimulator/VisualDriver.build/VisualDriver.DependencyMetadataFileList --source-file /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Products/Debug-iphonesimulator/VisualDriver-Runner.app/PlugIns/VisualDriver.xctest/Info.plist --archive-ssu-assets
+2026-11-11 09:07:28.044 appintentsnltrainingprocessor[17013:52344] Parsing options for appintentsnltrainingprocessor
+2026-11-11 09:07:28.046 appintentsnltrainingprocessor[17013:52344] Starting AppIntents SSU YAML Generation
+2026-11-11 09:07:28.052 appintentsnltrainingprocessor[17013:52344] No AppShortcuts found - Skipping.
+
+MkDir /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Products/Debug-iphonesimulator/VisualDriver-Runner.app (in target 'VisualDriver' from project 'VisualDriver')
+    cd /Users/runner/work/Plinka/Plinka/ios/VisualDriver
+    /bin/mkdir -p /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Products/Debug-iphonesimulator/VisualDriver-Runner.app
+
+CopyPlistFile /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Products/Debug-iphonesimulator/VisualDriver-Runner.app/Info.plist /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Xcode/Agents/XCTRunner.app/Info.plist (in target 'VisualDriver' from project 'VisualDriver')
+    cd /Users/runner/work/Plinka/Plinka/ios/VisualDriver
+    builtin-copyPlist --validate --convert xml1 --macro-expansion WRAPPEDPRODUCTNAME VisualDriver-Runner --macro-expansion WRAPPEDPRODUCTBUNDLEIDENTIFIER com.joseherreriastests.pluki.visual.xctrunner --macro-expansion TESTPRODUCTNAME VisualDriver --macro-expansion TESTPRODUCTBUNDLEIDENTIFIER com.joseherreriastests.pluki.visual --copy-value UIDeviceFamily /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Products/Debug-iphonesimulator/VisualDriver-Runner.app/PlugIns/VisualDriver.xctest/Info.plist --outdir /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Products/Debug-iphonesimulator/VisualDriver-Runner.app -- /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Xcode/Agents/XCTRunner.app/Info.plist
+
+CopyAndPreserveArchs /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Products/Debug-iphonesimulator/VisualDriver-Runner.app/VisualDriver-Runner (in target 'VisualDriver' from project 'VisualDriver')
+    cd /Users/runner/work/Plinka/Plinka/ios/VisualDriver
+    /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/lipo /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Xcode/Agents/XCTRunner.app/XCTRunner -output /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Products/Debug-iphonesimulator/VisualDriver-Runner.app/VisualDriver-Runner -extract arm64
+
+Copy /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Products/Debug-iphonesimulator/VisualDriver-Runner.app/PkgInfo /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Xcode/Agents/XCTRunner.app/PkgInfo (in target 'VisualDriver' from project 'VisualDriver')
+    cd /Users/runner/work/Plinka/Plinka/ios/VisualDriver
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Xcode/Agents/XCTRunner.app/PkgInfo /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Products/Debug-iphonesimulator/VisualDriver-Runner.app
+
+Copy /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Products/Debug-iphonesimulator/VisualDriver-Runner.app/Frameworks/libXCTestSwiftSupport.dylib /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib/libXCTestSwiftSupport.dylib (in target 'VisualDriver' from project 'VisualDriver')
+    cd /Users/runner/work/Plinka/Plinka/ios/VisualDriver
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -exclude Headers -exclude PrivateHeaders -exclude Modules -exclude \*.tbd -resolve-src-symlinks /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib/libXCTestSwiftSupport.dylib /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Products/Debug-iphonesimulator/VisualDriver-Runner.app/Frameworks
+
+Copy /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Products/Debug-iphonesimulator/VisualDriver-Runner.app/Frameworks/XCUnit.framework /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/PrivateFrameworks/XCUnit.framework (in target 'VisualDriver' from project 'VisualDriver')
+    cd /Users/runner/work/Plinka/Plinka/ios/VisualDriver
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -exclude Headers -exclude PrivateHeaders -exclude Modules -exclude \*.tbd -resolve-src-symlinks /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/PrivateFrameworks/XCUnit.framework /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Products/Debug-iphonesimulator/VisualDriver-Runner.app/Frameworks
+
+Copy /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Products/Debug-iphonesimulator/VisualDriver-Runner.app/Frameworks/XCUIAutomation.framework /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks/XCUIAutomation.framework (in target 'VisualDriver' from project 'VisualDriver')
+    cd /Users/runner/work/Plinka/Plinka/ios/VisualDriver
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -exclude Headers -exclude PrivateHeaders -exclude Modules -exclude \*.tbd -resolve-src-symlinks /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks/XCUIAutomation.framework /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Products/Debug-iphonesimulator/VisualDriver-Runner.app/Frameworks
+
+Copy /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Products/Debug-iphonesimulator/VisualDriver-Runner.app/Frameworks/XCTestSupport.framework /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/PrivateFrameworks/XCTestSupport.framework (in target 'VisualDriver' from project 'VisualDriver')
+    cd /Users/runner/work/Plinka/Plinka/ios/VisualDriver
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -exclude Headers -exclude PrivateHeaders -exclude Modules -exclude \*.tbd -resolve-src-symlinks /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/PrivateFrameworks/XCTestSupport.framework /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Products/Debug-iphonesimulator/VisualDriver-Runner.app/Frameworks
+
+Copy /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Products/Debug-iphonesimulator/VisualDriver-Runner.app/Frameworks/XCTestCore.framework /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/PrivateFrameworks/XCTestCore.framework (in target 'VisualDriver' from project 'VisualDriver')
+    cd /Users/runner/work/Plinka/Plinka/ios/VisualDriver
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -exclude Headers -exclude PrivateHeaders -exclude Modules -exclude \*.tbd -resolve-src-symlinks /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/PrivateFrameworks/XCTestCore.framework /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Products/Debug-iphonesimulator/VisualDriver-Runner.app/Frameworks
+
+Copy /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Products/Debug-iphonesimulator/VisualDriver-Runner.app/Frameworks/XCTest.framework /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks/XCTest.framework (in target 'VisualDriver' from project 'VisualDriver')
+    cd /Users/runner/work/Plinka/Plinka/ios/VisualDriver
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -exclude Headers -exclude PrivateHeaders -exclude Modules -exclude \*.tbd -resolve-src-symlinks /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks/XCTest.framework /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Products/Debug-iphonesimulator/VisualDriver-Runner.app/Frameworks
+
+Copy /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Products/Debug-iphonesimulator/VisualDriver-Runner.app/Frameworks/XCTAutomationSupport.framework /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/PrivateFrameworks/XCTAutomationSupport.framework (in target 'VisualDriver' from project 'VisualDriver')
+    cd /Users/runner/work/Plinka/Plinka/ios/VisualDriver
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -exclude Headers -exclude PrivateHeaders -exclude Modules -exclude \*.tbd -resolve-src-symlinks /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/PrivateFrameworks/XCTAutomationSupport.framework /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Products/Debug-iphonesimulator/VisualDriver-Runner.app/Frameworks
+
+Copy /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Products/Debug-iphonesimulator/VisualDriver-Runner.app/Frameworks/Testing.framework /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks/Testing.framework (in target 'VisualDriver' from project 'VisualDriver')
+    cd /Users/runner/work/Plinka/Plinka/ios/VisualDriver
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -exclude Headers -exclude PrivateHeaders -exclude Modules -exclude \*.tbd -resolve-src-symlinks /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks/Testing.framework /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Products/Debug-iphonesimulator/VisualDriver-Runner.app/Frameworks
+
+RegisterExecutionPolicyException /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Products/Debug-iphonesimulator/VisualDriver-Runner.app/PlugIns/VisualDriver.xctest (in target 'VisualDriver' from project 'VisualDriver')
+    cd /Users/runner/work/Plinka/Plinka/ios/VisualDriver
+    builtin-RegisterExecutionPolicyException /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Products/Debug-iphonesimulator/VisualDriver-Runner.app/PlugIns/VisualDriver.xctest
+
+Touch /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Products/Debug-iphonesimulator/VisualDriver-Runner.app/PlugIns/VisualDriver.xctest (in target 'VisualDriver' from project 'VisualDriver')
+    cd /Users/runner/work/Plinka/Plinka/ios/VisualDriver
+    /usr/bin/touch -c /Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Build/Products/Debug-iphonesimulator/VisualDriver-Runner.app/PlugIns/VisualDriver.xctest
+
+2026-11-11 09:07:47.302412+0000 VisualDriver-Runner[17593:53836] [Default] Running tests...
+objc[17593]: Class UIAccessibilityLoaderWebShared is implemented in both /Library/Developer/CoreSimulator/Volumes/iOS_23F77/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 26.5.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebCore.axbundle/WebCore (0x1076d0310) and /Library/Developer/CoreSimulator/Volumes/iOS_23F77/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 26.5.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebKit.axbundle/WebKit (0x107764398). This may cause spurious casting failures and mysterious crashes. One of the duplicates must be removed or renamed.
+    t =      nans Interface orientation changed to Portrait
+Test Suite 'Selected tests' started at 2026-11-11 09:07:59.069.
+Test Suite 'VisualDriver.xctest' started at 2026-11-11 09:07:59.071.
+Test Suite 'VisualDriver' started at 2026-11-11 09:07:59.071.
+Test Case '-[VisualDriver.VisualDriver testStudioCapture]' started.
+    t =     0.00s Start Test at 2026-11-11 09:07:59.072
+    t =     1.51s Set Up
+    t =     1.51s Setting device orientation to Portrait
+    t =     1.53s     Device orientation changed to Portrait
+    t =     1.63s     Wait for com.apple.springboard to idle
+    t =     1.78s Open com.joseherrerias.plinka
+    t =     1.78s     Launch com.joseherrerias.plinka
+    t =     2.90s         Setting up automation session
+    t =     4.50s         Wait for com.joseherrerias.plinka to idle
+    t =     8.71s Waiting 60.0s for "visual-stage" StaticText to exist
+    t =     9.76s     Checking `Expect predicate `existsNoRetry == 1` for object "visual-stage" StaticText`
+    t =     9.76s         Checking existence of `"visual-stage" StaticText`
+    t =    11.31s Checking `Expect predicate `label == "choose-animals"` for object "visual-stage" StaticText`
+    t =    11.31s     Find the "visual-stage" StaticText
+    t =    11.49s     Capturing element debug description
+    t =    11.62s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    11.77s         Find: Descendants matching type StaticText
+    t =    11.77s         Find: Elements matching predicate '"visual-stage" IN identifiers'
+    t =    11.78s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    11.92s         Find: Descendants matching type StaticText
+    t =    12.00s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    13.29s Checking `Expect predicate `label == "choose-animals"` for object "visual-stage" StaticText`
+    t =    13.29s     Find the "visual-stage" StaticText
+    t =    13.39s     Capturing element debug description
+    t =    13.45s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    13.56s         Find: Descendants matching type StaticText
+    t =    13.56s         Find: Elements matching predicate '"visual-stage" IN identifiers'
+    t =    13.56s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    13.69s         Find: Descendants matching type StaticText
+    t =    13.70s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    15.27s Checking `Expect predicate `label == "choose-animals"` for object "visual-stage" StaticText`
+    t =    15.28s     Find the "visual-stage" StaticText
+    t =    15.36s     Capturing element debug description
+    t =    15.45s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    15.53s         Find: Descendants matching type StaticText
+    t =    15.54s         Find: Elements matching predicate '"visual-stage" IN identifiers'
+    t =    15.54s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    15.64s         Find: Descendants matching type StaticText
+    t =    15.65s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    17.32s Checking `Expect predicate `label == "choose-animals"` for object "visual-stage" StaticText`
+    t =    17.32s     Find the "visual-stage" StaticText
+    t =    17.48s     Capturing element debug description
+    t =    17.61s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    17.78s         Find: Descendants matching type StaticText
+    t =    17.79s         Find: Elements matching predicate '"visual-stage" IN identifiers'
+    t =    17.79s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    17.95s         Find: Descendants matching type StaticText
+    t =    17.96s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    19.34s Checking `Expect predicate `label == "choose-animals"` for object "visual-stage" StaticText`
+    t =    19.34s     Find the "visual-stage" StaticText
+    t =    19.42s     Capturing element debug description
+    t =    19.61s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    19.73s         Find: Descendants matching type StaticText
+    t =    19.73s         Find: Elements matching predicate '"visual-stage" IN identifiers'
+    t =    19.73s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    19.84s         Find: Descendants matching type StaticText
+    t =    19.84s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    21.34s Checking `Expect predicate `label == "choose-animals"` for object "visual-stage" StaticText`
+    t =    21.34s     Find the "visual-stage" StaticText
+    t =    21.43s     Capturing element debug description
+    t =    21.49s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    21.60s         Find: Descendants matching type StaticText
+    t =    21.60s         Find: Elements matching predicate '"visual-stage" IN identifiers'
+    t =    21.61s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    21.74s         Find: Descendants matching type StaticText
+    t =    21.75s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    23.33s Checking `Expect predicate `label == "choose-animals"` for object "visual-stage" StaticText`
+    t =    23.38s     Find the "visual-stage" StaticText
+    t =    23.94s     Capturing element debug description
+    t =    24.56s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    24.73s         Find: Descendants matching type StaticText
+    t =    24.77s         Find: Elements matching predicate '"visual-stage" IN identifiers'
+    t =    24.84s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    25.12s         Find: Descendants matching type StaticText
+    t =    25.20s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    28.33s Checking `Expect predicate `label == "choose-animals"` for object "visual-stage" StaticText`
+    t =    28.33s     Find the "visual-stage" StaticText
+    t =    28.45s     Capturing element debug description
+    t =    28.52s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    28.64s         Find: Descendants matching type StaticText
+    t =    28.64s         Find: Elements matching predicate '"visual-stage" IN identifiers'
+    t =    28.64s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    28.76s         Find: Descendants matching type StaticText
+    t =    28.77s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    30.32s Checking `Expect predicate `label == "choose-animals"` for object "visual-stage" StaticText`
+    t =    30.32s     Find the "visual-stage" StaticText
+    t =    30.38s     Capturing element debug description
+    t =    30.45s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    30.55s         Find: Descendants matching type StaticText
+    t =    30.56s         Find: Elements matching predicate '"visual-stage" IN identifiers'
+    t =    30.57s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    30.66s         Find: Descendants matching type StaticText
+    t =    30.66s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    31.34s Checking `Expect predicate `label == "choose-animals"` for object "visual-stage" StaticText`
+    t =    31.34s     Find the "visual-stage" StaticText
+    t =    31.41s     Capturing element debug description
+    t =    31.51s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    31.62s         Find: Descendants matching type StaticText
+    t =    31.62s         Find: Elements matching predicate '"visual-stage" IN identifiers'
+    t =    31.62s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    31.71s         Find: Descendants matching type StaticText
+    t =    31.72s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    32.29s Checking `Expect predicate `label == "choose-animals"` for object "visual-stage" StaticText`
+    t =    32.29s     Find the "visual-stage" StaticText
+    t =    32.79s Waiting 10.0s for "Animals" Button to exist
+    t =    33.83s     Checking `Expect predicate `existsNoRetry == 1` for object "Animals" Button`
+    t =    33.83s         Checking existence of `"Animals" Button`
+    t =    33.99s Tap "Animals" Button
+    t =    33.99s     Wait for com.joseherrerias.plinka to idle
+    t =    34.00s     Find the "Animals" Button
+    t =    34.14s     Check for interrupting elements affecting "Animals" Button
+    t =    34.27s     Synthesize event
+    t =    34.75s     Wait for com.joseherrerias.plinka to idle
+    t =    35.81s Checking `Expect predicate `label == "choose-instruments"` for object "visual-stage" StaticText`
+    t =    35.81s     Find the "visual-stage" StaticText
+    t =    35.96s     Capturing element debug description
+    t =    36.03s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    36.27s         Find: Descendants matching type StaticText
+    t =    36.28s         Find: Elements matching predicate '"visual-stage" IN identifiers'
+    t =    36.29s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    36.50s         Find: Descendants matching type StaticText
+    t =    36.51s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    37.84s Checking `Expect predicate `label == "choose-instruments"` for object "visual-stage" StaticText`
+    t =    37.84s     Find the "visual-stage" StaticText
+    t =    37.97s     Capturing element debug description
+    t =    38.03s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    38.33s         Find: Descendants matching type StaticText
+    t =    38.33s         Find: Elements matching predicate '"visual-stage" IN identifiers'
+    t =    38.34s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    38.54s         Find: Descendants matching type StaticText
+    t =    38.55s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    40.84s Checking `Expect predicate `label == "choose-instruments"` for object "visual-stage" StaticText`
+    t =    40.84s     Find the "visual-stage" StaticText
+    t =    40.95s     Capturing element debug description
+    t =    41.01s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    41.19s         Find: Descendants matching type StaticText
+    t =    41.19s         Find: Elements matching predicate '"visual-stage" IN identifiers'
+    t =    41.21s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    41.42s         Find: Descendants matching type StaticText
+    t =    41.43s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    43.79s Checking `Expect predicate `label == "choose-instruments"` for object "visual-stage" StaticText`
+    t =    43.79s     Find the "visual-stage" StaticText
+    t =    43.96s     Capturing element debug description
+    t =    44.01s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    44.23s         Find: Descendants matching type StaticText
+    t =    44.23s         Find: Elements matching predicate '"visual-stage" IN identifiers'
+    t =    44.24s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    44.48s         Find: Descendants matching type StaticText
+    t =    44.49s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    46.83s Checking `Expect predicate `label == "choose-instruments"` for object "visual-stage" StaticText`
+    t =    46.83s     Find the "visual-stage" StaticText
+    t =    46.92s     Capturing element debug description
+    t =    46.97s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    47.13s         Find: Descendants matching type StaticText
+    t =    47.13s         Find: Elements matching predicate '"visual-stage" IN identifiers'
+    t =    47.14s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    47.34s         Find: Descendants matching type StaticText
+    t =    47.35s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    48.79s Checking `Expect predicate `label == "choose-instruments"` for object "visual-stage" StaticText`
+    t =    48.79s     Find the "visual-stage" StaticText
+    t =    48.93s     Capturing element debug description
+    t =    48.98s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    49.13s         Find: Descendants matching type StaticText
+    t =    49.14s         Find: Elements matching predicate '"visual-stage" IN identifiers'
+    t =    49.15s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    49.29s         Find: Descendants matching type StaticText
+    t =    49.30s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    51.79s Checking `Expect predicate `label == "choose-instruments"` for object "visual-stage" StaticText`
+    t =    51.79s     Find the "visual-stage" StaticText
+    t =    51.89s Tap "Instruments" Button
+    t =    51.89s     Wait for com.joseherrerias.plinka to idle
+    t =    51.90s     Find the "Instruments" Button
+    t =    51.99s     Check for interrupting elements affecting "Instruments" Button
+    t =    52.09s     Synthesize event
+    t =    52.39s     Wait for com.joseherrerias.plinka to idle
+    t =    53.45s Checking `Expect predicate `label == "finished"` for object "visual-stage" StaticText`
+    t =    53.46s     Find the "visual-stage" StaticText
+    t =    53.83s     Capturing element debug description
+    t =    55.00s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    55.31s         Find: Descendants matching type StaticText
+    t =    55.33s         Find: Elements matching predicate '"visual-stage" IN identifiers'
+    t =    55.36s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    55.97s         Find: Descendants matching type StaticText
+    t =    55.98s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    65.46s Checking `Expect predicate `label == "finished"` for object "visual-stage" StaticText`
+    t =    65.46s     Find the "visual-stage" StaticText
+    t =    65.57s     Capturing element debug description
+    t =    65.65s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    65.76s         Find: Descendants matching type StaticText
+    t =    65.76s         Find: Elements matching predicate '"visual-stage" IN identifiers'
+    t =    65.79s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    65.89s         Find: Descendants matching type StaticText
+    t =    65.90s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    67.47s Checking `Expect predicate `label == "finished"` for object "visual-stage" StaticText`
+    t =    67.47s     Find the "visual-stage" StaticText
+    t =    67.59s     Capturing element debug description
+    t =    67.64s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    67.79s         Find: Descendants matching type StaticText
+    t =    67.79s         Find: Elements matching predicate '"visual-stage" IN identifiers'
+    t =    67.80s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    67.92s         Find: Descendants matching type StaticText
+    t =    67.93s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    69.45s Checking `Expect predicate `label == "finished"` for object "visual-stage" StaticText`
+    t =    69.46s     Find the "visual-stage" StaticText
+    t =    70.50s     Capturing element debug description
+    t =    70.68s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    71.02s         Find: Descendants matching type StaticText
+    t =    71.02s         Find: Elements matching predicate '"visual-stage" IN identifiers'
+    t =    71.07s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    71.30s         Find: Descendants matching type StaticText
+    t =    71.31s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    73.45s Checking `Expect predicate `label == "finished"` for object "visual-stage" StaticText`
+    t =    73.46s     Find the "visual-stage" StaticText
+    t =    73.69s     Capturing element debug description
+    t =    73.87s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    74.26s         Find: Descendants matching type StaticText
+    t =    74.26s         Find: Elements matching predicate '"visual-stage" IN identifiers'
+    t =    74.29s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    74.40s         Find: Descendants matching type StaticText
+    t =    74.41s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    75.49s Checking `Expect predicate `label == "finished"` for object "visual-stage" StaticText`
+    t =    75.49s     Find the "visual-stage" StaticText
+    t =    75.72s     Capturing element debug description
+    t =    75.95s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    76.09s         Find: Descendants matching type StaticText
+    t =    76.09s         Find: Elements matching predicate '"visual-stage" IN identifiers'
+    t =    76.09s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    76.23s         Find: Descendants matching type StaticText
+    t =    76.23s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    77.42s Checking `Expect predicate `label == "finished"` for object "visual-stage" StaticText`
+    t =    77.42s     Find the "visual-stage" StaticText
+    t =    77.49s     Capturing element debug description
+    t =    77.54s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    77.65s         Find: Descendants matching type StaticText
+    t =    77.65s         Find: Elements matching predicate '"visual-stage" IN identifiers'
+    t =    77.66s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    77.78s         Find: Descendants matching type StaticText
+    t =    77.78s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    78.45s Checking `Expect predicate `label == "finished"` for object "visual-stage" StaticText`
+    t =    78.46s     Find the "visual-stage" StaticText
+    t =    78.54s     Capturing element debug description
+    t =    78.58s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    78.72s         Find: Descendants matching type StaticText
+    t =    78.72s         Find: Elements matching predicate '"visual-stage" IN identifiers'
+    t =    78.73s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    78.86s         Find: Descendants matching type StaticText
+    t =    78.87s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    79.43s Checking `Expect predicate `label == "finished"` for object "visual-stage" StaticText`
+    t =    79.43s     Find the "visual-stage" StaticText
+    t =    79.51s     Capturing element debug description
+    t =    79.55s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    79.67s         Find: Descendants matching type StaticText
+    t =    79.67s         Find: Elements matching predicate '"visual-stage" IN identifiers'
+    t =    79.68s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    79.81s         Find: Descendants matching type StaticText
+    t =    79.82s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    80.44s Checking `Expect predicate `label == "finished"` for object "visual-stage" StaticText`
+    t =    80.44s     Find the "visual-stage" StaticText
+    t =    80.54s     Capturing element debug description
+    t =    80.58s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    80.73s         Find: Descendants matching type StaticText
+    t =    80.74s         Find: Elements matching predicate '"visual-stage" IN identifiers'
+    t =    80.74s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    80.88s         Find: Descendants matching type StaticText
+    t =    80.89s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    81.45s Checking `Expect predicate `label == "finished"` for object "visual-stage" StaticText`
+    t =    81.46s     Find the "visual-stage" StaticText
+    t =    81.55s     Capturing element debug description
+    t =    81.60s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    81.74s         Find: Descendants matching type StaticText
+    t =    81.74s         Find: Elements matching predicate '"visual-stage" IN identifiers'
+    t =    81.75s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    81.89s         Find: Descendants matching type StaticText
+    t =    81.90s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    83.45s Checking `Expect predicate `label == "finished"` for object "visual-stage" StaticText`
+    t =    83.45s     Find the "visual-stage" StaticText
+    t =    83.53s     Capturing element debug description
+    t =    84.74s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    84.89s         Find: Descendants matching type StaticText
+    t =    84.90s         Find: Elements matching predicate '"visual-stage" IN identifiers'
+    t =    84.90s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    85.05s         Find: Descendants matching type StaticText
+    t =    85.05s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    86.45s Checking `Expect predicate `label == "finished"` for object "visual-stage" StaticText`
+    t =    86.45s     Find the "visual-stage" StaticText
+    t =    86.59s     Capturing element debug description
+    t =    86.69s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    86.94s         Find: Descendants matching type StaticText
+    t =    86.95s         Find: Elements matching predicate '"visual-stage" IN identifiers'
+    t =    86.95s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    87.16s         Find: Descendants matching type StaticText
+    t =    87.17s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    88.47s Checking `Expect predicate `label == "finished"` for object "visual-stage" StaticText`
+    t =    88.47s     Find the "visual-stage" StaticText
+    t =    88.62s     Capturing element debug description
+    t =    88.91s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    89.23s         Find: Descendants matching type StaticText
+    t =    89.23s         Find: Elements matching predicate '"visual-stage" IN identifiers'
+    t =    89.24s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    89.54s         Find: Descendants matching type StaticText
+    t =    89.55s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    90.43s Checking `Expect predicate `label == "finished"` for object "visual-stage" StaticText`
+    t =    90.44s     Find the "visual-stage" StaticText
+    t =    90.72s     Capturing element debug description
+    t =    91.27s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    91.53s         Find: Descendants matching type StaticText
+    t =    91.53s         Find: Elements matching predicate '"visual-stage" IN identifiers'
+    t =    91.54s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    91.81s         Find: Descendants matching type StaticText
+    t =    91.82s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    93.47s Checking `Expect predicate `label == "finished"` for object "visual-stage" StaticText`
+    t =    93.47s     Find the "visual-stage" StaticText
+    t =    94.06s     Capturing element debug description
+    t =    94.18s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    94.35s         Find: Descendants matching type StaticText
+    t =    94.35s         Find: Elements matching predicate '"visual-stage" IN identifiers'
+    t =    94.37s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    94.56s         Find: Descendants matching type StaticText
+    t =    94.57s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    96.49s Checking `Expect predicate `label == "finished"` for object "visual-stage" StaticText`
+    t =    96.49s     Find the "visual-stage" StaticText
+    t =    96.62s     Capturing element debug description
+    t =    96.74s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    96.87s         Find: Descendants matching type StaticText
+    t =    96.88s         Find: Elements matching predicate '"visual-stage" IN identifiers'
+    t =    96.89s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    97.07s         Find: Descendants matching type StaticText
+    t =    97.08s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    99.45s Checking `Expect predicate `label == "finished"` for object "visual-stage" StaticText`
+    t =    99.46s     Find the "visual-stage" StaticText
+    t =    99.66s     Capturing element debug description
+    t =    99.74s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =    99.92s         Find: Descendants matching type StaticText
+    t =    99.92s         Find: Elements matching predicate '"visual-stage" IN identifiers'
+    t =    99.94s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =   100.12s         Find: Descendants matching type StaticText
+    t =   100.13s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =   101.46s Checking `Expect predicate `label == "finished"` for object "visual-stage" StaticText`
+    t =   101.46s     Find the "visual-stage" StaticText
+    t =   101.60s     Capturing element debug description
+    t =   101.69s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =   101.90s         Find: Descendants matching type StaticText
+    t =   101.90s         Find: Elements matching predicate '"visual-stage" IN identifiers'
+    t =   101.91s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =   102.12s         Find: Descendants matching type StaticText
+    t =   102.14s         Requesting snapshot of accessibility hierarchy for app with pid 18068
+    t =   103.41s Checking `Expect predicate `label == "finished"` for object "visual-stage" StaticText`
+    t =   103.42s     Find the "visual-stage" StaticText
+    t =   103.72s Tear Down
+Test Case '-[VisualDriver.VisualDriver testStudioCapture]' passed (104.077 seconds).
+Test Suite 'VisualDriver' passed at 2026-11-11 09:09:43.150.
+	 Executed 1 test, with 0 failures (0 unexpected) in 104.077 (104.079) seconds
+Test Suite 'VisualDriver.xctest' passed at 2026-11-11 09:09:43.150.
+	 Executed 1 test, with 0 failures (0 unexpected) in 104.077 (104.079) seconds
+Test Suite 'Selected tests' passed at 2026-11-11 09:09:43.151.
+	 Executed 1 test, with 0 failures (0 unexpected) in 104.077 (104.081) seconds
+2026-11-11 09:09:44.113 xcodebuild[13571:43004] [MT] IDETestOperationsObserverDebug: 135.414 elapsed -- Testing started completed.
+2026-11-11 09:09:44.113 xcodebuild[13571:43004] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-11-11 09:09:44.113 xcodebuild[13571:43004] [MT] IDETestOperationsObserverDebug: 135.414 sec, +135.414 sec -- end
+
+Test session results, code coverage, and logs:
+	/Users/runner/Library/Developer/Xcode/DerivedData/VisualDriver-fwjnwysitnsvnobjuvuvxtbxnfzo/Logs/Test/Test-VisualDriver-2026.11.11_09-05-14-+0000.xcresult
+
+** TEST SUCCEEDED **
+
+Testing started
