@@ -1,5 +1,6 @@
-# Compiled Build 13 — RC1
+# Next build: Pluki 1.1 (32)
 
-Jose confirmed successful compilation on October 26, 2026. Source archive retained with Builds 11 and 12. Device acceptance remains pending.
+Update the offline privacy policy to the approved November 11, 2026 text and correct sample-recovery help. See [Build 32 notes](VERSION-32.md).
 
-The final simulator Save capture still shows no keyboard; verify automatic focus and tapping the name field in both orientations on the signed app. See VERSION-13.md. Do not mark keyboard-open layout approved from capture completion alone.
+Use the existing manual Xcode Cloud `main` workflow. Build 31 is already compiled and must not be relabeled. Verify the App Store Connect sequence before starting the signed build and check the processed version/build afterward. Keep the current App Store review submission untouched.
+

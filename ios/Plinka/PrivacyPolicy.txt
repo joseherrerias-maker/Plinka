@@ -1,14 +1,17 @@
 Pluki privacy policy
-Updated October 26, 2026
+Updated November 11, 2026
 
 Music stays on your device
-Pluki creates and plays music on your iPhone or iPad. Pluki does not send your songs, song names, or usage information to the developer. It does not have accounts, advertisements, tracking, third-party analytics, or an online song-sharing service.
+Pluki creates and plays music on your iPhone or iPad. Pluki does not send your songs, song names, or app usage information to the developer. It does not have accounts, advertisements, tracking, third-party analytics, or an online song-sharing service.
 
 Saved songs and drafts
-Song names, notes, tempo, loop settings, saved projects and the current draft are stored locally. Open song lets you delete saved projects. Starting a new song replaces the working draft. Deleting Pluki can remove its local data. Your device's backup settings may include app data; those backups are managed by Apple, not by Pluki.
+Song names, notes, tempo, loop settings, saved projects, and the working draft are stored on your device. When you start a new song or open a sample that would replace a meaningful unfinished melody, Pluki preserves a separate Recovered draft in Open song first. Open song also lets you delete saved projects and recovered drafts. Deleting Pluki can remove its local data. Your device's backup settings may include app data; those backups are managed by Apple, not by Pluki.
+
+Project backup and transfer
+After a local parent check, a grown-up can export an editable .pluki project through Files, or import a selected project as another saved copy. Pluki does not automatically upload projects, synchronize them between devices, or send them to Pebblesoft Apps. If you use iCloud Drive, AirDrop, or another provider to save or share a project, that provider handles the file under its own terms and privacy practices.
 
 Video and Photos
-Video creation happens on your device using the included sounds and artwork. Pluki does not record your microphone, camera or screen. The song title is included in the exported video, so avoid personal information in titles you plan to share.
+Video creation happens on your device using the included sounds and artwork. Pluki does not record your microphone, camera, or screen. The song title is included in an exported video, so avoid personal information in titles you plan to share.
 
 A parent check is required before first requesting Photos permission. Once add-only access is granted, videos save directly without another parent check. Pluki requests add-only Photos permission when you choose to save; it does not read your existing photos or videos. You can decline permission and continue composing. You can change permission in device Settings. Videos already saved to Photos are managed and deleted in Photos, and may sync through iCloud Photos according to your Apple settings.
 
@@ -16,15 +19,16 @@ Temporary files
 Pluki creates temporary audio and video files while exporting. It removes them when an export is cancelled, fails, or its preview is closed during normal operation. Files left by an unexpected app termination may remain in the app's temporary storage until the system removes them or the app is deleted.
 
 Children and families
-Pluki does not ask for a child's name, age, location, email address or other profile information. Parent-check answers are checked on the device and are not stored or sent anywhere. The parent check is an interaction safeguard, not identity verification or consent to collect personal data.
+Pluki does not ask for a child's name, age, location, email address, or other profile information. Parent-check answers are checked on the device and are not stored or sent anywhere. The parent check is an interaction safeguard, not identity verification or consent to collect personal data.
+
+Local app preferences
+Pluki keeps limited information on your device to decide whether to show an App Store rating request: recent app-use days, whether a song has been saved, and the app version last used to request a rating. This information is not sent to Pebblesoft Apps or an analytics service.
 
 Apple services
-Apple handles app distribution, purchases, optional device backups and Photos services under its own terms and privacy practices. Pluki does not receive your payment details. Feedback you voluntarily send through TestFlight is handled by Apple and may be provided to the developer.
+Apple handles app distribution, purchases, optional device backups, and Photos services under its own terms and privacy practices. Pluki does not receive your payment details. Feedback you voluntarily send through TestFlight is handled by Apple and may be provided to the developer.
 
 Contact
 A parent or guardian can contact support@pebblesoftapps.com for help or privacy questions. If you email us, we receive your email address and whatever information you include so we can respond. Please do not send children's personal information. Support email is handled through Microsoft 365 from GoDaddy; it is separate from the offline app.
 
 Website links
-Settings includes optional links to our support page, website, online policy and your email app. A parent check is required before opening them. Website visits are separate from the offline app and are covered by the website privacy notice at https://pebblesoftapps.com/privacy/.
-
-Pluki remembers up to three days of use, whether music has been saved, and the last app version that requested a rating. These settings stay on the device.
+Pluki includes optional links to our support page, website, online privacy policy, and your email app. A parent check is required before opening them. Website visits are separate from the offline app and are covered by the website privacy notice at https://pebblesoftapps.com/privacy/.
