@@ -1,0 +1,21 @@
+{
+  "device": "iPad Pro 13-inch (M4)",
+  "runtime": "iOS 26.5",
+  "base_release_commit": "b0e83b918ff4d6d8ddba8b59b7851e7f588bc272",
+  "capture_commit": "721439f0dd482f046fbd4a10fc2e99a71a6fa46d",
+  "app_version": "1.1",
+  "build": "31",
+  "source": "Native SwiftUI app, unsigned Debug simulator; capture-only code excluded from Release",
+  "screens": [
+    "04_Samples",
+    "05_Saved",
+    "06_Video"
+  ],
+  "sha256": {
+    "06_Video.png": "572c043041b287d36286e148bdbd080f7569fe118dbbd72999646bd7eaad8b5e",
+    "05_Saved.png": "c84b4fd4933de75b482f00c997ddc7807c5af6fdff2b193fe56a46a6e3010d86",
+    "04_Samples.png": "6e57fbe991e3fcb3d7681cff2ca957deb459ae5b3528a76d652a00fad60b18fc"
+  },
+  "recording_audio": "simctl footage is silent; real song audio is present in Little_Sunrise_Export.mp4",
+  "physical_device_verified": false
+}
