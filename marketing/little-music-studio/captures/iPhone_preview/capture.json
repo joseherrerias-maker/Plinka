@@ -1,0 +1,27 @@
+{
+  "device": "iPhone 16 Pro Max",
+  "runtime": "iOS 26.5",
+  "base_release_commit": "b0e83b918ff4d6d8ddba8b59b7851e7f588bc272",
+  "capture_commit": "ae4ee989e9753dd8dade6b19f509b19b3e1d575f",
+  "app_version": "1.1",
+  "build": "31",
+  "source": "Native SwiftUI app, unsigned Debug simulator; capture-only code excluded from Release",
+  "screens": [
+    "01_Create",
+    "02_Sounds",
+    "03_Playback",
+    "04_Samples",
+    "05_Saved",
+    "06_Video"
+  ],
+  "sha256": {
+    "03_Playback.png": "dc0ef1f4920b881e5c015ab8900b42b0edc3b781a493a2adefc200e391bf1d73",
+    "01_Create.png": "e0ffeabb5b94538005a9dcc850674213befb7be22da8cb64db1baa0f470f785e",
+    "06_Video.png": "1738b4067f9246881e604127a3396201f81274b8e12ad9b0f4e0e5c37d851b5f",
+    "05_Saved.png": "ed6309f8186d0e126a2949d5656b75706e095dc8a95d19374db51dfa5da2e63b",
+    "02_Sounds.png": "839b573bfaea053ccf125609e697476b3bc95323d19ce261af96db449ca71ff2",
+    "04_Samples.png": "3336ae98ca5055dd51b1b9279406a816f9110e1d3e115bfe9029eebea45b4c17"
+  },
+  "recording_audio": "simctl footage is silent; real song audio is present in Little_Sunrise_Export.mp4",
+  "physical_device_verified": false
+}
