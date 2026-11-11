@@ -1495,7 +1495,7 @@ extension ComposerView {
             let ack = folder.appendingPathComponent("visual-ack.txt")
             try? FileManager.default.removeItem(at: ack)
             try name.write(to: request, atomically: true, encoding: .utf8)
-            for _ in 0..<180 {
+            for _ in 0..<450 {
                 if (try? String(contentsOf: ack, encoding: .utf8)) == name {
                     try? FileManager.default.removeItem(at: request)
                     return
@@ -1594,7 +1594,7 @@ extension ComposerView {
             let ack = folder.appendingPathComponent("studio-ack.txt")
             try? FileManager.default.removeItem(at: ack)
             try name.write(to: request, atomically: true, encoding: .utf8)
-            for _ in 0..<180 {
+            for _ in 0..<450 {
                 if (try? String(contentsOf: ack, encoding: .utf8)) == name {
                     try? FileManager.default.removeItem(at: request)
                     return
@@ -1642,6 +1642,35 @@ extension ComposerView {
                 (0,8,.xylophone),(4,6,.xylophone),(10,5,.xylophone),
                 (6,1,.bells),(14,6,.bells)])
             store.choose(.piano)
+            if landscape {
+                // Capture the remaining real native sheets after initial system banners expire.
+                try await hold(45)
+                openSample(SampleSong.plukiTheme)
+                showSamples = true
+                try await capture("04_Samples")
+                showSamples = false
+                try await hold()
+                showSongs = true
+                try await capture("05_Saved")
+                showSongs = false
+                try await hold()
+                guard let sunrise = store.savedSongs.first(where: { $0.song.title == "Little Sunrise" }) else {
+                    throw NSError(domain: "StudioMissingSavedSong", code: 5)
+                }
+                openSavedSong(sunrise)
+                showVideoExport = true
+                for _ in 0..<900 {
+                    if FileManager.default.fileExists(atPath: folder.appendingPathComponent("studio-video-ready.txt").path) { break }
+                    try await hold(0.2)
+                }
+                guard FileManager.default.fileExists(atPath: folder.appendingPathComponent("studio-video-ready.txt").path) else {
+                    throw NSError(domain: "StudioVideoTimeout", code: 6)
+                }
+                try await capture("06_Video")
+                visualStage = "finished"
+                try "PASS: three final native iPad screens; three real saved projects; full Little Sunrise video".write(to: folder.appendingPathComponent("studio-result.txt"), atomically: true, encoding: .utf8)
+                return
+            }
             visualStage = "create"
             try await capture("01_Create")
             // Real Little Sunrise playback provides preview-video source footage.

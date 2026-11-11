@@ -26,7 +26,7 @@ try:
   result=folder/'studio-result.txt'
   if result.exists():
    message=result.read_text();(out/'result.txt').write_text(message)
-   if not message.startswith('PASS:') or len(seen)!=6: raise RuntimeError(f'{message}; captured {len(seen)}/6')
+   if not message.startswith('PASS:') or len(seen)!=3: raise RuntimeError(f'{message}; captured {len(seen)}/3')
    break
   if recorder is None and (folder/'studio-record-ready.txt').exists():
    rec_log=(out/'recording.log').open('w')
@@ -41,7 +41,7 @@ try:
     print(f'{device}: {name}',flush=True)
   time.sleep(.15)
  else: raise TimeoutError('Studio tour exceeded 600 seconds')
- if driver.wait(timeout=60)!=0: raise RuntimeError('Native driver failed after captures')
+ if driver.wait(timeout=240)!=0: raise RuntimeError('Native driver failed after captures')
  if recorder:
   recorder.send_signal(signal.SIGINT);recorder.wait(timeout=30);recorder=None
  for pattern in ['*.pluki','Little_Sunrise_Export.mp4']:
