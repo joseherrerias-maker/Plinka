@@ -28,17 +28,15 @@ try:
    message=result.read_text();(out/'result.txt').write_text(message)
    if not message.startswith('PASS:') or len(seen)!=6: raise RuntimeError(f'{message}; captured {len(seen)}/6')
    break
+  if recorder is None and (folder/'studio-record-ready.txt').exists():
+   rec_log=(out/'recording.log').open('w')
+   recorder=subprocess.Popen(['xcrun','simctl','io',uid,'recordVideo','--codec=h264','--mask=ignored','--force',str(out/'Native_Studio_Footage.mp4')],stdout=rec_log,stderr=subprocess.STDOUT)
   ready=folder/'studio-ready.txt'
   if ready.exists():
    name=ready.read_text()
    if name and name not in seen:
     run('xcrun','simctl','io',uid,'screenshot',str(out/(name+'.png')))
     seen.add(name)
-    # Record the real Little Sunrise playback, then preserve all following native screens.
-    if name=='01_Create':
-     rec_log=(out/'recording.log').open('w')
-     recorder=subprocess.Popen(['xcrun','simctl','io',uid,'recordVideo','--codec=h264','--mask=ignored','--force',str(out/'Native_Studio_Footage.mp4')],stdout=rec_log,stderr=subprocess.STDOUT)
-     time.sleep(.5)
     (folder/'studio-ack.txt').write_text(name)
     print(f'{device}: {name}',flush=True)
   time.sleep(.15)

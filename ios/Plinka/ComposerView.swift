@@ -1610,7 +1610,7 @@ extension ComposerView {
             for (step, row, instrument) in notes {
                 store.choose(instrument)
                 _ = store.tap(step: step, row: row)
-                try await hold(0.09)
+                try await hold(title == "Little Sunrise" ? 0.22 : 0.09)
             }
             store.selectedID = nil
             guard store.saveSong(named: title) else { throw NSError(domain: "StudioSave", code: 3) }
@@ -1633,6 +1633,8 @@ extension ComposerView {
                 (6,2,.xylophone),(8,3,.xylophone),(9,5,.xylophone),(11,6,.xylophone),
                 (12,3,.xylophone),(14,3,.bells),(0,8,.drums),(4,8,.drums),
                 (8,8,.drums),(12,8,.drums)])
+            try "ready".write(to: folder.appendingPathComponent("studio-record-ready.txt"), atomically: true, encoding: .utf8)
+            try await hold(1)
             try await make("Little Sunrise", tempo: 110, notes: [
                 (0,3,.piano),(1,2,.piano),(2,1,.piano),(3,0,.piano),
                 (4,1,.piano),(5,2,.piano),(6,3,.piano),(7,6,.piano),
@@ -1650,7 +1652,26 @@ extension ComposerView {
             store.choose(.puppy)
             visualStage = "choose-animals"
             // XCTest presses the actual Animals tab before host capture.
-            try await capture("02_Sounds", delay: 3)
+            try await hold(3)
+            if !landscape {
+                // Move the actual native staff to the first animal response.
+                // The current phone viewport cannot contain two animals eight cells apart.
+                func findStaff(_ view: UIView) -> UIScrollView? {
+                    if let scroll = view as? UIScrollView,
+                       scroll.bounds.height > 250,
+                       scroll.contentSize.width > scroll.bounds.width * 2 { return scroll }
+                    for child in view.subviews {
+                        if let match = findStaff(child) { return match }
+                    }
+                    return nil
+                }
+                guard let window = scene.windows.first(where: { $0.isKeyWindow }),
+                      let staff = findStaff(window) else {
+                    throw NSError(domain: "StudioStaffScroll", code: 7)
+                }
+                staff.setContentOffset(CGPoint(x: 336, y: 0), animated: false)
+            }
+            try await capture("02_Sounds")
             openSample(SampleSong.plukiTheme)
             store.choose(.piano)
             visualStage = "choose-instruments"
