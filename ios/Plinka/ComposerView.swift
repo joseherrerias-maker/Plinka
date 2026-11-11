@@ -107,6 +107,7 @@ struct ComposerView: View {
                 showHome = false
             }
             await runVisualTourIfRequested()
+            await runAppPreviewIfRequested()
             #endif
         }
         .onChange(of: showHome) { _, isHome in
@@ -1478,6 +1479,74 @@ enum StaffGridSmokeCheck {
 // Only runs in a disposable simulator when explicitly launched by the visual workflow.
 // Drive existing views through their normal state; do not maintain duplicate mock layouts.
 extension ComposerView {
+    /// Marketing-only capture of genuine Pluki screens, note placement and playback.
+    /// Never ships in Release builds and never modifies real users' songs.
+    @MainActor private func runAppPreviewIfRequested() async {
+        guard ProcessInfo.processInfo.arguments.contains("--app-preview-tour") else { return }
+        let documents = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+        func stage(_ name: String) {
+            let destination = documents.appendingPathComponent("app-preview-stage.txt")
+            try? name.write(to: destination, atomically: true, encoding: .utf8)
+        }
+        func hold(_ milliseconds: Int) async {
+            try? await Task.sleep(for: .milliseconds(milliseconds))
+        }
+        stage("home")
+        // The real home melody plays on open, exactly as in the shipping app.
+        await hold(2400)
+        guard store.newSong() else { stage("FAIL: new song"); return }
+        showHome = false
+        stage("compose")
+        await hold(550)
+
+        // Add notes through the actual editor store's tap/choose path. Each
+        // addition is rendered by the same SwiftUI staff and sticker artwork.
+        let pianoNotes: [(Int, Int)] = [
+            (0, 6), (2, 4), (4, 3), (6, 4), (8, 5),
+            (10, 3), (12, 4), (14, 2), (16, 5), (18, 4)
+        ]
+        store.choose(.piano)
+        for (step, row) in pianoNotes {
+            _ = store.tap(step: step, row: row)
+            await hold(275)
+        }
+        store.choose(.xylophone)
+        for (step, row) in [(20, 4), (22, 3), (24, 5), (26, 4)] {
+            _ = store.tap(step: step, row: row)
+            await hold(280)
+        }
+        store.choose(.frog)
+        for (step, row) in [(28, 7), (30, 6)] {
+            _ = store.tap(step: step, row: row)
+            await hold(290)
+        }
+        await hold(350)
+        stage("playback")
+        audio.start(store.song)
+        await hold(8500)
+        audio.stop()
+        await hold(400)
+
+        stage("samples")
+        showSamples = true
+        await hold(2150)
+        showSamples = false
+        await hold(350)
+
+        stage("video-export")
+        showVideoExport = true
+        await hold(2400)
+        showVideoExport = false
+        await hold(350)
+
+        stage("home-finale")
+        showHome = true
+        await hold(2400)
+        stage("PASS: original native app, music editor, playback, samples and video export recorded")
+        try? "PASS".write(to: documents.appendingPathComponent("app-preview-finished.txt"),
+                          atomically: true, encoding: .utf8)
+    }
+
     @MainActor private func runVisualTourIfRequested() async {
         guard ProcessInfo.processInfo.arguments.contains("--visual-tour") else { return }
         let folder = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]

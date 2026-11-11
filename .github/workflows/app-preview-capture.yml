@@ -1,0 +1,33 @@
+name: Pluki Marketing App Preview Capture
+on:
+  workflow_dispatch:
+  push:
+    branches: ['marketing/app-preview-31']
+    paths:
+      - '.github/workflows/app-preview-capture.yml'
+permissions:
+  contents: read
+jobs:
+  capture:
+    runs-on: macos-26
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Prepare original Pluki app icon
+        run: bash ios/scripts/prepare-app-icon.sh
+      - name: Build unsigned native iPhone Simulator app
+        shell: bash
+        run: |
+          set -euo pipefail
+          xcodebuild -project ios/Plinka.xcodeproj -scheme Plinka -configuration Debug -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' -derivedDataPath "$RUNNER_TEMP/PreviewBuild" CODE_SIGNING_ALLOWED=NO build > "$RUNNER_TEMP/preview-build.log" 2>&1 || { tail -110 "$RUNNER_TEMP/preview-build.log"; exit 1; }
+      - name: Capture actual native app video
+        shell: bash
+        run: |
+          python3 ios/scripts/capture-app-preview.py "$RUNNER_TEMP/PreviewBuild/Build/Products/Debug-iphonesimulator/Plinka.app" "$RUNNER_TEMP/PlukiPreview"
+      - name: Preserve real footage for editing
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Pluki-iPhone-Real-App-Preview-Footage
+          path: ${{ runner.temp }}/PlukiPreview
+          retention-days: 14
