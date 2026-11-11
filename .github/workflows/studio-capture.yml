@@ -1,7 +1,7 @@
-name: Little Music Studio refined phone capture
+name: Little Music Studio preview footage capture
 on:
   push:
-    branches: ['marketing/little-music-studio-phone']
+    branches: ['marketing/little-music-studio-preview']
     paths: ['.github/workflows/studio-capture.yml']
   workflow_dispatch:
 permissions:
@@ -20,11 +20,11 @@ jobs:
           xcodebuild -project ios/Plinka.xcodeproj -scheme Plinka -configuration Debug -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' -derivedDataPath "$RUNNER_TEMP/StudioBuild" CODE_SIGNING_ALLOWED=NO build > "$RUNNER_TEMP/build.log" 2>&1 || { tail -120 "$RUNNER_TEMP/build.log"; exit 1; }
           brew install xcodegen
           xcodegen generate --spec ios/VisualDriver/project.yml
-      - name: Capture refined iPhone portrait screens
+      - name: Capture real note placement, playback and export
         shell: bash
         run: |
           set -euo pipefail
-          python3 ios/scripts/capture-studio.py "$RUNNER_TEMP/StudioBuild/Build/Products/Debug-iphonesimulator/Plinka.app" 'iPhone 16 Pro Max' marketing/little-music-studio/captures/iPhone
+          python3 ios/scripts/capture-studio.py "$RUNNER_TEMP/StudioBuild/Build/Products/Debug-iphonesimulator/Plinka.app" 'iPhone 16 Pro Max' marketing/little-music-studio/captures/iPhone_preview
       - name: Preserve original capture package
         if: always()
         uses: actions/upload-artifact@v4
@@ -38,4 +38,4 @@ jobs:
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add marketing/little-music-studio/captures
           git commit -m 'Preserve native Little Music Studio captures and real saved projects'
-          git push origin HEAD:marketing/little-music-studio-phone
+          git push origin HEAD:marketing/little-music-studio-preview

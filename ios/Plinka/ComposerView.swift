@@ -1634,7 +1634,15 @@ extension ComposerView {
                 (12,3,.xylophone),(14,3,.bells),(0,8,.drums),(4,8,.drums),
                 (8,8,.drums),(12,8,.drums)])
             try "ready".write(to: folder.appendingPathComponent("studio-record-ready.txt"), atomically: true, encoding: .utf8)
-            try await hold(1)
+            // Wait until simctl confirms recording, so real note placement is not missed.
+            for _ in 0..<600 {
+                if FileManager.default.fileExists(atPath: folder.appendingPathComponent("studio-recording-ack.txt").path) { break }
+                try await hold(0.2)
+            }
+            guard FileManager.default.fileExists(atPath: folder.appendingPathComponent("studio-recording-ack.txt").path) else {
+                throw NSError(domain: "StudioRecordingTimeout", code: 8)
+            }
+            try await hold(3)
             try await make("Little Sunrise", tempo: 110, notes: [
                 (0,3,.piano),(1,2,.piano),(2,1,.piano),(3,0,.piano),
                 (4,1,.piano),(5,2,.piano),(6,3,.piano),(7,6,.piano),

@@ -31,6 +31,9 @@ try:
   if recorder is None and (folder/'studio-record-ready.txt').exists():
    rec_log=(out/'recording.log').open('w')
    recorder=subprocess.Popen(['xcrun','simctl','io',uid,'recordVideo','--codec=h264','--mask=ignored','--force',str(out/'Native_Studio_Footage.mp4')],stdout=rec_log,stderr=subprocess.STDOUT)
+  if recorder is not None and not (folder/'studio-recording-ack.txt').exists():
+   if 'Recording started' in (out/'recording.log').read_text():
+    (folder/'studio-recording-ack.txt').write_text('ready')
   ready=folder/'studio-ready.txt'
   if ready.exists():
    name=ready.read_text()
