@@ -85,7 +85,7 @@ struct ComposerView: View {
         .foregroundStyle(PlukiStyle.ink)
         .overlay(alignment: .topLeading) {
             #if DEBUG
-            if ProcessInfo.processInfo.arguments.contains("--visual-tour") {
+            if ProcessInfo.processInfo.arguments.contains("--visual-tour") || ProcessInfo.processInfo.arguments.contains("--studio-capture") {
                 Text(visualStage).font(.system(size: 1)).opacity(0.01)
                     .accessibilityIdentifier("visual-stage")
             }
@@ -107,6 +107,7 @@ struct ComposerView: View {
                 showHome = false
             }
             await runVisualTourIfRequested()
+            await runStudioCaptureIfRequested()
             #endif
         }
         .onChange(of: showHome) { _, isHome in
@@ -1573,6 +1574,116 @@ extension ComposerView {
         } catch {
             visualStage = "failed"
             try? "FAIL: \(error)".write(to: folder.appendingPathComponent("visual-result.txt"), atomically: true, encoding: .utf8)
+        }
+    }
+}
+#endif
+
+#if DEBUG
+// Disposable simulator only. Same native controls, store, samples and renderer as Build 31.
+extension ComposerView {
+    @MainActor private func runStudioCaptureIfRequested() async {
+        guard ProcessInfo.processInfo.arguments.contains("--studio-capture") else { return }
+        let folder = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+        func hold(_ seconds: Double = 1.5) async throws {
+            try await Task.sleep(nanoseconds: UInt64(seconds * 1_000_000_000))
+        }
+        func capture(_ name: String, delay: Double = 1.5) async throws {
+            try await hold(delay)
+            let request = folder.appendingPathComponent("studio-ready.txt")
+            let ack = folder.appendingPathComponent("studio-ack.txt")
+            try? FileManager.default.removeItem(at: ack)
+            try name.write(to: request, atomically: true, encoding: .utf8)
+            for _ in 0..<180 {
+                if (try? String(contentsOf: ack, encoding: .utf8)) == name {
+                    try? FileManager.default.removeItem(at: request)
+                    return
+                }
+                try await hold(0.2)
+            }
+            throw NSError(domain: "StudioCaptureTimeout", code: 1)
+        }
+        func make(_ title: String, tempo: Double, notes: [(Int, Int, Instrument)]) async throws {
+            guard store.newSong() else { throw NSError(domain: "StudioNewSong", code: 2) }
+            store.song.tempo = tempo
+            showHome = false
+            for (step, row, instrument) in notes {
+                store.choose(instrument)
+                _ = store.tap(step: step, row: row)
+                try await hold(0.09)
+            }
+            store.selectedID = nil
+            guard store.saveSong(named: title) else { throw NSError(domain: "StudioSave", code: 3) }
+            let data = try PlukiSongFile.encode(store.song)
+            try data.write(to: folder.appendingPathComponent(title.replacingOccurrences(of: " ", with: "_") + ".pluki"))
+        }
+        do {
+            try await hold(3)
+            let landscape = ProcessInfo.processInfo.arguments.contains("--studio-landscape")
+            guard let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                  scene.interfaceOrientation.isLandscape == landscape else {
+                throw NSError(domain: "StudioOrientation", code: 4)
+            }
+            try await make("My Happy Tune", tempo: 120, notes: [
+                (0,3,.guitar),(2,1,.guitar),(4,2,.guitar),(6,3,.guitar),
+                (8,5,.guitar),(10,3,.guitar),(12,2,.guitar),(14,3,.guitar),
+                (0,8,.xylophone),(4,6,.xylophone),(8,7,.xylophone),(12,6,.bells)])
+            try await make("Rainbow Rhythm", tempo: 116, notes: [
+                (0,6,.xylophone),(1,5,.xylophone),(3,3,.xylophone),(4,1,.xylophone),
+                (6,2,.xylophone),(8,3,.xylophone),(9,5,.xylophone),(11,6,.xylophone),
+                (12,3,.xylophone),(14,3,.bells),(0,8,.drums),(4,8,.drums),
+                (8,8,.drums),(12,8,.drums)])
+            try await make("Little Sunrise", tempo: 110, notes: [
+                (0,3,.piano),(1,2,.piano),(2,1,.piano),(3,0,.piano),
+                (4,1,.piano),(5,2,.piano),(6,3,.piano),(7,6,.piano),
+                (10,1,.piano),(11,0,.piano),(12,1,.piano),(14,3,.piano),
+                (0,8,.xylophone),(4,6,.xylophone),(10,5,.xylophone),
+                (6,1,.bells),(14,6,.bells)])
+            store.choose(.piano)
+            visualStage = "create"
+            try await capture("01_Create")
+            // Real Little Sunrise playback provides preview-video source footage.
+            audio.start(store.song)
+            try await hold(9)
+            audio.stop()
+            openSample(SampleSong.all.first { $0.id == "animal-parade" }!)
+            store.choose(.puppy)
+            visualStage = "choose-animals"
+            // XCTest presses the actual Animals tab before host capture.
+            try await capture("02_Sounds", delay: 3)
+            openSample(SampleSong.plukiTheme)
+            store.choose(.piano)
+            visualStage = "choose-instruments"
+            try await hold(3)
+            audio.start(store.song)
+            try await capture("03_Playback", delay: 0.75)
+            audio.stop()
+            showSamples = true
+            try await capture("04_Samples")
+            showSamples = false
+            try await hold()
+            showSongs = true
+            try await capture("05_Saved")
+            showSongs = false
+            try await hold()
+            guard let sunrise = store.savedSongs.first(where: { $0.song.title == "Little Sunrise" }) else {
+                throw NSError(domain: "StudioMissingSavedSong", code: 5)
+            }
+            openSavedSong(sunrise)
+            showVideoExport = true
+            for _ in 0..<900 {
+                if FileManager.default.fileExists(atPath: folder.appendingPathComponent("studio-video-ready.txt").path) { break }
+                try await hold(0.2)
+            }
+            guard FileManager.default.fileExists(atPath: folder.appendingPathComponent("studio-video-ready.txt").path) else {
+                throw NSError(domain: "StudioVideoTimeout", code: 6)
+            }
+            try await capture("06_Video")
+            visualStage = "finished"
+            try "PASS: six native screens; three real saved projects; full Little Sunrise video".write(to: folder.appendingPathComponent("studio-result.txt"), atomically: true, encoding: .utf8)
+        } catch {
+            visualStage = "failed"
+            try? "FAIL: \(error)".write(to: folder.appendingPathComponent("studio-result.txt"), atomically: true, encoding: .utf8)
         }
     }
 }

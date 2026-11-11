@@ -1,0 +1,42 @@
+name: Little Music Studio native captures
+on:
+  push:
+    branches: ['marketing/little-music-studio']
+    paths: ['.github/workflows/studio-capture.yml']
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  capture:
+    runs-on: macos-26
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - run: bash ios/scripts/prepare-app-icon.sh
+      - name: Compile native simulator app without signing
+        shell: bash
+        run: |
+          set -euo pipefail
+          xcodebuild -project ios/Plinka.xcodeproj -scheme Plinka -configuration Debug -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' -derivedDataPath "$RUNNER_TEMP/StudioBuild" CODE_SIGNING_ALLOWED=NO build > "$RUNNER_TEMP/build.log" 2>&1 || { tail -120 "$RUNNER_TEMP/build.log"; exit 1; }
+          brew install xcodegen
+          xcodegen generate --spec ios/VisualDriver/project.yml
+      - name: Capture iPhone portrait and iPad landscape
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 ios/scripts/capture-studio.py "$RUNNER_TEMP/StudioBuild/Build/Products/Debug-iphonesimulator/Plinka.app" 'iPhone 16 Pro Max' marketing/little-music-studio/captures/iPhone
+          python3 ios/scripts/capture-studio.py "$RUNNER_TEMP/StudioBuild/Build/Products/Debug-iphonesimulator/Plinka.app" 'iPad Pro 13-inch (M4)' marketing/little-music-studio/captures/iPad
+      - name: Preserve original capture package
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Little-Music-Studio-original-captures
+          path: marketing/little-music-studio/captures
+          retention-days: 30
+      - name: Save review assets on isolated marketing branch
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add marketing/little-music-studio/captures
+          git commit -m 'Preserve native Little Music Studio captures and real saved projects'
+          git push origin HEAD:marketing/little-music-studio

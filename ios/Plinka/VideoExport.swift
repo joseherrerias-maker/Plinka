@@ -94,6 +94,20 @@ struct SongVideoExportView: View {
         }
         .task {
             #if DEBUG
+            if ProcessInfo.processInfo.arguments.contains("--studio-capture") {
+                shape = ProcessInfo.processInfo.arguments.contains("--studio-landscape") ? .landscape : .vertical
+                model.start(song: song, shape: shape)
+                while model.working { try? await Task.sleep(nanoseconds: 100_000_000) }
+                if let player = model.player {
+                    // Seek within the actual rendered clip so the preview contains notes.
+                    await player.seek(to: CMTime(seconds: 0.15, preferredTimescale: 600), toleranceBefore: .zero, toleranceAfter: .zero)
+                    let folder = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+                    if let asset = player.currentItem?.asset as? AVURLAsset {
+                        try? FileManager.default.copyItem(at: asset.url, to: folder.appendingPathComponent("Little_Sunrise_Export.mp4"))
+                    }
+                    try? "ready".write(to: folder.appendingPathComponent("studio-video-ready.txt"), atomically: true, encoding: .utf8)
+                }
+            }
             if ProcessInfo.processInfo.arguments.contains("--visual-tour") || ProcessInfo.processInfo.arguments.contains("--parent-keypad-check") {
                 var previewSong = song
                 previewSong.notes = Array(song.notes.filter { $0.step < 4 })
