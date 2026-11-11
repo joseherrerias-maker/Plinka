@@ -1,0 +1,1 @@
+Pluki Build 31 native simulator App Store Preview. Full gameplay is a real captured iOS Debug app. Overlaid captions and original synthesized Pluki Theme accompany the footage. Marketing asset only; no App Store submission made.
