@@ -899,9 +899,6 @@ struct ComposerView: View {
                     NavigationLink { PlukiHelpView() } label: {
                         Label("How to play & help", systemImage: "questionmark.circle.fill")
                     }
-                    NavigationLink(value: SettingsRoute.contact) {
-                        Label("Contact & website", systemImage: "envelope.fill")
-                    }
                 }
                 if let error = audio.audioError { Section { Text(error).foregroundStyle(.red) } }
                 Section {
@@ -962,7 +959,11 @@ struct ComposerView: View {
                         } footer: {
                             Text("Save an editable .pluki project to Files or share it with another device. To export a saved song, open it first. An import creates a separate saved copy.")
                         }
-                        NavigationLink("Privacy policy") { PlukiPrivacyView() }
+                        Section("Contact & support") {
+                            NavigationLink(value: SettingsRoute.contact) {
+                                Label("Contact & website", systemImage: "envelope.fill")
+                            }
+                        }
                     }
                     .navigationTitle("For parents")
                     .task {
